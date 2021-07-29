@@ -1,21 +1,27 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { StatusBar } from "expo-status-bar";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+
+import { LoadAssets, ThemeProvider } from "./src/components";
+import Home from "./src/Home/Home";
+
+const fonts = {
+  Bold: require("./assets/fonts/Roboto-Bold.ttf"),
+  Medium: require("./assets/fonts/Roboto-Medium.ttf"),
+  Normal: require("./assets/fonts/Roboto-Regular.ttf"),
+  // Secondary fonts
+  SMedium: require("./assets/fonts/Flamante-Roma-Medium.ttf"),
+};
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <ThemeProvider>
+      <LoadAssets {...{ fonts }}>
+        <SafeAreaProvider>
+          <StatusBar />
+          <Home />
+        </SafeAreaProvider>
+      </LoadAssets>
+    </ThemeProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

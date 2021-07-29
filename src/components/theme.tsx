@@ -24,22 +24,22 @@ const theme = {
     primary: palette.red,
     primaryContrast: palette.white,
 
-    title: palette.black,
-    subTitle: palette.gray500,
-    paragraph: palette.gray400,
-    subParagraph: palette.gray300,
+    dark: palette.black,
+    darkGray: palette.gray500,
+    gray: palette.gray400,
+    lightGray: palette.gray300,
   },
   spacing: {
     s: 5,
     m: 10,
     l: 15,
     xl: 20,
+    screen: 22,
   },
   borderRadii: {
-    s: 5,
-    m: 8,
+    s: 3,
+    m: 6,
     l: 12,
-    xl: 18,
   },
   breakpoints: {
     phone: 0,
@@ -47,16 +47,14 @@ const theme = {
   },
   textVariants: {
     sectionTitle: {
+      color: "foreground",
       fontSize: 22,
-      fontFamily: "Bold",
-      paddingVertical: "20",
-      paddingHorizontal: "screen",
+      fontFamily: "Normal",
     },
     body: {
-      color: "bodyText",
+      color: "foregound",
       fontFamily: "Medium",
       fontSize: 16,
-      lineHeight: 23,
     },
   },
 };
