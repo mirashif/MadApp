@@ -25,7 +25,7 @@ const Menu = ({ items, logoUri }: MenuProps) => {
     >
       <Box style={styles.logo}>
         <Image style={styles.logoStyle} source={{ uri: logoUri }} />
-        <Icon name="arrow-right" />
+        <Icon name="arrow-right" size={24} color="#000000" />
       </Box>
 
       {items.map((item) => (

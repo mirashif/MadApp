@@ -3,7 +3,12 @@ import { View } from "react-native";
 
 import { Icon, makeStyles, Text, Theme, useTheme } from "../components";
 
-export default function LocationBar() {
+interface LocationBarProps {
+  address: string;
+  label: string;
+}
+
+export default function LocationBar({ address, label }: LocationBarProps) {
   const styles = useStyles();
   const theme = useTheme();
 
@@ -11,12 +16,12 @@ export default function LocationBar() {
     <View style={styles.container}>
       <View>
         <Text numberOfLines={1} style={styles.address}>
-          5 Rd No. 2/3, Dhaka 1213
+          {address}
         </Text>
-        <View style={styles.labelContainer}>
-          <Icon name="book-open" size={12} />
-          <Text numberOfLines={1} style={styles.label}>
-            Scratchboard
+        <View style={styles.label}>
+          <Icon color={theme.colors.darkGray} name="book-open" size={12} />
+          <Text numberOfLines={1} style={styles.labelText}>
+            {label}
           </Text>
         </View>
       </View>
@@ -40,11 +45,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: 15,
     marginBottom: 4,
   },
-  labelContainer: {
+  label: {
     flexDirection: "row",
     alignItems: "center",
   },
-  label: {
+  labelText: {
     color: theme.colors.darkGray,
     fontFamily: "Bold",
     fontSize: 11,

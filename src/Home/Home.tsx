@@ -30,7 +30,10 @@ export default function Home() {
     <SafeAreaView>
       <ScrollView showsVerticalScrollIndicator={false}>
         <Box mb="l" mx="screen">
-          <LocationBar />
+          <LocationBar
+            address="5 Rd No. 2/3, Dhaka 1213"
+            label="Scratchboard"
+          />
         </Box>
 
         <Box mb="l" mx="screen" style={styles.wideBanner}>
