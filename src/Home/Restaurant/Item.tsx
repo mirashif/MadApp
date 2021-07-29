@@ -29,9 +29,11 @@ const Item = ({
         imageStyle={styles.imageStyle}
         source={{ uri: imageUri }}
       >
-        <Box style={styles.discount}>
-          <Text style={styles.discountText}>{discount}</Text>
-        </Box>
+        {discount && (
+          <Box style={styles.discount}>
+            <Text style={styles.discountText}>{discount}</Text>
+          </Box>
+        )}
         <Box style={styles.addCartIcon}>
           <Icon size={18} name="plus" color={theme.colors.primaryContrast} />
         </Box>
@@ -40,7 +42,9 @@ const Item = ({
       <Text style={styles.name}>{name}</Text>
       <Box style={styles.price}>
         <Text style={styles.currentPrice}>{price}</Text>
-        <Text style={styles.previousPrice}>{previousPrice}</Text>
+        {previousPrice && (
+          <Text style={styles.previousPrice}>{previousPrice}</Text>
+        )}
       </Box>
     </Box>
   );
