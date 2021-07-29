@@ -3,14 +3,22 @@ import { ImageBackground } from "react-native";
 
 import { Box, Icon, makeStyles, Text, Theme, useTheme } from "../../components";
 
-interface ItemProps {
+export interface ItemProps {
+  id: number | string;
   discount?: string;
   name: string;
   previousPrice?: string;
   price: string;
+  imageUri: string;
 }
 
-const Item = ({ discount, name, previousPrice, price }: ItemProps) => {
+const Item = ({
+  discount,
+  name,
+  previousPrice,
+  price,
+  imageUri,
+}: ItemProps) => {
   const styles = useStyles();
   const theme = useTheme();
 
@@ -19,7 +27,7 @@ const Item = ({ discount, name, previousPrice, price }: ItemProps) => {
       <ImageBackground
         style={styles.imageView}
         imageStyle={styles.imageStyle}
-        source={require("../assets/wide-banner.png")}
+        source={{ uri: imageUri }}
       >
         <Box style={styles.discount}>
           <Text style={styles.discountText}>{discount}</Text>

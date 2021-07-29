@@ -1,54 +1,73 @@
 import React from "react";
-import { ImageBackground, ScrollView } from "react-native";
+import { Image, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Box, makeStyles, Text, Theme } from "../components";
+import { Box, makeStyles, Text, Theme, useTheme } from "../components";
 
 import LocationBar from "./LocationBar";
-import Item from "./Restaurant/Item";
+import Menu from "./Restaurant/Menu";
 
-const items = [...Array(6).keys()];
+const verticalBanners = [...Array(6)].map((_, id) => {
+  return { id, imageUri: "https://picsum.photos/200/300" };
+});
+
+const restaurantItems = [...Array(6)].map((_, id) => {
+  return {
+    id,
+    imageUri: "https://picsum.photos/200/200",
+    discount: "20% OFF",
+    name: "Madame Lucy",
+    price: "৳ 369.00",
+    previousPrice: "৳ 468.00",
+  };
+});
 
 export default function Home() {
   const styles = useStyles();
+  const theme = useTheme();
 
   return (
     <SafeAreaView>
-      <Box mb="l" mx="screen">
-        <LocationBar />
-      </Box>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Box mb="l" mx="screen">
+          <LocationBar />
+        </Box>
 
-      <Box mb="l" mx="screen" style={styles.wideBanner}>
-        <ImageBackground
-          source={require("./assets/wide-banner.png")}
-          style={styles.wideBannerImage}
-        />
-      </Box>
+        <Box mb="l" mx="screen" style={styles.wideBanner}>
+          <Image
+            source={{
+              uri: "https://picsum.photos/600/300",
+            }}
+            style={styles.wideBannerImage}
+          />
+        </Box>
 
-      <Box mb="xl" ml="screen">
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {items.map((_, i) => (
-            <Box key={i} style={styles.verticalBanner}>
-              <ImageBackground
-                source={require("./assets/wide-banner.png")}
-                style={styles.verticalBannerImage}
-              />
-            </Box>
-          ))}
-        </ScrollView>
-      </Box>
+        <Box mb="xl">
+          <ScrollView
+            contentContainerStyle={{
+              paddingHorizontal: theme.spacing.screen,
+            }}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          >
+            {verticalBanners.map(({ id, imageUri }) => (
+              <Box key={id} style={styles.verticalBanner}>
+                <Image
+                  source={{ uri: imageUri }}
+                  style={styles.verticalBannerImage}
+                />
+              </Box>
+            ))}
+          </ScrollView>
+        </Box>
 
-      <Box mx="screen">
-        <Text mb="l" variant="sectionTitle">
+        <Text mb="l" mx="screen" variant="sectionTitle">
           🍴 Restaurants
         </Text>
-        <Item
-          discount="20% OFF"
-          name="Madame Lucy"
-          price="$ 369.00"
-          previousPrice="$ 468.00"
-        />
-      </Box>
+        <Menu items={restaurantItems} logoUri="https://picsum.photos/40/65" />
+        <Menu items={restaurantItems} logoUri="https://picsum.photos/40/65" />
+        <Menu items={restaurantItems} logoUri="https://picsum.photos/40/65" />
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -75,5 +94,19 @@ const useStyles = makeStyles((theme: Theme) => ({
     flex: 1,
     resizeMode: "cover",
     justifyContent: "center",
+  },
+  restaurantItem: {
+    marginRight: theme.spacing.xl,
+  },
+  logo: {
+    marginRight: theme.spacing.l,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  logoStyle: {
+    width: 38,
+    height: 65,
+    resizeMode: "contain",
+    marginBottom: theme.spacing.s,
   },
 }));
