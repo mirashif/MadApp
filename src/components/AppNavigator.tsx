@@ -9,6 +9,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import { Home } from "../Home";
 import { Cashback } from "../Cashback";
+import { Get100 } from "../Get100";
+import { Settings } from "../Settings";
 
 import { useTheme } from "./theme";
 
@@ -20,6 +22,8 @@ const TabBarIcon = (props: {
 type BottomTabParamList = {
   Home: undefined;
   Cashback: undefined;
+  Get100: undefined;
+  Settings: undefined;
 };
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
@@ -53,6 +57,7 @@ const BottomTabs = () => {
         name="Home"
         component={Home}
         options={{
+          tabBarLabel: "HOME",
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
         }}
       />
@@ -60,6 +65,23 @@ const BottomTabs = () => {
         name="Cashback"
         component={Cashback}
         options={{
+          tabBarLabel: "CASHBACK",
+          tabBarIcon: ({ color }) => <TabBarIcon name="gift" color={color} />,
+        }}
+      />
+      <BottomTab.Screen
+        name="Get100"
+        component={Get100}
+        options={{
+          tabBarLabel: "GET ৳100",
+          tabBarIcon: ({ color }) => <TabBarIcon name="gift" color={color} />,
+        }}
+      />
+      <BottomTab.Screen
+        name="Settings"
+        component={Settings}
+        options={{
+          tabBarLabel: "MENU",
           tabBarIcon: ({ color }) => <TabBarIcon name="gift" color={color} />,
         }}
       />
