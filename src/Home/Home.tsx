@@ -2,7 +2,7 @@ import React from "react";
 import { Image, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Box, Button, makeStyles, Text, Theme, useTheme } from "../components";
+import { Box, makeStyles, Text, Theme, useTheme } from "../components";
 
 import LocationBar from "./LocationBar";
 import Menu from "./Restaurant/Menu";
@@ -67,12 +67,6 @@ export default function Home() {
         <Text mb="l" mx="screen" variant="sectionTitle">
           🍴 Restaurants
         </Text>
-        <Button>Hellow World!</Button>
-        <Button disabled>Hellow World!</Button>
-        <Button variant="secondary">Hellow World!</Button>
-        <Button variant="secondary" disabled>
-          Hellow World!
-        </Button>
         <Menu items={restaurantItems} logoUri="https://picsum.photos/40/65" />
         <Menu items={restaurantItems} logoUri="https://picsum.photos/40/65" />
         <Menu items={restaurantItems} logoUri="https://picsum.photos/40/65" />

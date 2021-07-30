@@ -1,25 +1,26 @@
 import React from "react";
-import { StyleProp, ViewStyle } from "react-native";
+import { StyleProp, View, ViewStyle } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 
 import { makeStyles, Text, Theme, useTheme } from "./theme";
 
 interface ButtonProps {
-  size?: "sm" | "md" | "lg" | "xl";
-  variant?: "primary" | "secondary";
   children: React.ReactNode;
-  style?: StyleProp<ViewStyle>;
   disabled?: boolean;
+  onPress: () => void;
+  size?: "sm" | "md" | "lg" | "xl";
+  style?: StyleProp<ViewStyle>;
+  variant?: "primary" | "secondary";
 }
 
 const Button = (props: ButtonProps) => {
   const {
-    size = "md",
-    variant = "primary",
     children,
     disabled,
+    onPress,
+    size = "md",
     style,
-    ...rest
+    variant = "primary",
   } = props;
   const styles = useStyles();
   const theme = useTheme();
@@ -78,19 +79,20 @@ const Button = (props: ButtonProps) => {
     variant === "secondary" && !disabled && styles.borderStyles;
 
   return (
-    <RectButton
-      enabled={!disabled}
-      style={[styles.button, buttonStyle, borderStyles, style]}
-      {...rest}
-    >
-      <Text
-        selectable={false}
-        numberOfLines={1}
-        style={[styles.label, textStyle]}
+    <View style={borderStyles}>
+      <RectButton
+        style={[styles.button, buttonStyle, style]}
+        {...{ enabled: !disabled, onPress }}
       >
-        {children}
-      </Text>
-    </RectButton>
+        <Text
+          selectable={false}
+          numberOfLines={1}
+          style={[styles.label, textStyle]}
+        >
+          {children}
+        </Text>
+      </RectButton>
+    </View>
   );
 };
 
@@ -116,5 +118,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderWidth: 2,
     borderStyle: "solid",
     borderColor: theme.colors.primary,
+    borderRadius: theme.borderRadii.l,
   },
 }));
