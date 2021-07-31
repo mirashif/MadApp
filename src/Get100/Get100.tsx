@@ -7,7 +7,6 @@ import {
   SafeArea,
   useTheme,
   CircularIcon,
-  Theme,
   makeStyles,
   Button,
   Icon,
@@ -20,8 +19,6 @@ const madAppLogo = {
 };
 
 export const assets = [madAppLogo.src];
-
-const EXTERNAL_SHARE_ICON_BG = "#ffffff";
 
 const Get100 = () => {
   const theme = useTheme();
@@ -164,7 +161,7 @@ const Get100 = () => {
 
 export default Get100;
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   card: {
     backgroundColor: "#D92955",
     alignItems: "center",
