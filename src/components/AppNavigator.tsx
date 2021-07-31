@@ -54,8 +54,9 @@ const BottomTabs = () => {
     },
     style: {
       backgroundColor: theme.colors.background,
-      // height: 70,
-      // paddingTop: 15,
+      height: 70 + insets.bottom,
+      paddingTop: 15,
+      paddingBottom: 10 + insets.bottom,
     },
   };
 
