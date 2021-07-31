@@ -2,8 +2,11 @@ import React from "react";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { LoadAssets, ThemeProvider } from "./src/components";
 import AppNavigator from "./src/components/AppNavigator";
+import { assets as CashbackAssets } from "./src/Cashback";
+import { LoadAssets, ThemeProvider } from "./src/components";
+
+const assets = [...CashbackAssets];
 
 const fonts = {
   Bold: require("./assets/fonts/Roboto-Bold.ttf"),
@@ -15,7 +18,7 @@ const fonts = {
 const App = () => {
   return (
     <ThemeProvider>
-      <LoadAssets {...{ fonts }}>
+      <LoadAssets {...{ assets, fonts }}>
         <SafeAreaProvider>
           <StatusBar />
           <AppNavigator />

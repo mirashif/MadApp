@@ -103,6 +103,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: "center",
     backgroundColor: "pink",
     borderRadius: theme.borderRadii.l,
+    paddingHorizontal: 30,
     height: 42,
     justifyContent: "center",
   },

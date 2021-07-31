@@ -40,6 +40,7 @@ const theme = {
     s: 3,
     m: 6,
     l: 12,
+    xl: 18,
   },
   breakpoints: {
     phone: 0,
