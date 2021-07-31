@@ -9,8 +9,9 @@ const cardBackgroundImage = {
 };
 
 const madAppLogo = {
-  src: require("./assets/mad-logo.png"),
+  src: require("../../assets/mad-logo.png"),
   height: 60,
+  width: 60,
 };
 
 export const assets = [cardBackgroundImage.src, madAppLogo.src];
@@ -88,7 +89,10 @@ const Card = ({ points, name }: CardProps) => {
         >
           {name}
         </Text>
-        <Image style={{ height: madAppLogo.height }} source={madAppLogo.src} />
+        <Image
+          style={{ height: madAppLogo.height, width: madAppLogo.width }}
+          source={madAppLogo.src}
+        />
       </View>
     </ImageBackground>
   );

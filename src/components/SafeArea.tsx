@@ -1,5 +1,4 @@
 import React from "react";
-import { ScrollView } from "react-native";
 import {
   NativeSafeAreaViewProps,
   SafeAreaView,
@@ -7,7 +6,7 @@ import {
 
 import { useTheme } from "./theme";
 
-const SafeScrollView = ({ children, ...props }: NativeSafeAreaViewProps) => {
+const SafeArea = ({ children, ...props }: NativeSafeAreaViewProps) => {
   const theme = useTheme();
 
   return (
@@ -19,9 +18,9 @@ const SafeScrollView = ({ children, ...props }: NativeSafeAreaViewProps) => {
       edges={["top", "right", "left"]}
       {...props}
     >
-      <ScrollView showsVerticalScrollIndicator={false}>{children}</ScrollView>
+      {children}
     </SafeAreaView>
   );
 };
 
-export default SafeScrollView;
+export default SafeArea;

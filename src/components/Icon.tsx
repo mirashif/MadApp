@@ -6,14 +6,18 @@ import { useTheme } from "./theme";
 
 interface IconProps {
   name: React.ComponentProps<typeof Feather>["name"];
-  size: number;
-  color: string;
+  size?: number;
+  color?: string;
 }
 
 const Icon = (props: IconProps) => <Feather {...props} />;
 export default Icon;
 
-export const CircularIcon = ({ name, size }: IconProps) => {
+export const CircularIcon = ({
+  name,
+  size = 34,
+  backgroundColor,
+}: IconProps & { backgroundColor?: string }) => {
   const theme = useTheme();
 
   return (
@@ -22,7 +26,9 @@ export const CircularIcon = ({ name, size }: IconProps) => {
         height: size,
         width: size,
         borderRadius: size,
-        backgroundColor: theme.colors.primary,
+        backgroundColor: backgroundColor
+          ? backgroundColor
+          : theme.colors.primary,
         alignItems: "center",
         justifyContent: "center",
       }}

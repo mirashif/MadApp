@@ -10,7 +10,7 @@ interface ButtonProps {
   onPress: () => void;
   size?: "sm" | "md" | "lg" | "xl";
   style?: StyleProp<ViewStyle>;
-  variant?: "primary" | "secondary";
+  variant?: "contained" | "outlined" | "text";
 }
 
 const Button = (props: ButtonProps) => {
@@ -20,7 +20,7 @@ const Button = (props: ButtonProps) => {
     onPress,
     size = "md",
     style,
-    variant = "primary",
+    variant = "contained",
   } = props;
   const styles = useStyles();
   const theme = useTheme();
@@ -32,7 +32,11 @@ const Button = (props: ButtonProps) => {
     color = theme.colors.primaryContrast;
   } else {
     switch (variant) {
-      case "secondary":
+      case "text":
+        backgroundColor = "transparent";
+        color = theme.colors.primary;
+        break;
+      case "outlined":
         backgroundColor = theme.colors.primaryContrast;
         color = theme.colors.primary;
         break;
@@ -76,7 +80,7 @@ const Button = (props: ButtonProps) => {
     fontFamily,
   };
   const borderStyles =
-    variant === "secondary" && !disabled && styles.borderStyles;
+    variant === "outlined" && !disabled && styles.borderStyles;
 
   return (
     <View style={borderStyles}>
