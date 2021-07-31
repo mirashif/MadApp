@@ -1,8 +1,14 @@
 import React from "react";
 import { Image, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Box, makeStyles, Text, Theme, useTheme } from "../components";
+import {
+  Box,
+  makeStyles,
+  SafeArea,
+  Text,
+  Theme,
+  useTheme,
+} from "../components";
 
 import LocationBar from "./LocationBar";
 import Menu from "./Restaurant/Menu";
@@ -27,51 +33,46 @@ export default function Home() {
   const theme = useTheme();
 
   return (
-    <SafeAreaView>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Box mb="l" mx="screen">
-          <LocationBar
-            address="5 Rd No. 2/3, Dhaka 1213"
-            label="Scratchboard"
-          />
-        </Box>
+    <SafeArea>
+      <Box mb="l" mx="screen">
+        <LocationBar address="5 Rd No. 2/3, Dhaka 1213" label="Scratchboard" />
+      </Box>
 
-        <Box mb="l" mx="screen" style={styles.wideBanner}>
-          <Image
-            source={{
-              uri: "https://picsum.photos/600/300",
-            }}
-            style={styles.wideBannerImage}
-          />
-        </Box>
+      <Box mb="l" mx="screen" style={styles.wideBanner}>
+        <Image
+          source={{
+            uri: "https://picsum.photos/600/300",
+          }}
+          style={styles.wideBannerImage}
+        />
+      </Box>
 
-        <Box mb="xl">
-          <ScrollView
-            contentContainerStyle={{
-              paddingHorizontal: theme.spacing.screen,
-            }}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          >
-            {verticalBanners.map(({ id, imageUri }) => (
-              <Box key={id} style={styles.verticalBanner}>
-                <Image
-                  source={{ uri: imageUri }}
-                  style={styles.verticalBannerImage}
-                />
-              </Box>
-            ))}
-          </ScrollView>
-        </Box>
+      <Box mb="xl">
+        <ScrollView
+          contentContainerStyle={{
+            paddingHorizontal: theme.spacing.screen,
+          }}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+        >
+          {verticalBanners.map(({ id, imageUri }) => (
+            <Box key={id} style={styles.verticalBanner}>
+              <Image
+                source={{ uri: imageUri }}
+                style={styles.verticalBannerImage}
+              />
+            </Box>
+          ))}
+        </ScrollView>
+      </Box>
 
-        <Text mb="l" mx="screen" variant="sectionTitle">
-          🍴 Restaurants
-        </Text>
-        <Menu items={restaurantItems} logoUri="https://picsum.photos/40/65" />
-        <Menu items={restaurantItems} logoUri="https://picsum.photos/40/65" />
-        <Menu items={restaurantItems} logoUri="https://picsum.photos/40/65" />
-      </ScrollView>
-    </SafeAreaView>
+      <Text mb="l" mx="screen" variant="sectionTitle">
+        🍴 Restaurants
+      </Text>
+      <Menu items={restaurantItems} logoUri="https://picsum.photos/40/65" />
+      <Menu items={restaurantItems} logoUri="https://picsum.photos/40/65" />
+      <Menu items={restaurantItems} logoUri="https://picsum.photos/40/65" />
+    </SafeArea>
   );
 }
 
