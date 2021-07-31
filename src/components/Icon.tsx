@@ -23,12 +23,14 @@ export const CircularIcon = ({ name, size }: IconProps) => {
         width: size,
         borderRadius: size,
         backgroundColor: theme.colors.primary,
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
       <Icon
         {...{
           name,
-          size: size / 2,
+          size: size / 1.7,
           color: theme.colors.primaryContrast,
         }}
       />
