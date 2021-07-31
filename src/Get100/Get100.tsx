@@ -10,6 +10,7 @@ import {
   makeStyles,
   Button,
   Icon,
+  Theme,
 } from "../components";
 
 const madAppLogo = {
@@ -32,6 +33,7 @@ const Get100 = () => {
             <Image style={styles.cardImage} source={madAppLogo.src} />
           </Box>
 
+          {/* Invite friend */}
           <Box p="screen">
             <Box
               style={{
@@ -57,6 +59,7 @@ const Get100 = () => {
               </Box>
             </Box>
 
+            {/* Invite friend steps */}
             <Box style={styles.step}>
               <CircularIcon name="send" size={35} color="primary" />
               <Box style={styles.stepDetails}>
@@ -66,7 +69,6 @@ const Get100 = () => {
                 </Text>
               </Box>
             </Box>
-
             <Box style={styles.step}>
               <CircularIcon name="heart" size={35} color="primary" />
               <Box style={styles.stepDetails}>
@@ -80,31 +82,9 @@ const Get100 = () => {
           </Box>
 
           {/* My coupon share */}
-          <Box
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              paddingLeft: 30,
-              borderRadius: theme.borderRadii.l,
-            }}
-          >
-            <Box
-              style={{
-                flex: 1,
-                borderRightWidth: 1,
-                borderRightColor: theme.colors.gray,
-                marginBottom: theme.spacing.l,
-              }}
-            >
-              <Text
-                numberOfLines={1}
-                style={{
-                  fontFamily: "Bold",
-                  fontSize: 25,
-                  color: "#000000",
-                }}
-              >
+          <Box style={styles.couponShare}>
+            <Box style={styles.coupon}>
+              <Text numberOfLines={1} style={styles.couponText}>
                 RABBILITV
               </Text>
             </Box>
@@ -161,7 +141,7 @@ const Get100 = () => {
 
 export default Get100;
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme: Theme) => ({
   card: {
     backgroundColor: "#D92955",
     alignItems: "center",
@@ -186,11 +166,29 @@ const useStyles = makeStyles(() => ({
   stepTitle: {
     fontFamily: "Normal",
     fontSize: 17,
-    color: "#000000",
+    color: theme.colors.dark,
   },
   stepDescription: {
     fontFamily: "Normal",
     fontSize: 14,
     color: "#939393",
+  },
+  couponShare: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingLeft: 30,
+    borderRadius: theme.borderRadii.l,
+    marginBottom: theme.spacing.l,
+  },
+  coupon: {
+    flex: 1,
+    borderRightWidth: 1,
+    borderRightColor: theme.colors.gray,
+  },
+  couponText: {
+    fontFamily: "Bold",
+    fontSize: 25,
+    color: theme.colors.dark,
   },
 }));
