@@ -116,7 +116,7 @@ const Get100 = () => {
               size="lg"
               variant="text"
             >
-              <Icon name="send" size={17} color="primary" />
+              <Icon name="send" size={17} color={theme.colors.primary} />
               <Box width={7} />
               <Text>Share</Text>
             </Button>
