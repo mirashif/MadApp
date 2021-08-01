@@ -39,7 +39,7 @@ const Get100 = () => {
               style={{
                 flexDirection: "row",
                 justifyContent: "center",
-                marginBottom: 24,
+                marginBottom: theme.spacing.xl,
               }}
             >
               <Text style={{ fontSize: 55 }}>🥳</Text>
@@ -117,7 +117,7 @@ const Get100 = () => {
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "center",
-              marginBottom: theme.spacing.l,
+              marginBottom: theme.spacing.xl,
             }}
           >
             <Text>TODO: External share icon buttons</Text>
@@ -129,7 +129,7 @@ const Get100 = () => {
               style={{
                 fontSize: 18,
                 fontFamily: "Bold",
-                marginBottom: theme.spacing.m,
+                marginBottom: theme.spacing.l,
               }}
             >
               💌 My Invites
@@ -161,7 +161,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: 210,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-    marginBottom: 20,
+    marginBottom: theme.spacing.xl,
   },
   cardImage: {
     height: madAppLogo.height,
@@ -169,7 +169,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   step: {
     flexDirection: "row",
-    marginBottom: 24,
+    marginBottom: theme.spacing.xl,
   },
   stepDetails: {
     marginLeft: 7,
