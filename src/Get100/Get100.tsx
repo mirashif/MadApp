@@ -60,23 +60,35 @@ const Get100 = () => {
             </Box>
 
             {/* Invite friend steps */}
-            <Box style={styles.step}>
-              <CircularIcon name="send" size={35} color="primary" />
-              <Box style={styles.stepDetails}>
-                <Text style={styles.stepTitle}>ENJOY</Text>
-                <Text style={styles.stepDescription}>
-                  After they order, you will receive a ৳100 promo code.
-                </Text>
+            <Box style={{ position: "relative" }}>
+              <Box
+                style={{
+                  position: "absolute",
+                  width: 2,
+                  height: 60,
+                  backgroundColor: theme.colors.primary,
+                  left: 34 / 2 - 1,
+                  top: 34,
+                }}
+              />
+              <Box style={styles.step}>
+                <CircularIcon name="send" size={34} color="primary" />
+                <Box style={styles.stepDetails}>
+                  <Text style={styles.stepTitle}>ENJOY</Text>
+                  <Text style={styles.stepDescription}>
+                    After they order, you will receive a ৳100 promo code.
+                  </Text>
+                </Box>
               </Box>
-            </Box>
-            <Box style={styles.step}>
-              <CircularIcon name="heart" size={35} color="primary" />
-              <Box style={styles.stepDetails}>
-                <Text style={styles.stepTitle}>INVITE</Text>
-                <Text style={styles.stepDescription}>
-                  Share your referral code with friends & they get a ৳100 promo
-                  code!
-                </Text>
+              <Box style={styles.step}>
+                <CircularIcon name="heart" size={34} color="primary" />
+                <Box style={styles.stepDetails}>
+                  <Text style={styles.stepTitle}>INVITE</Text>
+                  <Text style={styles.stepDescription}>
+                    Share your referral code with friends & they get a ৳100
+                    promo code!
+                  </Text>
+                </Box>
               </Box>
             </Box>
           </Box>
