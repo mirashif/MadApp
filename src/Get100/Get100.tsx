@@ -13,6 +13,8 @@ import {
   Theme,
 } from "../components";
 
+import InviteItem from "./InviteItem";
+
 const madAppLogo = {
   src: require("../../assets/mad-logo.png"),
   height: 170,
@@ -111,29 +113,37 @@ const Get100 = () => {
             </Button>
           </Box>
 
-          {/* External share */}
-          <Box
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              marginBottom: theme.spacing.xl,
-            }}
-          >
-            <Text>TODO: External share icon buttons</Text>
-          </Box>
-
           {/* My invites */}
           <Box px="xl" my="xl">
-            <Text
+            <Box
               style={{
-                fontSize: 18,
-                fontFamily: "Bold",
+                flexDirection: "row",
+                alignItems: "center",
                 marginBottom: theme.spacing.l,
               }}
             >
-              💌 My Invites
-            </Text>
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontFamily: "Bold",
+                }}
+              >
+                💌 My Invites
+              </Text>
+              <Box style={styles.inviteCount}>
+                <Text
+                  style={{
+                    color: theme.colors.primaryContrast,
+                    fontSize: 9,
+                    fontFamily: "Normal",
+                  }}
+                >
+                  2
+                </Text>
+              </Box>
+            </Box>
+
+            {/* Empty state */}
             <Text
               style={{
                 fontSize: 14,
@@ -144,6 +154,9 @@ const Get100 = () => {
               None of your friends signed up yet! They will show up here once
               they do.
             </Text>
+
+            {/* Not Empty state */}
+            <InviteItem name="Omran Jamal" id="+88 017#####123" />
           </Box>
         </Box>
       </ScrollView>
@@ -202,5 +215,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontFamily: "Bold",
     fontSize: 25,
     color: theme.colors.dark,
+  },
+  inviteCount: {
+    height: 18,
+    width: 18,
+    borderRadius: 18,
+    backgroundColor: theme.colors.primary,
+    marginLeft: theme.spacing.m,
+    alignItems: "center",
+    justifyContent: "center",
   },
 }));
