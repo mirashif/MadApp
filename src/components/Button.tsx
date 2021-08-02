@@ -77,7 +77,7 @@ const Button = (props: ButtonProps) => {
   const textStyle = {
     color,
     fontSize,
-    fontFamily,
+    fontFamily: variant === "text" ? "Bold" : fontFamily,
   };
   const borderStyles =
     variant === "outlined" && !disabled && styles.borderStyles;

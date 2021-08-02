@@ -12,7 +12,7 @@ import Svg, { Path } from "react-native-svg";
 import { Home } from "../Home";
 import { Cashback } from "../Cashback";
 import { Get100 } from "../Get100";
-import { Settings } from "../Settings";
+import { Menu } from "../Menu";
 
 import { useTheme } from "./theme";
 
@@ -88,7 +88,7 @@ const BottomTabs = () => {
       />
       <BottomTab.Screen
         name="Settings"
-        component={Settings}
+        component={Menu}
         options={{
           tabBarLabel: "MENU",
           tabBarIcon: ({ color }) => <TabBarIcon name="menu" color={color} />,
