@@ -5,7 +5,7 @@ import {
   createStackNavigator,
 } from "@react-navigation/stack";
 
-import MyOrders from "./MyOrders";
+import MyOrders from "./MyOrders/MyOrders";
 
 export { default as Menu } from "./Menu";
 
