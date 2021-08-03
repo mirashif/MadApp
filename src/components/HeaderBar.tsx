@@ -13,11 +13,13 @@ const HeaderBar = ({ title }: HeaderBarProps) => {
   const navigation = useNavigation();
 
   return (
-    <Box>
+    <Box px="screen" py="xl" flexDirection="row" alignItems="center">
       <TouchableWithoutFeedback onPress={() => navigation.goBack()}>
         <Icon name="arrow-left" size={24} />
       </TouchableWithoutFeedback>
-      <Text>{title}</Text>
+      <Text px="l" style={{ fontSize: 24, fontFamily: "Medium" }}>
+        {title}
+      </Text>
     </Box>
   );
 };
