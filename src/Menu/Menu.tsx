@@ -54,8 +54,8 @@ const Menu = ({ navigation }: RootStackProps<"MenuStack">) => {
             }
           />
           <Item icon="⚙" label="Settings" />
-          <Item icon="🗺" label="Store Locator" />
-          <Item icon="🤺" label="Logout" />
+          <Item icon="🧭" label="Store Locator" />
+          <Item icon="🚶‍♂️" label="Logout" />
         </Box>
 
         <Box style={{ marginHorizontal: 72, marginVertical: 12 }}>
