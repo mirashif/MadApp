@@ -105,7 +105,7 @@ export type RootStackProps<RouteName extends keyof RootStackParamList> = {
 
 type RootStackParamList = {
   Home: undefined;
-  MenuNavigator: NavigatorScreenParams<MenuStackPramList>;
+  MenuStack: NavigatorScreenParams<MenuStackPramList>;
 };
 
 const RootStack = createStackNavigator<RootStackParamList>();
@@ -113,7 +113,7 @@ const RootStack = createStackNavigator<RootStackParamList>();
 const AppNavigator = () => (
   <RootStack.Navigator headerMode="none" initialRouteName="Home">
     <RootStack.Screen name="Home" component={BottomTabs} />
-    <RootStack.Screen name="MenuNavigator" component={MenuNavigator} />
+    <RootStack.Screen name="MenuStack" component={MenuNavigator} />
   </RootStack.Navigator>
 );
 

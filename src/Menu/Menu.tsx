@@ -13,7 +13,7 @@ import { RootStackProps } from "../components/AppNavigator";
 
 import Item from "./Item";
 
-const Menu = ({ navigation }: RootStackProps<"MenuNavigator">) => {
+const Menu = ({ navigation }: RootStackProps<"MenuStack">) => {
   const theme = useTheme();
   const styles = useStyles();
 
@@ -50,7 +50,7 @@ const Menu = ({ navigation }: RootStackProps<"MenuNavigator">) => {
             icon="🍔"
             label="My Orders"
             onPress={() =>
-              navigation.navigate("MenuNavigator", { screen: "MyOrders" })
+              navigation.navigate("MenuStack", { screen: "MyOrders" })
             }
           />
           <Item icon="⚙" label="Settings" />
