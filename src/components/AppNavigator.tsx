@@ -3,6 +3,7 @@ import { Feather } from "@expo/vector-icons";
 import { NavigatorScreenParams, RouteProp } from "@react-navigation/native";
 import {
   createStackNavigator,
+  CardStyleInterpolators,
   StackNavigationProp,
 } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -111,7 +112,13 @@ type RootStackParamList = {
 const RootStack = createStackNavigator<RootStackParamList>();
 
 const AppNavigator = () => (
-  <RootStack.Navigator headerMode="none" initialRouteName="Home">
+  <RootStack.Navigator
+    headerMode="none"
+    initialRouteName="Home"
+    screenOptions={{
+      cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+    }}
+  >
     <RootStack.Screen name="Home" component={BottomTabs} />
     <RootStack.Screen name="MenuStack" component={MenuNavigator} />
   </RootStack.Navigator>
