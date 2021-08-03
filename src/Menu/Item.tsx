@@ -6,13 +6,14 @@ import { Box, Text, useTheme } from "../components";
 interface ItemProps {
   icon: string;
   label: string;
+  onPress?: () => void;
 }
 
-const Item = ({ icon, label, ...otherProps }: ItemProps) => {
+const Item = ({ icon, label, onPress, ...otherProps }: ItemProps) => {
   const theme = useTheme();
 
   return (
-    <TouchableWithoutFeedback {...otherProps}>
+    <TouchableWithoutFeedback {...otherProps} {...{ onPress }}>
       <Box
         style={{
           flexDirection: "row",

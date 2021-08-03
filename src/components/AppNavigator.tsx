@@ -1,6 +1,6 @@
 import React from "react";
 import { Feather } from "@expo/vector-icons";
-import { RouteProp } from "@react-navigation/native";
+import { NavigatorScreenParams, RouteProp } from "@react-navigation/native";
 import {
   createStackNavigator,
   StackNavigationProp,
@@ -12,7 +12,7 @@ import Svg, { Path } from "react-native-svg";
 import { Home } from "../Home";
 import { Cashback } from "../Cashback";
 import { Get100 } from "../Get100";
-import { Menu } from "../Menu";
+import { Menu, MenuNavigator, MenuStackPramList } from "../Menu";
 
 import { useTheme } from "./theme";
 
@@ -105,6 +105,7 @@ export type RootStackProps<RouteName extends keyof RootStackParamList> = {
 
 type RootStackParamList = {
   Home: undefined;
+  MenuNavigator: NavigatorScreenParams<MenuStackPramList>;
 };
 
 const RootStack = createStackNavigator<RootStackParamList>();
@@ -112,6 +113,7 @@ const RootStack = createStackNavigator<RootStackParamList>();
 const AppNavigator = () => (
   <RootStack.Navigator headerMode="none" initialRouteName="Home">
     <RootStack.Screen name="Home" component={BottomTabs} />
+    <RootStack.Screen name="MenuNavigator" component={MenuNavigator} />
   </RootStack.Navigator>
 );
 
