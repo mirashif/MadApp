@@ -10,6 +10,32 @@ import {
   Text,
 } from "../../components";
 
+import Item from "./Item";
+
+const orders = [
+  {
+    id: 1,
+    restaurant: "Cheez",
+    price: 829.0,
+    date: "July 10th, 2021",
+    status: "Active",
+  },
+  {
+    id: 2,
+    restaurant: "Cheez",
+    price: 619.0,
+    date: "July 9th, 2021",
+    status: "Delivered",
+  },
+  {
+    id: 3,
+    restaurant: "Cheez",
+    price: 419.0,
+    date: "July 9th, 2021",
+    status: "Cancelled",
+  },
+];
+
 const MyOrders = () => {
   const styles = useStyles();
 
@@ -20,6 +46,12 @@ const MyOrders = () => {
 
         <Box style={styles.notice}>
           <Text color="primary">You earn cashback from every order!</Text>
+        </Box>
+
+        <Box px="screen" py="l">
+          {orders.map(({ id, ...rest }) => (
+            <Item key={id} {...{ ...rest }} />
+          ))}
         </Box>
       </ScrollView>
     </SafeArea>
