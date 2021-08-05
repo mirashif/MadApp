@@ -61,7 +61,7 @@ const BottomTabs = () => {
   };
 
   return (
-    <BottomTab.Navigator initialRouteName="Home" tabBarOptions={tabBarOptions}>
+    <BottomTab.Navigator tabBarOptions={tabBarOptions}>
       <BottomTab.Screen
         name="Home"
         component={Home}
@@ -104,14 +104,14 @@ export type RootStackProps<RouteName extends keyof RootStackParamList> = {
 };
 
 type RootStackParamList = {
-  Home: undefined;
+  BottomTabs: undefined;
 };
 
 const RootStack = createStackNavigator<RootStackParamList>();
 
 const AppNavigator = () => (
-  <RootStack.Navigator headerMode="none" initialRouteName="Home">
-    <RootStack.Screen name="Home" component={BottomTabs} />
+  <RootStack.Navigator headerMode="none">
+    <RootStack.Screen name="BottomTabs" component={BottomTabs} />
   </RootStack.Navigator>
 );
 
