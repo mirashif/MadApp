@@ -114,7 +114,7 @@ const RootStack = createStackNavigator<RootStackParamList>();
 const AppNavigator = () => (
   <RootStack.Navigator
     headerMode="none"
-    initialRouteName="Home"
+    initialRouteName="BottomTabs"
     screenOptions={{
       cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
     }}
