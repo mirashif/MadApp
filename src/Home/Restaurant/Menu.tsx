@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { ScrollView } from "react-native";
 import Animated from "react-native-reanimated";
 import { onScrollEvent, useValue } from "react-native-redash/lib/module/v1";
 
@@ -30,6 +31,7 @@ const Menu = () => {
           {...{ y }}
         />
       </Animated.ScrollView>
+
       <Header
         title="Cheez"
         image="https://source.unsplash.com/a66sGfOnnqQ"

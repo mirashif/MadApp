@@ -9,6 +9,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Box, Icon, Text, useTheme } from "../../components";
 
+import Offer from "./Offer";
 import TabHeader from "./TabHeader";
 import { HEADER_HEIGHT, HEADER_IMAGE_HEIGHT, TabModel } from "./constants";
 
@@ -31,6 +32,24 @@ const Header = ({ title, image, y, tabs, scrollView }: HeaderProps) => {
     extrapolate: Extrapolate.CLAMP,
   });
 
+  const marginBottom = interpolateNode(y, {
+    inputRange: [0, HEADER_IMAGE_HEIGHT, HEADER_IMAGE_HEIGHT + HEADER_HEIGHT],
+    outputRange: [HEADER_HEIGHT / 2 + 15, HEADER_HEIGHT / 2, 0],
+    extrapolate: Extrapolate.CLAMP,
+  });
+
+  const opacity = interpolateNode(y, {
+    inputRange: [0, HEADER_IMAGE_HEIGHT, HEADER_IMAGE_HEIGHT + HEADER_HEIGHT],
+    outputRange: [1, 0, 0],
+    extrapolate: Extrapolate.CLAMP,
+  });
+
+  const translateY = interpolateNode(y, {
+    inputRange: [0, HEADER_IMAGE_HEIGHT, HEADER_IMAGE_HEIGHT + HEADER_HEIGHT],
+    outputRange: [0, 0, -HEADER_IMAGE_HEIGHT],
+    extrapolate: Extrapolate.CLAMP,
+  });
+
   return (
     <View
       style={{
@@ -38,13 +57,13 @@ const Header = ({ title, image, y, tabs, scrollView }: HeaderProps) => {
         top: 0,
         left: 0,
         right: 0,
-        bottom: 0,
         paddingTop: insets.top,
       }}
     >
       <Animated.View
         style={{
           height,
+          position: "relative",
         }}
       >
         <ImageBackground
@@ -52,10 +71,6 @@ const Header = ({ title, image, y, tabs, scrollView }: HeaderProps) => {
             flex: 1,
           }}
           source={{ uri: image }}
-          imageStyle={{
-            borderTopLeftRadius: 18,
-            borderTopRightRadius: 18,
-          }}
         >
           <Box
             style={{
@@ -80,7 +95,34 @@ const Header = ({ title, image, y, tabs, scrollView }: HeaderProps) => {
             </Text>
           </Box>
         </ImageBackground>
+
+        <Animated.View
+          style={{
+            position: "absolute",
+            bottom: -(HEADER_HEIGHT / 2),
+            left: 0,
+            right: 0,
+            opacity,
+            transform: [
+              {
+                translateY,
+              },
+            ],
+          }}
+        >
+          <Offer
+            title="20% OFF"
+            description="Enjoy 20% OFF on the entire menu!"
+            telephone="8777111223"
+          />
+        </Animated.View>
       </Animated.View>
+      {/* OFFER MARGIN BOTTOM */}
+      <Animated.View
+        style={{
+          marginBottom,
+        }}
+      />
 
       <TabHeader {...{ y, tabs, scrollView }} />
     </View>

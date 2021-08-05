@@ -12,7 +12,12 @@ interface OfferProps {
   telephone: string;
 }
 
-const Offer = ({ title, description, telephone }: OfferProps) => {
+const Offer = ({
+  title,
+  description,
+  telephone,
+  ...otherProps
+}: OfferProps) => {
   const theme = useTheme();
 
   return (
@@ -20,9 +25,9 @@ const Offer = ({ title, description, telephone }: OfferProps) => {
       style={{
         flexDirection: "row",
         justifyContent: "space-between",
-        backgroundColor: theme.colors.background,
         paddingHorizontal: 30,
       }}
+      {...otherProps}
     >
       <Box
         style={{

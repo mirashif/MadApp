@@ -5,7 +5,9 @@ import { Box } from "../../components";
 
 import { HEADER_HEIGHT, HEADER_IMAGE_HEIGHT, TabModel } from "./constants";
 import Items from "./Items";
-import Offer from "./Offer";
+
+const TOP_AREA_HEIGHT =
+  HEADER_HEIGHT * 2 + HEADER_IMAGE_HEIGHT + (HEADER_HEIGHT / 2 + 15); // header, tabsheader, image, offer
 
 const items = [
   {
@@ -60,13 +62,7 @@ interface ContentProps {
 
 const Content = ({ y, onMeasurement }: ContentProps) => {
   return (
-    <Box>
-      <Box
-        style={{
-          height: HEADER_IMAGE_HEIGHT,
-          marginBottom: HEADER_HEIGHT * 2,
-        }}
-      />
+    <Box style={{ paddingTop: TOP_AREA_HEIGHT }}>
       {menu.map(({ name, items: menuItems }, index) => (
         <Box style={{ marginVertical: 15 }} key={index}>
           <Items name={name} items={menuItems} />
