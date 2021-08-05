@@ -1,5 +1,7 @@
-import React, { useState } from "react";
-import { ImageBackground, ScrollView } from "react-native";
+import React, { useRef, useState } from "react";
+import { StyleSheet } from "react-native";
+import Animated from "react-native-reanimated";
+import { onScrollEvent, useValue } from "react-native-redash/lib/module/v1";
 
 import { Box, SafeArea, useTheme } from "../../components";
 
@@ -61,24 +63,19 @@ export interface TabModel {
 
 const Menu = () => {
   const theme = useTheme();
+  const scrollView = useRef<Animated.ScrollView>(null);
   const [tabs, setTabs] = useState(defaultTabs);
+  const y = useValue(0);
+  const onScroll = onScrollEvent({ y });
 
   return (
     <SafeArea>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <ImageBackground
-          source={{ uri: "https://source.unsplash.com/a66sGfOnnqQ" }}
-          style={{
-            height: 220,
-          }}
-          imageStyle={{
-            borderTopLeftRadius: 18,
-            borderTopRightRadius: 18,
-          }}
-        >
-          <Header title="Cheez" />
-        </ImageBackground>
-
+      <Animated.ScrollView
+        showsVerticalScrollIndicator={false}
+        ref={scrollView}
+        scrollEventThrottle={1}
+        {...{ onScroll }}
+      >
         <Offer
           title="20% OFF"
           description="Enjoy 20% OFF on the entire menu!"
@@ -92,7 +89,12 @@ const Menu = () => {
             <Items name={name} items={menuItems} />
           </Box>
         ))}
-      </ScrollView>
+      </Animated.ScrollView>
+      <Header
+        title="Cheez"
+        image="https://source.unsplash.com/a66sGfOnnqQ"
+        {...{ y, tabs, scrollView }}
+      />
     </SafeArea>
   );
 };

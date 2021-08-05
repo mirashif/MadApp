@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 
 import Tab from "./Tab";
 import { TabModel } from "./Menu";
@@ -8,6 +8,7 @@ const styles = StyleSheet.create({
   overlay: {
     // ...StyleSheet.absoluteFillObject,
     flexDirection: "row",
+    backgroundColor: "white",
   },
 });
 
@@ -19,11 +20,7 @@ interface TabsProps {
 }
 
 const Tabs = ({ tabs, active, onMeasurement, onPress }: TabsProps) => (
-  <ScrollView
-    style={styles.overlay}
-    horizontal
-    showsHorizontalScrollIndicator={false}
-  >
+  <View style={styles.overlay}>
     {tabs.map((tab, index) => (
       <Tab
         key={index}
@@ -35,7 +32,7 @@ const Tabs = ({ tabs, active, onMeasurement, onPress }: TabsProps) => (
         {...tab}
       />
     ))}
-  </ScrollView>
+  </View>
 );
 
 export default Tabs;

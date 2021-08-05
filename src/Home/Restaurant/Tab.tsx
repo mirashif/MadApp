@@ -2,6 +2,7 @@ import React from "react";
 import { TouchableWithoutFeedback, View } from "react-native";
 
 import { makeStyles, Text } from "../../components";
+import { HEADER_HEIGHT } from "./Header";
 
 interface TabProps {
   color: string;
@@ -27,7 +28,8 @@ const Tab = ({ name, color, onMeasurement, onPress }: TabProps) => {
         }
         style={styles.container}
       >
-        <Text style={[styles.text, { color }]}>• {name}</Text>
+        <Text style={[styles.text, { color }]}>•</Text>
+        <Text style={[styles.text, { color }]}>{name}</Text>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -37,12 +39,14 @@ export default Tab;
 
 const useStyles = makeStyles(() => ({
   container: {
-    height: 42,
+    flexDirection: "row",
+    height: HEADER_HEIGHT,
     justifyContent: "center",
     alignItems: "center",
   },
   text: {
     fontFamily: "Bold",
     fontSize: 18,
+    marginRight: 18,
   },
 }));
