@@ -21,7 +21,8 @@ const Offer = ({ title, description, telephone }: OfferProps) => {
         flexDirection: "row",
         justifyContent: "space-between",
         paddingHorizontal: 30,
-        top: -(SIZE / 2),
+        marginTop: -(SIZE / 2),
+        marginBottom: 15,
       }}
     >
       <Box

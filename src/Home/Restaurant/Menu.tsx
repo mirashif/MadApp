@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { ImageBackground, ScrollView } from "react-native";
 
 import { Box, SafeArea, useTheme } from "../../components";
@@ -41,19 +41,27 @@ const items = [
 ];
 
 const menu = [
-  { title: "Classic Pizzas", items },
-  { title: "Gourmet Pizzas", items },
-  { title: "Tomato Soups", items },
-  { title: "Potato Mehedi", items },
+  { name: "Classic Pizzas", items },
+  { name: "Gourmet Pizzas", items },
+  { name: "Tomato Soups", items },
+  { name: "Potato Mehedi", items },
 ];
+
+export const defaultTabs = menu.map(({ name }) => ({ name, anchor: 0 }));
 
 import Header from "./Header";
 import Items from "./Items";
 import Offer from "./Offer";
+import TabHeader from "./TabHeader";
+
+export interface TabModel {
+  name: string;
+  anchor: number;
+}
 
 const Menu = () => {
   const theme = useTheme();
-  const TOP_RADIUS = theme.borderRadii.xl;
+  const [tabs, setTabs] = useState(defaultTabs);
 
   return (
     <SafeArea>
@@ -64,8 +72,8 @@ const Menu = () => {
             height: 220,
           }}
           imageStyle={{
-            borderTopLeftRadius: TOP_RADIUS,
-            borderTopRightRadius: TOP_RADIUS,
+            borderTopLeftRadius: 18,
+            borderTopRightRadius: 18,
           }}
         >
           <Header title="Cheez" />
@@ -77,9 +85,11 @@ const Menu = () => {
           telephone="8777111223"
         />
 
-        {menu.map(({ title, items: menuItems }, index) => (
-          <Box style={{ marginBottom: 30 }} key={index}>
-            <Items name={title} items={menuItems} />
+        <TabHeader {...{ tabs }} />
+
+        {menu.map(({ name, items: menuItems }, index) => (
+          <Box style={{ marginVertical: 15 }} key={index}>
+            <Items name={name} items={menuItems} />
           </Box>
         ))}
       </ScrollView>
