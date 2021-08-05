@@ -1,15 +1,18 @@
 import React from "react";
 import { Feather } from "@expo/vector-icons";
-import { RouteProp } from "@react-navigation/native";
+import { NavigatorScreenParams, RouteProp } from "@react-navigation/native";
 import {
   createStackNavigator,
   StackNavigationProp,
 } from "@react-navigation/stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {
+  BottomTabNavigationProp,
+  createBottomTabNavigator,
+} from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Path } from "react-native-svg";
 
-import { Home } from "../Home";
+import { Home, HomeNavigator, HomeStackParamList } from "../Home";
 import { Cashback } from "../Cashback";
 import { Get100 } from "../Get100";
 import { Menu } from "../Menu";
@@ -104,7 +107,8 @@ export type RootStackProps<RouteName extends keyof RootStackParamList> = {
 };
 
 type RootStackParamList = {
-  BottomTabs: undefined;
+  BottomTabs: BottomTabNavigationProp<BottomTabParamList>;
+  HomeStack: NavigatorScreenParams<HomeStackParamList>;
 };
 
 const RootStack = createStackNavigator<RootStackParamList>();
@@ -112,6 +116,7 @@ const RootStack = createStackNavigator<RootStackParamList>();
 const AppNavigator = () => (
   <RootStack.Navigator headerMode="none">
     <RootStack.Screen name="BottomTabs" component={BottomTabs} />
+    <RootStack.Screen name="HomeStack" component={HomeNavigator} />
   </RootStack.Navigator>
 );
 

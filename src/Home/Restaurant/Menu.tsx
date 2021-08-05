@@ -1,57 +1,74 @@
 import React from "react";
-import { ScrollView, Image } from "react-native";
+import * as Linking from "expo-linking";
+import { ImageBackground, TouchableWithoutFeedback } from "react-native";
 
-import { Box, Icon, makeStyles, Theme, useTheme } from "../../components";
+import { Box, CircularIcon, SafeArea, Text, useTheme } from "../../components";
 
-import Item, { ItemProps } from "./Item";
+import Header from "./Header";
 
-interface MenuProps {
-  logoUri: string;
-  items: ItemProps[];
-}
-
-const Menu = ({ items, logoUri }: MenuProps) => {
-  const styles = useStyles();
+const Menu = () => {
   const theme = useTheme();
-
   return (
-    <ScrollView
-      contentContainerStyle={{
-        paddingHorizontal: theme.spacing.screen,
-        marginBottom: theme.spacing.l,
-      }}
-      horizontal
-      showsHorizontalScrollIndicator={false}
-    >
-      <Box style={styles.logo}>
-        <Image style={styles.logoStyle} source={{ uri: logoUri }} />
-        <Icon name="arrow-right" size={24} color="#000000" />
-      </Box>
-
-      {items.map((item) => (
-        <Box key={item.id} style={styles.restaurantItem}>
-          <Item {...item} />
+    <SafeArea>
+      <ImageBackground
+        source={{ uri: "https://source.unsplash.com/a66sGfOnnqQ" }}
+        style={{
+          height: 220,
+        }}
+        imageStyle={{
+          borderTopLeftRadius: theme.borderRadii.l,
+          borderTopRightRadius: theme.borderRadii.l,
+        }}
+      >
+        <Header title="Cheez" />
+      </ImageBackground>
+      <Box
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          paddingHorizontal: 30,
+          top: -28,
+        }}
+      >
+        <Box
+          style={{
+            flex: 1,
+            borderRadius: theme.borderRadii.l,
+            backgroundColor: theme.colors.primary,
+            paddingVertical: 12,
+            paddingHorizontal: 18,
+            marginRight: 8,
+          }}
+        >
+          <Text
+            style={{
+              fontFamily: "Bold",
+              fontSize: 16,
+              color: theme.colors.primaryContrast,
+            }}
+          >
+            20% OFF
+          </Text>
+          <Text
+            style={{
+              fontFamily: "Normal",
+              fontSize: 12,
+              color: theme.colors.primaryContrast,
+            }}
+          >
+            Enjoy 20% OFF on the entire menu!
+          </Text>
         </Box>
-      ))}
-    </ScrollView>
+        <TouchableWithoutFeedback
+          onPress={() => {
+            Linking.openURL("tel:8777111223");
+          }}
+        >
+          <CircularIcon name="phone" size={58} />
+        </TouchableWithoutFeedback>
+      </Box>
+    </SafeArea>
   );
 };
 
 export default Menu;
-
-const useStyles = makeStyles((theme: Theme) => ({
-  restaurantItem: {
-    marginRight: theme.spacing.xl,
-  },
-  logo: {
-    marginRight: theme.spacing.l,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  logoStyle: {
-    width: 38,
-    height: 65,
-    resizeMode: "contain",
-    marginBottom: theme.spacing.s,
-  },
-}));

@@ -1,7 +1,7 @@
 import React from "react";
 import { ImageBackground } from "react-native";
 
-import { Box, Icon, makeStyles, Text, Theme, useTheme } from "../../components";
+import { Box, Icon, makeStyles, Text, Theme, useTheme } from "../components";
 
 export interface ItemProps {
   id: number | string;

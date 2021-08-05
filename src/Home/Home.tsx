@@ -11,7 +11,7 @@ import {
 } from "../components";
 
 import LocationBar from "./LocationBar";
-import Menu from "./Restaurant/Menu";
+import Menu from "./Menu";
 
 const verticalBanners = [...Array(6)].map((_, id) => {
   return { id, imageUri: "https://picsum.photos/200/300" };
@@ -20,7 +20,7 @@ const verticalBanners = [...Array(6)].map((_, id) => {
 const restaurantItems = [...Array(6)].map((_, id) => {
   return {
     id,
-    imageUri: "https://picsum.photos/200/200",
+    imageUri: "https://source.unsplash.com/a66sGfOnnqQ/200x200",
     discount: "20% OFF",
     name: "Madame Lucy",
     price: "৳ 369.00",
