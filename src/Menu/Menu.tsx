@@ -9,10 +9,11 @@ import {
   makeStyles,
   Theme,
 } from "../components";
+import { RootStackProps } from "../components/AppNavigator";
 
 import Item from "./Item";
 
-const Menu = () => {
+const Menu = ({ navigation }: RootStackProps<"MenuStack">) => {
   const theme = useTheme();
   const styles = useStyles();
 
@@ -45,10 +46,16 @@ const Menu = () => {
 
         <Box px="xl">
           <Item icon="😎" label="My Profile" />
-          <Item icon="🍔" label="My Orders" />
+          <Item
+            icon="🍔"
+            label="My Orders"
+            onPress={() =>
+              navigation.navigate("MenuStack", { screen: "MyOrders" })
+            }
+          />
           <Item icon="⚙" label="Settings" />
-          <Item icon="🗺" label="Store Locator" />
-          <Item icon="🤺" label="Logout" />
+          <Item icon="🧭" label="Store Locator" />
+          <Item icon="🚶‍♂️" label="Logout" />
         </Box>
 
         <Box style={{ marginHorizontal: 72, marginVertical: 12 }}>

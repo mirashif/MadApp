@@ -1,8 +1,9 @@
 import React from "react";
 import { Feather } from "@expo/vector-icons";
-import { RouteProp } from "@react-navigation/native";
+import { NavigatorScreenParams, RouteProp } from "@react-navigation/native";
 import {
   createStackNavigator,
+  CardStyleInterpolators,
   StackNavigationProp,
 } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -12,7 +13,7 @@ import Svg, { Path } from "react-native-svg";
 import { Home } from "../Home";
 import { Cashback } from "../Cashback";
 import { Get100 } from "../Get100";
-import { Menu } from "../Menu";
+import { Menu, MenuNavigator, MenuStackParamList } from "../Menu";
 
 import { useTheme } from "./theme";
 
@@ -105,13 +106,21 @@ export type RootStackProps<RouteName extends keyof RootStackParamList> = {
 
 type RootStackParamList = {
   BottomTabs: undefined;
+  MenuStack: NavigatorScreenParams<MenuStackParamList>;
 };
 
 const RootStack = createStackNavigator<RootStackParamList>();
 
 const AppNavigator = () => (
-  <RootStack.Navigator headerMode="none">
+  <RootStack.Navigator
+    headerMode="none"
+    initialRouteName="Home"
+    screenOptions={{
+      cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+    }}
+  >
     <RootStack.Screen name="BottomTabs" component={BottomTabs} />
+    <RootStack.Screen name="MenuStack" component={MenuNavigator} />
   </RootStack.Navigator>
 );
 
