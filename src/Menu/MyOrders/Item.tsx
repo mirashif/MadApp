@@ -1,15 +1,18 @@
 import React from "react";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 import { Box, Icon, Text, useTheme } from "../../components";
 
 interface ItemProps {
+  id: string;
   restaurant: string;
   price: number;
   date: string;
   status: string;
+  onPress: (id: string) => void;
 }
 
-const Item = ({ restaurant, price, date, status }: ItemProps) => {
+const Item = ({ id, restaurant, price, date, status, onPress }: ItemProps) => {
   const theme = useTheme();
 
   let statusColor;
@@ -33,43 +36,45 @@ const Item = ({ restaurant, price, date, status }: ItemProps) => {
   }
 
   return (
-    <Box
-      flexDirection="row"
-      justifyContent="space-between"
-      alignItems="center"
-      borderColor="lightGray"
-      borderWidth={1}
-      px="l"
-      borderRadius="l"
-      style={{ paddingVertical: 8, marginBottom: 6 }}
-    >
-      <Box>
-        <Text>
-          {restaurant} - ৳{price}
-        </Text>
-        <Text fontSize={12} style={{ marginTop: 3 }}>
-          {date}
-        </Text>
-      </Box>
-
-      <Box flexDirection="row" alignItems="center">
-        <Box
-          style={{
-            width: 70,
-            height: 22,
-            borderColor: statusColor,
-            borderWidth: 2,
-            borderRadius: 22,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text style={{ color: statusColor, fontSize: 12 }}>{status}</Text>
+    <TouchableWithoutFeedback onPress={() => onPress(id)}>
+      <Box
+        flexDirection="row"
+        justifyContent="space-between"
+        alignItems="center"
+        borderColor="lightGray"
+        borderWidth={1}
+        px="l"
+        borderRadius="l"
+        style={{ paddingVertical: 8, marginBottom: 6 }}
+      >
+        <Box>
+          <Text>
+            {restaurant} - ৳{price}
+          </Text>
+          <Text fontSize={12} style={{ marginTop: 3 }}>
+            {date}
+          </Text>
         </Box>
 
-        <Icon name="chevron-right" size={30} color="#CBCBCB" />
+        <Box flexDirection="row" alignItems="center">
+          <Box
+            style={{
+              width: 70,
+              height: 22,
+              borderColor: statusColor,
+              borderWidth: 2,
+              borderRadius: 22,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text style={{ color: statusColor, fontSize: 12 }}>{status}</Text>
+          </Box>
+
+          <Icon name="chevron-right" size={30} color="#CBCBCB" />
+        </Box>
       </Box>
-    </Box>
+    </TouchableWithoutFeedback>
   );
 };
 

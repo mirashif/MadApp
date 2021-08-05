@@ -9,26 +9,27 @@ import {
   Theme,
   Text,
 } from "../../components";
+import { RootStackProps } from "../../components/AppNavigator";
 
 import Item from "./Item";
 
 const orders = [
   {
-    id: 1,
+    id: "1",
     restaurant: "Cheez",
     price: 829.0,
     date: "July 10th, 2021",
     status: "Active",
   },
   {
-    id: 2,
+    id: "2",
     restaurant: "Cheez",
     price: 619.0,
     date: "July 9th, 2021",
     status: "Delivered",
   },
   {
-    id: 3,
+    id: "3",
     restaurant: "Cheez",
     price: 419.0,
     date: "July 9th, 2021",
@@ -36,7 +37,7 @@ const orders = [
   },
 ];
 
-const MyOrders = () => {
+const MyOrders = ({ navigation }: RootStackProps<"MenuStack">) => {
   const styles = useStyles();
 
   return (
@@ -49,8 +50,14 @@ const MyOrders = () => {
         </Box>
 
         <Box px="screen" py="l">
-          {orders.map(({ id, ...rest }) => (
-            <Item key={id} {...{ ...rest }} />
+          {orders.map((item) => (
+            <Item
+              key={item.id}
+              {...{ ...item }}
+              onPress={() =>
+                navigation.navigate("MenuStack", { screen: "OrderProcessing" })
+              }
+            />
           ))}
         </Box>
       </ScrollView>

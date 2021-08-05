@@ -13,7 +13,7 @@ import Svg, { Path } from "react-native-svg";
 import { Home } from "../Home";
 import { Cashback } from "../Cashback";
 import { Get100 } from "../Get100";
-import { Menu, MenuNavigator, MenuStackPramList } from "../Menu";
+import { Menu, MenuNavigator, MenuStackParamList } from "../Menu";
 
 import { useTheme } from "./theme";
 
@@ -106,7 +106,7 @@ export type RootStackProps<RouteName extends keyof RootStackParamList> = {
 
 type RootStackParamList = {
   Home: undefined;
-  MenuStack: NavigatorScreenParams<MenuStackPramList>;
+  MenuStack: NavigatorScreenParams<MenuStackParamList>;
 };
 
 const RootStack = createStackNavigator<RootStackParamList>();
