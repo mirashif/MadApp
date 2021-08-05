@@ -2,12 +2,15 @@ import React from "react";
 import { ImageBackground } from "react-native";
 
 import { SafeArea, useTheme } from "../../components";
+import CategoryHeader from "./CategoryHeader";
 
 import Header from "./Header";
 import Offer from "./Offer";
 
 const Menu = () => {
   const theme = useTheme();
+  const TOP_RADIUS = theme.borderRadii.xl;
+
   return (
     <SafeArea>
       <ImageBackground
@@ -16,8 +19,8 @@ const Menu = () => {
           height: 220,
         }}
         imageStyle={{
-          borderTopLeftRadius: theme.borderRadii.l,
-          borderTopRightRadius: theme.borderRadii.l,
+          borderTopLeftRadius: TOP_RADIUS,
+          borderTopRightRadius: TOP_RADIUS,
         }}
       >
         <Header title="Cheez" />
@@ -28,6 +31,8 @@ const Menu = () => {
         description="Enjoy 20% OFF on the entire menu!"
         telephone="8777111223"
       />
+
+      <CategoryHeader />
     </SafeArea>
   );
 };
