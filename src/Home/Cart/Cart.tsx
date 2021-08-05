@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableWithoutFeedback } from "react-native";
+import { ScrollView, TouchableWithoutFeedback } from "react-native";
 
 import {
   Box,
@@ -13,6 +13,7 @@ import {
 import LocationBar from "../LocationBar";
 
 import OrderItem from "./OrderItem";
+import PopularItem from "./PopularItem";
 
 const orderItems = [
   {
@@ -34,6 +35,17 @@ const orderItems = [
   },
 ];
 
+const popularItems = [...Array(6)].map((_, id) => {
+  return {
+    id,
+    image: "https://source.unsplash.com/collection/8592813/82x82",
+    name: "Burnt Cheezcake",
+    category: "Dessert",
+    currentPrice: 350,
+    oldPrice: 399,
+  };
+});
+
 const Cart = () => {
   const theme = useTheme();
   const styles = useStyles();
@@ -50,6 +62,7 @@ const Cart = () => {
 
           {orderItems.map((item) => (
             <OrderItem
+              key={item.id}
               {...{ ...item }}
               onDelete={() => null}
               onDecrease={() => null}
@@ -66,6 +79,24 @@ const Cart = () => {
             </Box>
           </TouchableWithoutFeedback>
         </Box>
+      </Box>
+
+      <Box style={{ marginTop: 40 }}>
+        <Box px="screen">
+          <Text style={styles.sectionTitle}>Popular with your order</Text>
+        </Box>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: theme.spacing.screen,
+          }}
+        >
+          {popularItems.map((item) => (
+            <PopularItem key={item.id} {...{ ...item }} onAdd={() => null} />
+          ))}
+        </ScrollView>
       </Box>
     </SafeArea>
   );
