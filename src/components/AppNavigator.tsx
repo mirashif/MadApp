@@ -62,7 +62,7 @@ const BottomTabs = () => {
   };
 
   return (
-    <BottomTab.Navigator initialRouteName="Home" tabBarOptions={tabBarOptions}>
+    <BottomTab.Navigator tabBarOptions={tabBarOptions}>
       <BottomTab.Screen
         name="Home"
         component={Home}
@@ -105,7 +105,7 @@ export type RootStackProps<RouteName extends keyof RootStackParamList> = {
 };
 
 type RootStackParamList = {
-  Home: undefined;
+  BottomTabs: undefined;
   MenuStack: NavigatorScreenParams<MenuStackParamList>;
 };
 
@@ -119,7 +119,7 @@ const AppNavigator = () => (
       cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
     }}
   >
-    <RootStack.Screen name="Home" component={BottomTabs} />
+    <RootStack.Screen name="BottomTabs" component={BottomTabs} />
     <RootStack.Screen name="MenuStack" component={MenuNavigator} />
   </RootStack.Navigator>
 );
