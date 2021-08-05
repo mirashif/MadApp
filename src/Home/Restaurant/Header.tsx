@@ -1,11 +1,6 @@
 import React, { RefObject } from "react";
 import { useNavigation } from "@react-navigation/native";
-import {
-  ImageBackground,
-  TouchableWithoutFeedback,
-  StyleSheet,
-  View,
-} from "react-native";
+import { ImageBackground, TouchableWithoutFeedback, View } from "react-native";
 import Animated, {
   Extrapolate,
   interpolateNode,
@@ -15,10 +10,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, Icon, Text, useTheme } from "../../components";
 
 import TabHeader from "./TabHeader";
-import { TabModel } from "./Menu";
-
-const HEADER_IMAGE_HEIGHT = 220;
-export const HEADER_HEIGHT = 52;
+import { HEADER_HEIGHT, HEADER_IMAGE_HEIGHT, TabModel } from "./constants";
 
 interface HeaderProps {
   title: string;
@@ -35,7 +27,7 @@ const Header = ({ title, image, y, tabs, scrollView }: HeaderProps) => {
 
   const height = interpolateNode(y, {
     inputRange: [0, HEADER_IMAGE_HEIGHT],
-    outputRange: [HEADER_IMAGE_HEIGHT + HEADER_HEIGHT, HEADER_HEIGHT * 2],
+    outputRange: [HEADER_IMAGE_HEIGHT + HEADER_HEIGHT, HEADER_HEIGHT],
     extrapolate: Extrapolate.CLAMP,
   });
 
@@ -88,9 +80,9 @@ const Header = ({ title, image, y, tabs, scrollView }: HeaderProps) => {
             </Text>
           </Box>
         </ImageBackground>
-
-        <TabHeader {...{ y, tabs, scrollView }} />
       </Animated.View>
+
+      <TabHeader {...{ y, tabs, scrollView }} />
     </View>
   );
 };

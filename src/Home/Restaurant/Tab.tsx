@@ -2,7 +2,8 @@ import React from "react";
 import { TouchableWithoutFeedback, View } from "react-native";
 
 import { makeStyles, Text } from "../../components";
-import { HEADER_HEIGHT } from "./Header";
+
+import { HEADER_HEIGHT } from "./constants";
 
 interface TabProps {
   color: string;

@@ -20,9 +20,8 @@ const Offer = ({ title, description, telephone }: OfferProps) => {
       style={{
         flexDirection: "row",
         justifyContent: "space-between",
+        backgroundColor: theme.colors.background,
         paddingHorizontal: 30,
-        marginTop: -(SIZE / 2),
-        marginBottom: 15,
       }}
     >
       <Box

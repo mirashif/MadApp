@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { TabModel } from "./Menu";
+import { TabModel } from "./constants";
 import Tabs from "./Tabs";
 
 interface TabHeaderProps {

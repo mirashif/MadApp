@@ -1,12 +1,11 @@
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
 
+import { TabModel } from "./constants";
 import Tab from "./Tab";
-import { TabModel } from "./Menu";
 
 const styles = StyleSheet.create({
   overlay: {
-    // ...StyleSheet.absoluteFillObject,
     flexDirection: "row",
     backgroundColor: "white",
   },
