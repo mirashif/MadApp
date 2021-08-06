@@ -3,7 +3,7 @@ import { Image, TouchableWithoutFeedback } from "react-native";
 
 import { Box, Icon, Text, useTheme } from "../../components";
 
-import QuantityButton from "./QuantityButton";
+import { QuantityButton } from "./Button";
 
 interface OrderItemProps {
   id: string;

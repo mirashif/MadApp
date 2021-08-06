@@ -13,9 +13,7 @@ import LocationBar from "../LocationBar";
 
 import OrderItem from "./OrderItem";
 import PopularItem from "./PopularItem";
-import VoucherButton from "./VoucherButton";
-import CheckoutButton from "./CheckoutButton";
-import ClearCartButton from "./ClearCartButton";
+import { VoucherButton, ClearCartButton, CheckoutButton } from "./Button";
 import OrderSummaryItem from "./OrderSummaryItem";
 
 const orderItems = [
