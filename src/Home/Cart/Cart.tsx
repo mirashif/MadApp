@@ -14,7 +14,7 @@ import LocationBar from "../LocationBar";
 import OrderItem from "./OrderItem";
 import PopularItem from "./PopularItem";
 import { VoucherButton, ClearCartButton, CheckoutButton } from "./Button";
-import OrderSummaryItem from "./OrderSummaryItem";
+import OrderSummaryItem, { Discount } from "./Item";
 
 const orderItems = [
   {
@@ -110,6 +110,7 @@ const Cart = () => {
 
           <Box mt="m">
             <VoucherButton onPress={() => null} />
+            <Discount amount={20} onDiscountCancel={() => null} />
           </Box>
         </Box>
       </ScrollView>
