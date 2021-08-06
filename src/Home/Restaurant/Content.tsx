@@ -66,13 +66,18 @@ const Content = ({ onMeasurement }: ContentProps) => {
     <Box style={{ paddingTop: TOP_AREA_HEIGHT, paddingBottom: height }}>
       {menu.map(({ name, items: menuItems }, index) => (
         <Box
-          style={{ marginVertical: 15 }}
+          style={{ paddingVertical: 15, backgroundColor: "pink" }}
           key={index}
           onLayout={({
             nativeEvent: {
               layout: { y: anchor },
             },
-          }) => onMeasurement(index, { name, anchor })}
+          }) =>
+            onMeasurement(index, {
+              name,
+              anchor: anchor - HEADER_HEIGHT * 2,
+            })
+          }
         >
           <Items name={name} items={menuItems} />
         </Box>

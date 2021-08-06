@@ -72,6 +72,7 @@ const Header = ({ title, image, y, tabs, scrollView }: HeaderProps) => {
           }}
           source={{ uri: image }}
         >
+          {/* HeaderBar */}
           <Box
             style={{
               flexDirection: "row",
@@ -96,6 +97,7 @@ const Header = ({ title, image, y, tabs, scrollView }: HeaderProps) => {
           </Box>
         </ImageBackground>
 
+        {/* Offer */}
         <Animated.View
           style={{
             position: "absolute",

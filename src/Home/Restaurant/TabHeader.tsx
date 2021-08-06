@@ -29,6 +29,7 @@ const TabHeader = ({ y, tabs, scrollView }: TabHeaderProps) => {
     new Array(tabs.length).fill(0)
   );
   const indexTransition = withTransition(index);
+
   const translateX = interpolateNode(indexTransition, {
     inputRange: tabs.map((_tab, i) => i),
     outputRange: measurements.map((_, i) => {
@@ -41,6 +42,7 @@ const TabHeader = ({ y, tabs, scrollView }: TabHeaderProps) => {
       );
     }),
   });
+
   useCode(
     () =>
       block(
@@ -58,6 +60,7 @@ const TabHeader = ({ y, tabs, scrollView }: TabHeaderProps) => {
       ),
     [index, tabs, y]
   );
+
   return (
     <Animated.View
       style={{
