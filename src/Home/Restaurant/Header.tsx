@@ -33,19 +33,19 @@ const Header = ({ title, image, y, tabs, scrollView }: HeaderProps) => {
   });
 
   const marginBottom = interpolateNode(y, {
-    inputRange: [0, HEADER_IMAGE_HEIGHT, HEADER_IMAGE_HEIGHT + HEADER_HEIGHT],
+    inputRange: [0, HEADER_IMAGE_HEIGHT / 2, HEADER_IMAGE_HEIGHT],
     outputRange: [HEADER_HEIGHT / 2 + 15, HEADER_HEIGHT / 2, 0],
     extrapolate: Extrapolate.CLAMP,
   });
 
   const opacity = interpolateNode(y, {
-    inputRange: [0, HEADER_IMAGE_HEIGHT, HEADER_IMAGE_HEIGHT + HEADER_HEIGHT],
+    inputRange: [0, HEADER_IMAGE_HEIGHT - HEADER_HEIGHT, HEADER_IMAGE_HEIGHT],
     outputRange: [1, 0, 0],
     extrapolate: Extrapolate.CLAMP,
   });
 
   const translateY = interpolateNode(y, {
-    inputRange: [0, HEADER_IMAGE_HEIGHT, HEADER_IMAGE_HEIGHT + HEADER_HEIGHT],
+    inputRange: [0, HEADER_IMAGE_HEIGHT - HEADER_HEIGHT, HEADER_IMAGE_HEIGHT],
     outputRange: [0, 0, -HEADER_IMAGE_HEIGHT],
     extrapolate: Extrapolate.CLAMP,
   });

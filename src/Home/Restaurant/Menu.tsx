@@ -1,5 +1,4 @@
 import React, { useRef, useState } from "react";
-import { ScrollView } from "react-native";
 import Animated from "react-native-reanimated";
 import { onScrollEvent, useValue } from "react-native-redash/lib/module/v1";
 
@@ -9,7 +8,6 @@ import Content, { defaultTabs } from "./Content";
 import Header from "./Header";
 
 const Menu = () => {
-  // const theme = useTheme();
   const scrollView = useRef<Animated.ScrollView>(null);
   const [tabs, setTabs] = useState(defaultTabs);
   const y = useValue(0);
