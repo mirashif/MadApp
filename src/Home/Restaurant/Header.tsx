@@ -117,6 +117,7 @@ const Header = ({ title, image, y, tabs, scrollView }: HeaderProps) => {
           />
         </Animated.View>
       </Animated.View>
+
       {/* OFFER MARGIN BOTTOM */}
       <Animated.View
         style={{
@@ -124,7 +125,9 @@ const Header = ({ title, image, y, tabs, scrollView }: HeaderProps) => {
         }}
       />
 
-      <TabHeader {...{ y, tabs, scrollView }} />
+      <Box backgroundColor="background">
+        <TabHeader {...{ y, tabs, scrollView }} />
+      </Box>
     </View>
   );
 };

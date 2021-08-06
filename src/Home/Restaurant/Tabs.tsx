@@ -7,7 +7,6 @@ import Tab from "./Tab";
 const styles = StyleSheet.create({
   overlay: {
     flexDirection: "row",
-    backgroundColor: "white",
   },
 });
 
@@ -26,7 +25,7 @@ const Tabs = ({ tabs, active, onMeasurement, onPress }: TabsProps) => (
         onMeasurement={
           onMeasurement ? onMeasurement.bind(null, index) : undefined
         }
-        color={active ? "white" : "black"}
+        color={active ? "red" : "black"}
         onPress={onPress ? onPress.bind(null, index) : undefined}
         {...tab}
       />

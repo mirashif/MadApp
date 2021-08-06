@@ -1,25 +1,82 @@
-import React, { useState } from "react";
+import React, { RefObject, useState } from "react";
+import Animated, {
+  Value,
+  interpolateNode,
+  useCode,
+  and,
+  block,
+  cond,
+  greaterOrEq,
+  lessOrEq,
+  set,
+} from "react-native-reanimated";
+import { withTransition } from "react-native-redash/lib/module/v1";
 
 import { TabModel } from "./constants";
 import Tabs from "./Tabs";
 
+const PADDING_LEFT = 18;
+
 interface TabHeaderProps {
+  y: Animated.Node<number>;
   tabs: TabModel[];
+  scrollView: RefObject<Animated.ScrollView>;
 }
 
-const TabHeader = ({ tabs }: TabHeaderProps) => {
+const TabHeader = ({ y, tabs, scrollView }: TabHeaderProps) => {
+  const index = new Value<number>(0);
   const [measurements, setMeasurements] = useState<number[]>(
     new Array(tabs.length).fill(0)
   );
-
+  const indexTransition = withTransition(index);
+  const translateX = interpolateNode(indexTransition, {
+    inputRange: tabs.map((_tab, i) => i),
+    outputRange: measurements.map((_, i) => {
+      return (
+        -1 *
+          measurements
+            .filter((_measurement, j) => j < i)
+            .reduce((acc, m) => acc + m, 0) +
+        PADDING_LEFT
+      );
+    }),
+  });
+  useCode(
+    () =>
+      block(
+        tabs.map((tab, i) =>
+          cond(
+            i === tabs.length - 1
+              ? greaterOrEq(y, tab.anchor)
+              : and(
+                  greaterOrEq(y, tab.anchor),
+                  lessOrEq(y, tabs[i + 1].anchor)
+                ),
+            set(index, i)
+          )
+        )
+      ),
+    [index, tabs, y]
+  );
   return (
-    <Tabs
-      onMeasurement={(i, m) => {
-        measurements[i] = m;
-        setMeasurements([...measurements]);
+    <Animated.View
+      style={{
+        transform: [{ translateX }],
       }}
-      {...{ tabs }}
-    />
+    >
+      <Tabs
+        onPress={(i) => {
+          if (scrollView.current) {
+            scrollView.current.getNode().scrollTo({ y: tabs[i].anchor + 1 });
+          }
+        }}
+        onMeasurement={(i, m) => {
+          measurements[i] = m;
+          setMeasurements([...measurements]);
+        }}
+        {...{ tabs, translateX }}
+      />
+    </Animated.View>
   );
 };
 

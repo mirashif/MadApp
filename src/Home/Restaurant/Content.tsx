@@ -1,5 +1,5 @@
 import React from "react";
-import Animated from "react-native-reanimated";
+import { Dimensions } from "react-native";
 
 import { Box } from "../../components";
 
@@ -56,15 +56,24 @@ const menu = [
 export const defaultTabs = menu.map(({ name }) => ({ name, anchor: 0 }));
 
 interface ContentProps {
-  y: Animated.Node<number>;
   onMeasurement: (index: number, tab: TabModel) => void;
 }
 
-const Content = ({ y, onMeasurement }: ContentProps) => {
+const Content = ({ onMeasurement }: ContentProps) => {
+  const { height } = Dimensions.get("screen");
+
   return (
-    <Box style={{ paddingTop: TOP_AREA_HEIGHT }}>
+    <Box style={{ paddingTop: TOP_AREA_HEIGHT, paddingBottom: height }}>
       {menu.map(({ name, items: menuItems }, index) => (
-        <Box style={{ marginVertical: 15 }} key={index}>
+        <Box
+          style={{ marginVertical: 15 }}
+          key={index}
+          onLayout={({
+            nativeEvent: {
+              layout: { y: anchor },
+            },
+          }) => onMeasurement(index, { name, anchor })}
+        >
           <Items name={name} items={menuItems} />
         </Box>
       ))}

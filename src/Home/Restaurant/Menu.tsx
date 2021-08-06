@@ -26,7 +26,6 @@ const Menu = () => {
             tabs[index] = tab;
             setTabs([...tabs]);
           }}
-          {...{ y }}
         />
       </Animated.ScrollView>
 
