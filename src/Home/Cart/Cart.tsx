@@ -1,20 +1,22 @@
 import React from "react";
-import { Dimensions, ScrollView, TouchableWithoutFeedback } from "react-native";
+import { Dimensions, ScrollView } from "react-native";
 
 import {
   Box,
   HeaderBar,
-  Icon,
   makeStyles,
   SafeArea,
   Text,
-  Theme,
   useTheme,
 } from "../../components";
 import LocationBar from "../LocationBar";
 
 import OrderItem from "./OrderItem";
 import PopularItem from "./PopularItem";
+import VoucherButton from "./VoucherButton";
+import CheckoutButton from "./CheckoutButton";
+import ClearCartButton from "./ClearCartButton";
+import OrderSummaryItem from "./OrderSummaryItem";
 
 const orderItems = [
   {
@@ -47,24 +49,6 @@ const popularItems = [...Array(6)].map((_, id) => {
   };
 });
 
-const OrderSummaryItem = ({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) => (
-  <Box
-    flexDirection="row"
-    alignItems="center"
-    justifyContent="space-between"
-    style={{ marginBottom: 6 }}
-  >
-    <Text style={{ color: "#111111" }}>{title}</Text>
-    <Text style={{ color: "#8A8A8A" }}>{description}</Text>
-  </Box>
-);
-
 const Cart = () => {
   const theme = useTheme();
   const styles = useStyles();
@@ -96,14 +80,9 @@ const Cart = () => {
               />
             ))}
 
-            <TouchableWithoutFeedback onPress={() => null}>
-              <Box flexDirection="row" alignItems="center" marginTop="s">
-                <Icon name="x-circle" color={theme.colors.primary} />
-                <Text marginLeft="s" color="primary" fontSize={12}>
-                  Clear Cart
-                </Text>
-              </Box>
-            </TouchableWithoutFeedback>
+            <Box mt="s">
+              <ClearCartButton onPress={() => null} />
+            </Box>
           </Box>
         </Box>
 
@@ -131,16 +110,9 @@ const Cart = () => {
           <OrderSummaryItem title="Subtotal" description="৳769" />
           <OrderSummaryItem title="Delivery fee" description="৳30" />
 
-          <TouchableWithoutFeedback onPress={() => null}>
-            <Box alignItems="flex-end" mt="m">
-              <Box style={styles.voucherButton}>
-                <Icon name="percent" color={theme.colors.primary} />
-                <Text color="primary" ml="m">
-                  Apply a voucher
-                </Text>
-              </Box>
-            </Box>
-          </TouchableWithoutFeedback>
+          <Box mt="m">
+            <VoucherButton onPress={() => null} />
+          </Box>
         </Box>
       </ScrollView>
 
@@ -167,47 +139,18 @@ const Cart = () => {
         </Box>
 
         <Box style={{ alignItems: "center", marginTop: 27 }}>
-          <TouchableWithoutFeedback onPress={() => null}>
-            <Box style={styles.checkoutButton}>
-              <Text color="background" fontSize={17}>
-                Checkout
-              </Text>
-
-              <Box style={{ position: "absolute", right: 18, top: 15 }}>
-                <Icon name="chevron-right" size={24} color="#fff" />
-              </Box>
-            </Box>
-          </TouchableWithoutFeedback>
+          <CheckoutButton onPress={() => null} />
         </Box>
       </Box>
     </SafeArea>
   );
 };
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   sectionTitle: {
     color: "#8A8A8A",
     fontSize: 18,
     marginBottom: 21,
-  },
-  voucherButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    height: 29,
-    width: 158,
-    borderColor: theme.colors.primary,
-    borderWidth: 1,
-    borderRadius: theme.borderRadii.xl,
-    justifyContent: "center",
-  },
-  checkoutButton: {
-    backgroundColor: theme.colors.primary,
-    height: 57,
-    width: 358,
-    borderRadius: theme.borderRadii.l,
-    position: "relative",
-    alignItems: "center",
-    justifyContent: "center",
   },
 }));
 

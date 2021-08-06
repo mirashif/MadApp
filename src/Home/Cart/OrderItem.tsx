@@ -3,6 +3,8 @@ import { Image, TouchableWithoutFeedback } from "react-native";
 
 import { Box, Icon, Text, useTheme } from "../../components";
 
+import QuantityButton from "./QuantityButton";
+
 interface OrderItemProps {
   id: string;
   name: string;
@@ -14,35 +16,6 @@ interface OrderItemProps {
   onIncrease: (id: string) => void;
   onDecrease: (id: string) => void;
 }
-
-const QuantityHandler = ({
-  disabled,
-  onPress,
-  isIncreaseButton,
-}: {
-  disabled?: boolean;
-  isIncreaseButton?: boolean;
-  onPress: () => void;
-}) => (
-  <TouchableWithoutFeedback {...{ ...onPress, disabled }}>
-    <Box
-      style={{
-        backgroundColor: isIncreaseButton ? "#FF385A" : "#F8F8F8",
-        width: 34,
-        height: 34,
-        borderRadius: 21,
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      {isIncreaseButton ? (
-        <Icon name="plus" color="#fff" size={18} />
-      ) : (
-        <Icon name="minus" color="#8A8A8A" size={18} />
-      )}
-    </Box>
-  </TouchableWithoutFeedback>
-);
 
 const OrderItem = (props: OrderItemProps) => {
   const theme = useTheme();
@@ -94,11 +67,11 @@ const OrderItem = (props: OrderItemProps) => {
         <Box flexDirection="row" style={{ marginTop: 9, marginBottom: 6 }}>
           <Text style={{ color: "#939393", fontSize: 12 }}>+</Text>
           <Text
+            fontSize={11}
             style={{
               color: "#939393",
               marginLeft: 3,
               width: 131,
-              fontSize: 11,
             }}
           >
             {addons}
@@ -109,11 +82,11 @@ const OrderItem = (props: OrderItemProps) => {
       </Box>
 
       <Box alignItems="center">
-        <QuantityHandler isIncreaseButton onPress={() => onIncrease(id)} />
+        <QuantityButton isIncreaseButton onPress={() => onIncrease(id)} />
         <Text style={{ color: "#8A8A8A", fontSize: 17, marginVertical: 10 }}>
           {quantity}
         </Text>
-        <QuantityHandler onPress={() => onDecrease(id)} />
+        <QuantityButton onPress={() => onDecrease(id)} />
       </Box>
     </Box>
   );
