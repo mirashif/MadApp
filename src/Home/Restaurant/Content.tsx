@@ -63,10 +63,15 @@ const Content = ({ onMeasurement }: ContentProps) => {
   const { height } = Dimensions.get("screen");
 
   return (
-    <Box style={{ paddingTop: TOP_AREA_HEIGHT, paddingBottom: height }}>
+    <Box
+      style={{
+        paddingTop: TOP_AREA_HEIGHT,
+        paddingBottom: height - TOP_AREA_HEIGHT,
+      }}
+    >
       {menu.map(({ name, items: menuItems }, index) => (
         <Box
-          style={{ paddingVertical: 15, backgroundColor: "pink" }}
+          style={{ paddingVertical: 15 }}
           key={index}
           onLayout={({
             nativeEvent: {
