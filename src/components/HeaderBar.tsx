@@ -7,14 +7,18 @@ import { Box, Text } from "./theme";
 
 interface HeaderBarProps {
   title: string;
+  onBackPress?: () => void;
 }
 
-const HeaderBar = ({ title }: HeaderBarProps) => {
+const HeaderBar = ({ title, onBackPress }: HeaderBarProps) => {
   const navigation = useNavigation();
+
+  const handleBackPress = () =>
+    onBackPress ? onBackPress() : navigation.goBack();
 
   return (
     <Box px="screen" py="xl" flexDirection="row" alignItems="center">
-      <TouchableWithoutFeedback onPress={() => navigation.goBack()}>
+      <TouchableWithoutFeedback onPress={handleBackPress}>
         <Icon name="arrow-left" size={24} />
       </TouchableWithoutFeedback>
       <Text px="l" style={{ fontSize: 24, fontFamily: "Medium" }}>
