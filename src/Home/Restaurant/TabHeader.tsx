@@ -10,6 +10,7 @@ import Animated, {
   lessOrEq,
   set,
 } from "react-native-reanimated";
+import MaskedView from "@react-native-community/masked-view";
 import { withTransition } from "react-native-redash/lib/module/v1";
 
 import { TabModel } from "./constants";
@@ -62,23 +63,73 @@ const TabHeader = ({ y, tabs, scrollView }: TabHeaderProps) => {
   );
 
   return (
-    <Animated.View
-      style={{
-        transform: [{ translateX }],
-      }}
-    >
-      <Tabs
-        onPress={(i) => {
-          if (scrollView.current) {
-            scrollView.current.getNode().scrollTo({ y: tabs[i].anchor + 1 });
-          }
+    // <Animated.View
+    //   style={{
+    //     transform: [{ translateX }],
+    //   }}
+    // >
+    //   <Tabs
+    //     onPress={(i) => {
+    //       if (scrollView.current) {
+    //         scrollView.current.getNode().scrollTo({ y: tabs[i].anchor + 1 });
+    //       }
+    //     }}
+    //     onMeasurement={(i, m) => {
+    //       measurements[i] = m;
+    //       setMeasurements([...measurements]);
+    //     }}
+    //     {...{ tabs, translateX }}
+    //   />
+    // </Animated.View>
+    <Animated.View style={[styles.container, { opacity }]}>
+      <Animated.View
+        style={{
+          ...StyleSheet.absoluteFillObject,
+          transform: [{ translateX }],
         }}
-        onMeasurement={(i, m) => {
-          measurements[i] = m;
-          setMeasurements([...measurements]);
-        }}
-        {...{ tabs, translateX }}
-      />
+      >
+        <Tabs
+          onMeasurement={(i, m) => {
+            measurements[i] = m;
+            setMeasurements([...measurements]);
+          }}
+          {...{ tabs, translateX }}
+        />
+      </Animated.View>
+      <View>
+        <Animated.View
+          style={[
+            style,
+            Platform.OS === "android"
+              ? {
+                  backgroundColor: "transparent",
+                  borderColor: "black",
+                  borderWidth: 1,
+                }
+              : {},
+          ]}
+        />
+      </View>
+      <MaskedView style={StyleSheet.absoluteFill} maskElement={maskElement}>
+        <Animated.View
+          style={{
+            ...StyleSheet.absoluteFillObject,
+            transform: [{ translateX }],
+          }}
+        >
+          <Tabs
+            active
+            onPress={(i) => {
+              if (scrollView.current) {
+                scrollView.current
+                  .getNode()
+                  .scrollTo({ y: tabs[i].anchor + 1 });
+              }
+            }}
+            {...{ tabs, translateX }}
+          />
+        </Animated.View>
+      </MaskedView>
     </Animated.View>
   );
 };
