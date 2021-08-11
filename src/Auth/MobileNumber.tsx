@@ -1,5 +1,5 @@
-import React from "react";
-import { TextInput } from "react-native";
+import React, { useState } from "react";
+import { TextInput, Alert } from "react-native";
 
 import { Box, HeaderBar, SafeArea, Text } from "../components";
 import DissmissKeyboard from "../components/DissmissKeyboard";
@@ -8,7 +8,21 @@ import Button from "./Button";
 import Phone from "./assets/Phone.svg";
 import BDFlag from "./assets/BDFlag.svg";
 
-const MobileNumber = () => {
+import { AuthStackProps } from ".";
+
+const MobileNumber = ({ navigation }: AuthStackProps<"MobileNumber">) => {
+  const [phoneNumber, setPhoneNumber] = useState<null | string>(null);
+
+  const handleContinue = () => {
+    if (phoneNumber) {
+      navigation.navigate("Verification", {
+        phoneNumber,
+      });
+    } else {
+      Alert.alert("Please enter a phone number");
+    }
+  };
+
   return (
     <SafeArea>
       <HeaderBar title="Your Details" onBackPress={() => null} />
@@ -56,6 +70,7 @@ const MobileNumber = () => {
                 <Box ml="m">
                   <TextInput
                     keyboardType="number-pad"
+                    onChangeText={(value) => setPhoneNumber(value)}
                     style={{
                       borderColor: "#DDDDDD",
                       borderWidth: 1,
@@ -70,7 +85,7 @@ const MobileNumber = () => {
             </Box>
 
             <Box style={{ paddingTop: 16, paddingBottom: 40 }}>
-              <Button title="Continue" onPress={() => null} />
+              <Button title="Continue" onPress={handleContinue} />
             </Box>
           </Box>
         </Box>

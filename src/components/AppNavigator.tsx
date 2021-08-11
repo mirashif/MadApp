@@ -14,6 +14,7 @@ import { Home } from "../Home";
 import { Cashback } from "../Cashback";
 import { Get100 } from "../Get100";
 import { Menu, MenuNavigator, MenuStackParamList } from "../Menu";
+import { AuthStackParamList } from "../Auth";
 
 import { useTheme } from "./theme";
 
@@ -107,6 +108,7 @@ export type RootStackProps<RouteName extends keyof RootStackParamList> = {
 type RootStackParamList = {
   BottomTabs: undefined;
   MenuStack: NavigatorScreenParams<MenuStackParamList>;
+  AuthStack: NavigatorScreenParams<AuthStackParamList>;
 };
 
 const RootStack = createStackNavigator<RootStackParamList>();

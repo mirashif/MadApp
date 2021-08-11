@@ -7,6 +7,7 @@ import {
 } from "@react-navigation/stack";
 
 import MobileNumber from "./MobileNumber";
+import Verification from "./Verification";
 
 export type AuthStackProps<RouteName extends keyof AuthStackParamList> = {
   navigation: StackNavigationProp<AuthStackParamList, RouteName>;
@@ -15,7 +16,9 @@ export type AuthStackProps<RouteName extends keyof AuthStackParamList> = {
 
 export type AuthStackParamList = {
   MobileNumber: undefined;
-  Verfication: undefined;
+  Verification: {
+    phoneNumber: string;
+  };
   ProfileInfo: undefined;
 };
 
@@ -30,5 +33,6 @@ export const AuthNavigator = () => (
     }}
   >
     <AuthStack.Screen name="MobileNumber" component={MobileNumber} />
+    <AuthStack.Screen name="Verification" component={Verification} />
   </AuthStack.Navigator>
 );
