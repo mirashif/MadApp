@@ -17,8 +17,8 @@ import {
 } from "../components";
 import { RootStackProps } from "../components/AppNavigator";
 import Button from "../components/Button";
+import Input from "../components/Input";
 
-import Input from "./Input";
 import Referral from "./assets/Referral.svg";
 import Success from "./assets/Success.svg";
 
