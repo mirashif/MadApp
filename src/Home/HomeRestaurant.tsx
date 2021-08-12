@@ -6,12 +6,12 @@ import { Box, Icon, makeStyles, Theme, useTheme } from "../components";
 
 import Item, { ItemProps } from "./Item";
 
-interface MenuProps {
+interface HomeRestaurantProps {
   logoUri: string;
   items: ItemProps[];
 }
 
-const Menu = ({ items, logoUri }: MenuProps) => {
+const HomeRestaurant = ({ items, logoUri }: HomeRestaurantProps) => {
   const styles = useStyles();
   const theme = useTheme();
   const navigation = useNavigation();
@@ -43,7 +43,7 @@ const Menu = ({ items, logoUri }: MenuProps) => {
   );
 };
 
-export default Menu;
+export default HomeRestaurant;
 
 const useStyles = makeStyles((theme: Theme) => ({
   restaurantItem: {

@@ -11,7 +11,7 @@ import {
 } from "../components";
 
 import LocationBar from "./LocationBar";
-import Menu from "./Menu";
+import HomeRestaurant from "./HomeRestaurant";
 
 const verticalBanners = [...Array(6)].map((_, id) => {
   return { id, imageUri: "https://picsum.photos/200/300" };
@@ -73,9 +73,18 @@ export default function Home() {
         <Text mb="l" mx="screen" variant="sectionTitle">
           🍴 Restaurants
         </Text>
-        <Menu items={restaurantItems} logoUri="https://picsum.photos/40/65" />
-        <Menu items={restaurantItems} logoUri="https://picsum.photos/40/65" />
-        <Menu items={restaurantItems} logoUri="https://picsum.photos/40/65" />
+        <HomeRestaurant
+          items={restaurantItems}
+          logoUri="https://picsum.photos/40/65"
+        />
+        <HomeRestaurant
+          items={restaurantItems}
+          logoUri="https://picsum.photos/40/65"
+        />
+        <HomeRestaurant
+          items={restaurantItems}
+          logoUri="https://picsum.photos/40/65"
+        />
       </ScrollView>
     </SafeArea>
   );
