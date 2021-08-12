@@ -1,5 +1,6 @@
 {
   "expo": {
+    "owner": "madapp",
     "name": "MadApp",
     "slug": "MadApp",
     "version": "1.0.0",
@@ -13,17 +14,18 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "bd.com.madchef.madapp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "bd.com.madchef.madapp",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"

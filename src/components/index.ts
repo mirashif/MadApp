@@ -4,3 +4,4 @@ export { default as Icon, CircularIcon } from "./Icon";
 export { default as LoadAssets } from "./LoadAssets";
 export { default as SafeArea } from "./SafeArea";
 export { default as HeaderBar } from "./HeaderBar";
+export { default as CustomModal } from "./CustomModal";
