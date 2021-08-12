@@ -8,8 +8,8 @@ import {
 } from "react-native";
 
 import { Box, useTheme } from "./theme";
-
-import { Button, Icon } from ".";
+import Button from "./Button";
+import Icon from "./Icon";
 
 interface ModalProps {
   visible: boolean;

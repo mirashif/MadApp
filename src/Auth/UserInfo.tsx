@@ -20,13 +20,16 @@ import Button from "../components/Button";
 
 import Input from "./Input";
 import Referral from "./assets/Referral.svg";
+import Success from "./assets/Success.svg";
 
 const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
   const theme = useTheme();
 
-  const [referralCode, setReferralCode] = useState<null | string>(null);
-  const [tempReferralCode, setTempReferralCode] = useState<null | string>(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [refCode, setRefCode] = useState<null | string>(null);
+  const [tempRefCode, setTempRefCode] = useState<null | string>(null);
+  const [wrongRefCode, setWrongRefCode] = useState(false);
+  const [refModalVisible, setRefModalVisible] = useState(false);
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
 
   /**
    * When user presses back button it takes to the mobile number screen
@@ -44,6 +47,26 @@ const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
         BackHandler.removeEventListener("hardwareBackPress", () => null);
     }, [navigation])
   );
+
+  const handleRefModalCTAPress = () => {
+    if (wrongRefCode) {
+      setWrongRefCode(false);
+      return;
+    }
+
+    if (tempRefCode === "madapp") {
+      setRefCode(tempRefCode);
+      setRefModalVisible(!refModalVisible);
+      return;
+    }
+
+    setWrongRefCode(true);
+  };
+
+  const hadleRefModalClose = () => {
+    setWrongRefCode(false);
+    setRefModalVisible(false);
+  };
 
   return (
     <SafeArea>
@@ -84,16 +107,18 @@ const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
             mt="xl"
           >
             <Box>
-              {referralCode ? (
+              {refCode && (
                 <Box>
                   <Text fontSize={11} style={{ color: "#BEBEBE" }}>
                     REFERRAL
                   </Text>
                   <Text fontSize={14} fontFamily="Bold" color="primary">
-                    {referralCode.toUpperCase()}
+                    {refCode.toUpperCase()}
                   </Text>
                 </Box>
-              ) : (
+              )}
+
+              {!refCode && (
                 <Text fontSize={11} style={{ color: "#BBBBBB" }}>
                   No referral code added.
                 </Text>
@@ -101,8 +126,8 @@ const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
             </Box>
 
             <Box>
-              {referralCode ? (
-                <TouchableWithoutFeedback onPress={() => setReferralCode(null)}>
+              {refCode && (
+                <TouchableWithoutFeedback onPress={() => setRefCode(null)}>
                   <Box
                     height={25}
                     width={25}
@@ -114,9 +139,11 @@ const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
                     <Icon name="x" size={16} color="#fff" />
                   </Box>
                 </TouchableWithoutFeedback>
-              ) : (
+              )}
+
+              {!refCode && (
                 <TouchableWithoutFeedback
-                  onPress={() => setIsModalVisible(true)}
+                  onPress={() => setRefModalVisible(true)}
                 >
                   <Box
                     width={108}
@@ -164,7 +191,7 @@ const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
           </Box>
 
           <Box style={{ paddingTop: 16, paddingBottom: 40, marginTop: 14 }}>
-            <Button onPress={() => null} size="lg">
+            <Button onPress={() => setSuccessModalVisible(true)} size="lg">
               Let's Go!
             </Button>
           </Box>
@@ -172,24 +199,59 @@ const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
       </ScrollView>
 
       <CustomModal
-        visible={isModalVisible}
-        buttonTitle="Apply"
-        onButtonPress={() => {
-          setReferralCode(tempReferralCode);
-          setIsModalVisible(!isModalVisible);
-        }}
-        onBackPress={() => setIsModalVisible(!isModalVisible)}
-        onRequestClose={() => setIsModalVisible(!isModalVisible)}
+        visible={refModalVisible}
+        buttonTitle={wrongRefCode ? "Try Again" : "Apply"}
+        onButtonPress={handleRefModalCTAPress}
+        onBackPress={hadleRefModalClose}
+        onRequestClose={hadleRefModalClose}
       >
-        <Box alignItems="center">
-          <Referral />
-        </Box>
+        {wrongRefCode && (
+          <>
+            <Box alignItems="center" flexDirection="row" mt="l">
+              <Text fontSize={50}>😰</Text>
+              <Text fontSize={24} fontFamily="Medium" style={{ marginLeft: 8 }}>
+                Uh Oh!
+              </Text>
+            </Box>
 
-        <Box my="m">
-          <Input
-            onChangeText={(value) => setTempReferralCode(value)}
-            placeholder="Enter your referral code"
-          />
+            <Text mt="m" fontSize={15} style={{ marginBottom: 45 }}>
+              You entered an invalid referral code, please enter a valid
+              referral code to get a discount
+            </Text>
+          </>
+        )}
+
+        {!wrongRefCode && (
+          <>
+            <Box alignItems="center">
+              <Referral />
+            </Box>
+
+            <Box my="m">
+              <Input
+                onChangeText={(value) => setTempRefCode(value)}
+                placeholder="Enter your referral code"
+              />
+            </Box>
+          </>
+        )}
+      </CustomModal>
+
+      <CustomModal
+        visible={successModalVisible}
+        onRequestClose={() => setSuccessModalVisible(false)}
+        buttonTitle="Let’s go"
+        onButtonPress={() => setSuccessModalVisible(false)}
+      >
+        <Box
+          alignItems="center"
+          justifyContent="center"
+          style={{ paddingBottom: 55, paddingTop: 32 }}
+        >
+          <Success />
+          <Text fontSize={18} style={{ color: "#323232" }}>
+            Wohoo! you’re done
+          </Text>
         </Box>
       </CustomModal>
     </SafeArea>
