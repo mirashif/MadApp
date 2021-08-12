@@ -1,19 +1,32 @@
 import React, { useCallback, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { BackHandler, ScrollView } from "react-native";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import {
+  BackHandler,
+  ScrollView,
+  TouchableWithoutFeedback,
+} from "react-native";
 
-import { Box, HeaderBar, Icon, SafeArea, Text, useTheme } from "../components";
+import {
+  Box,
+  CustomModal,
+  HeaderBar,
+  Icon,
+  SafeArea,
+  Text,
+  useTheme,
+} from "../components";
+import { RootStackProps } from "../components/AppNavigator";
+import Button from "../components/Button";
 
 import Input from "./Input";
-import Button from "./Button";
+import Referral from "./assets/Referral.svg";
 
-import { AuthStackProps } from ".";
-
-const UserInfo = ({ navigation }: AuthStackProps<"UserInfo">) => {
+const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
   const theme = useTheme();
 
   const [referralCode, setReferralCode] = useState<null | string>(null);
+  const [tempReferralCode, setTempReferralCode] = useState<null | string>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   /**
    * When user presses back button it takes to the mobile number screen
@@ -37,7 +50,9 @@ const UserInfo = ({ navigation }: AuthStackProps<"UserInfo">) => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <HeaderBar
           title="Profile"
-          onBackPress={() => navigation.navigate("MobileNumber")}
+          onBackPress={() =>
+            navigation.navigate("AuthStack", { screen: "MobileNumber" })
+          }
         />
 
         <Box px="screen">
@@ -53,13 +68,15 @@ const UserInfo = ({ navigation }: AuthStackProps<"UserInfo">) => {
             </Text>
           </Box>
 
+          {/* Name */}
           <Box mt="xl">
             <Text mb="m" fontFamily="Medium" style={{ color: "#111111" }}>
               Name
             </Text>
-            <Input onChange={(value) => console.log(value)} />
+            <Input onChangeText={(value) => console.log(value)} />
           </Box>
 
+          {/* Referral Code */}
           <Box
             flexDirection="row"
             justifyContent="space-between"
@@ -99,7 +116,7 @@ const UserInfo = ({ navigation }: AuthStackProps<"UserInfo">) => {
                 </TouchableWithoutFeedback>
               ) : (
                 <TouchableWithoutFeedback
-                  onPress={() => setReferralCode("RABBILITV")}
+                  onPress={() => setIsModalVisible(true)}
                 >
                   <Box
                     width={108}
@@ -147,10 +164,34 @@ const UserInfo = ({ navigation }: AuthStackProps<"UserInfo">) => {
           </Box>
 
           <Box style={{ paddingTop: 16, paddingBottom: 40, marginTop: 14 }}>
-            <Button title="Continue" onPress={() => null} />
+            <Button onPress={() => null} size="lg">
+              Let's Go!
+            </Button>
           </Box>
         </Box>
       </ScrollView>
+
+      <CustomModal
+        visible={isModalVisible}
+        buttonTitle="Apply"
+        onButtonPress={() => {
+          setReferralCode(tempReferralCode);
+          setIsModalVisible(!isModalVisible);
+        }}
+        onBackPress={() => setIsModalVisible(!isModalVisible)}
+        onRequestClose={() => setIsModalVisible(!isModalVisible)}
+      >
+        <Box alignItems="center">
+          <Referral />
+        </Box>
+
+        <Box my="m">
+          <Input
+            onChangeText={(value) => setTempReferralCode(value)}
+            placeholder="Enter your referral code"
+          />
+        </Box>
+      </CustomModal>
     </SafeArea>
   );
 };

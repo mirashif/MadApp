@@ -3,13 +3,13 @@ import { TextInput } from "react-native";
 
 interface InputProps {
   placeholder?: string;
-  onChange: (vale: string) => void;
+  onChangeText: (vale: string) => void;
 }
 
-const Input = ({ placeholder, onChange }: InputProps) => {
+const Input = ({ placeholder, onChangeText }: InputProps) => {
   return (
     <TextInput
-      onChangeText={(value) => onChange(value)}
+      onChangeText={(value) => onChangeText(value)}
       placeholder={placeholder}
       style={{
         borderColor: "#DDDDDD",

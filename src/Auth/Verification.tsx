@@ -4,9 +4,9 @@ import { ScrollView } from "react-native";
 
 import { Box, HeaderBar, makeStyles, SafeArea, Text } from "../components";
 import DissmissKeyboard from "../components/DissmissKeyboard";
+import Button from "../components/Button";
 
 import OTPVerify from "./assets/OTPVerify.svg";
-import Button from "./Button";
 
 import { AuthStackProps } from ".";
 
@@ -21,12 +21,15 @@ const Verification = ({
   const [otp, setOtp] = useState<null | string>(null);
 
   useEffect(() => {
-    console.log(otp);
+    console.log("otp", otp);
   }, [otp]);
 
   return (
     <SafeArea>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
         <HeaderBar title="Account Verification" />
 
         <DissmissKeyboard>
@@ -63,10 +66,9 @@ const Verification = ({
               px="screen"
               style={{ paddingTop: 16, paddingBottom: 40, marginTop: 14 }}
             >
-              <Button
-                title="Continue"
-                onPress={() => navigation.navigate("UserInfo")}
-              />
+              <Button size="lg" onPress={() => navigation.navigate("UserInfo")}>
+                Continue
+              </Button>
             </Box>
           </Box>
         </DissmissKeyboard>
