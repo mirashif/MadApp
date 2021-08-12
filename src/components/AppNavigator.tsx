@@ -14,7 +14,7 @@ import { Home } from "../Home";
 import { Cashback } from "../Cashback";
 import { Get100 } from "../Get100";
 import { Menu, MenuNavigator, MenuStackParamList } from "../Menu";
-import { AuthNavigator, AuthStackParamList } from "../Auth";
+import { AuthStackParamList } from "../Auth";
 
 import { useTheme } from "./theme";
 
@@ -121,9 +121,8 @@ const AppNavigator = () => (
       cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
     }}
   >
-    {/* <RootStack.Screen name="BottomTabs" component={BottomTabs} />
-    <RootStack.Screen name="MenuStack" component={MenuNavigator} /> */}
-    <RootStack.Screen name="AuthStack" component={AuthNavigator} />
+    <RootStack.Screen name="BottomTabs" component={BottomTabs} />
+    <RootStack.Screen name="MenuStack" component={MenuNavigator} />
   </RootStack.Navigator>
 );
 
