@@ -6,8 +6,6 @@ import {
   BottomSheetBackdrop,
 } from "@gorhom/bottom-sheet";
 
-// TODO: MODAL BACKDROP
-
 import type { Theme } from "../components";
 import {
   Box,
