@@ -55,7 +55,7 @@ const Button = (props: ButtonProps) => {
     case "sm":
       height = 38;
       fontSize = 14;
-      fontFamily = "Normal";
+      fontFamily = "Medium";
       break;
     case "lg":
       height = 52;
