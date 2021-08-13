@@ -1,5 +1,11 @@
 import React, { useRef, useState } from "react";
-import { Image, ImageBackground, ScrollView, View } from "react-native";
+import {
+  Image,
+  ImageBackground,
+  ScrollView,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import {
   BottomSheetModal,
   BottomSheetScrollView,
@@ -8,6 +14,7 @@ import {
 
 import type { Theme } from "../components";
 import {
+  Icon,
   Box,
   Button,
   CircularIcon,
@@ -93,7 +100,7 @@ export default function Home() {
       <BottomSheetModal
         ref={itemSheetRef}
         snapPoints={["60%", "90%"]}
-        // handleComponent={null}
+        handleComponent={null}
         onDismiss={handleDismiss}
         onChange={handleItemSheetChange}
         backdropComponent={BottomSheetBackdrop}
@@ -107,44 +114,41 @@ export default function Home() {
             style={{
               height: 272,
             }}
-            // imageStyle={{
-            //   borderTopLeftRadius: 12,
-            //   borderTopRightRadius: 12,
-            // }}
+            imageStyle={{
+              borderTopLeftRadius: 12,
+              borderTopRightRadius: 12,
+            }}
             source={{ uri: "https://source.unsplash.com/a66sGfOnnqQ/" }}
           >
-            {/* 
-          CLOSE ICON
-          <TouchableWithoutFeedback onPress={handleDismiss}>
+            {/* CLOSE ICON */}
+            <TouchableWithoutFeedback onPress={handleDismiss}>
+              <View
+                style={{
+                  position: "absolute",
+                  top: 13,
+                  left: 13,
+                }}
+              >
+                <Icon name="x" size={24} color="white" />
+              </View>
+            </TouchableWithoutFeedback>
+
+            {/* Handle Bar */}
             <View
               style={{
-                position: "absolute",
-                top: 13,
-                left: 13,
+                alignItems: "center",
               }}
             >
-              <Icon name="x" size={24} color="white" />
+              <View
+                style={{
+                  backgroundColor: "rgba(255, 255, 255, 0.7)",
+                  width: 100,
+                  height: 2,
+                  position: "absolute",
+                  top: 13,
+                }}
+              />
             </View>
-          </TouchableWithoutFeedback> 
-          */}
-            {/* 
-          HANDLE BAR
-          <View
-            style={{
-              alignItems: "center",
-            }}
-          >
-            <View
-              style={{
-                backgroundColor: "rgba(255, 255, 255, 0.7)",
-                width: 100,
-                height: 2,
-                position: "absolute",
-                top: 13,
-              }}
-            />
-          </View> 
-          */}
           </ImageBackground>
 
           {/* Main Scrollable */}
