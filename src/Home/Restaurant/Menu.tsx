@@ -16,7 +16,7 @@ const Menu = () => {
 
   return (
     <SafeArea>
-      <FloatingCart />
+      <FloatingCart insetBottom />
 
       <Animated.ScrollView
         showsVerticalScrollIndicator={false}

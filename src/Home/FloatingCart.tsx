@@ -5,7 +5,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Box, Icon, Text } from "../components";
 
-const FloatingCart = () => {
+interface FloatingCartProps {
+  insetBottom?: boolean;
+}
+
+const FloatingCart = ({ insetBottom = false }: FloatingCartProps) => {
   const navigation = useNavigation();
 
   const insets = useSafeAreaInsets();
@@ -17,7 +21,7 @@ const FloatingCart = () => {
       <Box
         m="m"
         position="absolute"
-        bottom={insets.bottom}
+        bottom={insetBottom ? insets.bottom : 0}
         left={0}
         right={0}
         style={{ zIndex: 2 }}
