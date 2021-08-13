@@ -31,7 +31,7 @@ const MobileNumber = ({ navigation }: RootStackProps<"AuthStack">) => {
       >
         <HeaderBar
           title="Your Details"
-          onBackPress={() => navigation.navigate("HomeStack")}
+          onBackPress={() => navigation.navigate("BottomTabs")}
         />
 
         <DissmissKeyboard>
