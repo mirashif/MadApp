@@ -1,5 +1,11 @@
 import React, { useCallback, useMemo, useRef } from "react";
-import { Image, ImageBackground, ScrollView, View } from "react-native";
+import {
+  Image,
+  ImageBackground,
+  ScrollView,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
 import {
@@ -53,6 +59,8 @@ export default function Home() {
     itemSheetRef.current?.present();
   }, []);
 
+  const handleClosePress = () => itemSheetRef.current.close();
+
   const handleItemSheetChanges = useCallback((index: number) => {
     console.log("handleItemSheetChanges", index);
   }, []);
@@ -76,15 +84,17 @@ export default function Home() {
           }}
           source={{ uri: "https://source.unsplash.com/a66sGfOnnqQ/" }}
         >
-          <View
-            style={{
-              position: "absolute",
-              top: 13,
-              left: 13,
-            }}
-          >
-            <Icon name="x" size={24} color="white" />
-          </View>
+          <TouchableWithoutFeedback onPress={handleClosePress}>
+            <View
+              style={{
+                position: "absolute",
+                top: 13,
+                left: 13,
+              }}
+            >
+              <Icon name="x" size={24} color="white" />
+            </View>
+          </TouchableWithoutFeedback>
           <View
             style={{
               alignItems: "center",
