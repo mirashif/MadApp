@@ -1,9 +1,12 @@
 import React, { useCallback, useMemo, useRef } from "react";
-import { Image, ScrollView, View } from "react-native";
+import { Image, ImageBackground, ScrollView, View } from "react-native";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
 import {
   Box,
+  Button,
+  CircularIcon,
+  Icon,
   makeStyles,
   SafeArea,
   Text,
@@ -61,15 +64,105 @@ export default function Home() {
         index={0}
         snapPoints={snapPoints}
         onChange={handleItemSheetChanges}
+        handleComponent={null}
       >
+        <ImageBackground
+          style={{
+            height: 272,
+          }}
+          imageStyle={{
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 12,
+          }}
+          source={{ uri: "https://source.unsplash.com/a66sGfOnnqQ/" }}
+        >
+          <View
+            style={{
+              position: "absolute",
+              top: 13,
+              left: 13,
+            }}
+          >
+            <Icon name="x" size={24} color="white" />
+          </View>
+          <View
+            style={{
+              alignItems: "center",
+            }}
+          >
+            <View
+              style={{
+                backgroundColor: "rgba(255, 255, 255, 0.7)",
+                width: 100,
+                height: 2,
+                position: "absolute",
+                top: 13,
+              }}
+            />
+          </View>
+        </ImageBackground>
         <View
           style={{
-            flex: 1,
-            padding: 24,
-            justifyContent: "center",
+            paddingTop: 20,
+            paddingBottom: 28,
           }}
         >
-          <Text>Awesome 🎉</Text>
+          <View
+            style={{
+              marginHorizontal: 30,
+            }}
+          >
+            <Text
+              style={{
+                fontFamily: "Normal",
+                fontSize: 28,
+                color: "black",
+              }}
+            >
+              ৳699.00
+            </Text>
+          </View>
+
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginHorizontal: 30,
+            }}
+          >
+            <CircularIcon
+              color="#8A8A8A"
+              backgroundColor="#F8F8F8"
+              name="minus"
+              size={40}
+            />
+            <View
+              style={{
+                width: 35,
+                alignItems: "center",
+                justifyContent: "center",
+                marginHorizontal: 15,
+              }}
+            >
+              <Text
+                style={{
+                  fontFamily: "Normal",
+                  fontSize: 17,
+                  color: "#8A8A8A",
+                }}
+              >
+                1
+              </Text>
+            </View>
+            <CircularIcon name="plus" size={40} />
+
+            <Box width={30} />
+
+            <Button size="xl" onPress={() => console.log("ADD TO CART")}>
+              ADD TO CART
+            </Button>
+          </View>
         </View>
       </BottomSheetModal>
 
