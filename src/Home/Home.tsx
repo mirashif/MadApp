@@ -6,7 +6,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 import {
   Box,
@@ -74,6 +74,7 @@ export default function Home() {
         onChange={handleItemSheetChanges}
         handleComponent={null}
       >
+        {/* Header */}
         <ImageBackground
           style={{
             height: 272,
@@ -111,6 +112,38 @@ export default function Home() {
             />
           </View>
         </ImageBackground>
+
+        {/* Main Scrollable */}
+        <BottomSheetScrollView
+          contentContainerStyle={{
+            backgroundColor: "pink",
+            marginVertical: 25,
+            marginHorizontal: 30,
+          }}
+        >
+          <Text
+            style={{
+              fontFamily: "Normal",
+              fontSize: 28,
+              color: "black",
+              marginBottom: 16,
+            }}
+          >
+            Chicken Alfredo
+          </Text>
+          <Text
+            style={{
+              fontFamily: "Normal",
+              fontSize: 14,
+              color: "#8A8A8A",
+            }}
+          >
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mattis
+            condimentum faucibus viverra non nullam nisl bibendum egestas.
+          </Text>
+        </BottomSheetScrollView>
+
+        {/* Footer */}
         <View
           style={{
             paddingTop: 20,
@@ -152,7 +185,6 @@ export default function Home() {
                 width: 35,
                 alignItems: "center",
                 justifyContent: "center",
-                marginHorizontal: 15,
               }}
             >
               <Text
@@ -166,8 +198,6 @@ export default function Home() {
               </Text>
             </View>
             <CircularIcon name="plus" size={40} />
-
-            <Box width={30} />
 
             <Button size="xl" onPress={() => console.log("ADD TO CART")}>
               ADD TO CART
