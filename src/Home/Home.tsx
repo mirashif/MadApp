@@ -1,7 +1,10 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Image, ImageBackground, ScrollView, View } from "react-native";
 import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
+// TODO: MODAL BACKDROP
+
+import type { Theme } from "../components";
 import {
   Box,
   Button,
@@ -9,12 +12,15 @@ import {
   makeStyles,
   SafeArea,
   Text,
-  Theme,
   useTheme,
 } from "../components";
 
 import LocationBar from "./LocationBar";
 import HomeRestaurant from "./HomeRestaurant";
+import VariationItem from "./VariationItem";
+import AddonsItem from "./AddonsItem";
+
+const FOOTER_SHEET_HEIGHT = 144;
 
 const verticalBanners = [...Array(6)].map((_, id) => {
   return { id, imageUri: "https://picsum.photos/200/300" };
@@ -40,12 +46,29 @@ const restaurantItems = [...Array(6)].map((_, id) => {
   };
 });
 
+const variations = [
+  {
+    id: 1,
+    name: "12 “",
+    price: 699,
+  },
+  {
+    id: 2,
+    name: "16 “",
+    price: 1119,
+  },
+];
+
 export default function Home() {
   const styles = useStyles();
   const theme = useTheme();
 
   const itemSheetRef = useRef<BottomSheetModal>(null);
   const itemFooterSheetRef = useRef<BottomSheetModal>(null);
+
+  const [selectedVariationID, setSelectedVariationID] = useState<
+    null | string | number
+  >(null);
 
   const handleItemPress = () => {
     itemSheetRef.current?.present();
@@ -65,12 +88,15 @@ export default function Home() {
       {/* ItemSheet */}
       <BottomSheetModal
         ref={itemSheetRef}
-        snapPoints={["70%", "90%"]}
+        snapPoints={["60%", "90%"]}
         // handleComponent={null}
         onDismiss={handleDismiss}
         onChange={handleItemSheetChange}
       >
-        <BottomSheetScrollView>
+        <BottomSheetScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: FOOTER_SHEET_HEIGHT }}
+        >
           {/* Header */}
           <ImageBackground
             style={{
@@ -143,6 +169,33 @@ export default function Home() {
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mattis
               condimentum faucibus viverra non nullam nisl bibendum egestas.
             </Text>
+
+            <View style={{ marginTop: 24 }}>
+              <Text style={styles.modalSectionTitle}>Variation</Text>
+              <Text style={styles.modalSectionSubtitle}>Select one</Text>
+
+              <Box>
+                {variations.map((variation) => (
+                  <VariationItem
+                    key={variation.id}
+                    name={variation.name}
+                    price={variation.price}
+                    selected={variation.id === selectedVariationID}
+                    onPress={() => setSelectedVariationID(variation.id)}
+                  />
+                ))}
+              </Box>
+            </View>
+
+            <View style={{ marginTop: 14 }}>
+              <Text style={styles.modalSectionTitle}>Add-ons</Text>
+              <Text style={styles.modalSectionSubtitle}>Select one</Text>
+
+              <Box>
+                <AddonsItem />
+                <AddonsItem />
+              </Box>
+            </View>
           </View>
         </BottomSheetScrollView>
       </BottomSheetModal>
@@ -150,12 +203,13 @@ export default function Home() {
       {/* Footer */}
       <BottomSheetModal
         ref={itemFooterSheetRef}
-        snapPoints={[144]}
+        snapPoints={[FOOTER_SHEET_HEIGHT]}
         handleComponent={null}
         stackBehavior="push"
       >
         <View
           style={{
+            height: FOOTER_SHEET_HEIGHT,
             paddingTop: 20,
             paddingBottom: 28,
           }}
@@ -311,5 +365,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: 65,
     resizeMode: "contain",
     marginBottom: theme.spacing.s,
+  },
+  modalSectionTitle: {
+    fontSize: 20,
+    marginBottom: 5,
+  },
+  modalSectionSubtitle: {
+    color: "#8A8A8A",
   },
 }));
