@@ -1,52 +1,53 @@
 import React from "react";
-import { ImageBackground } from "react-native";
+import { ImageBackground, TouchableWithoutFeedback } from "react-native";
 
 import { Box, Icon, makeStyles, Text, Theme, useTheme } from "../components";
 
-export interface ItemProps {
-  id: number | string;
-  discount?: string;
-  name: string;
-  previousPrice?: string;
-  price: string;
-  imageUri: string;
+import { IItem } from "./Home";
+
+interface ItemProps extends IItem {
+  onItemPress: (id: number | string) => void;
 }
 
 const Item = ({
+  id,
   discount,
   name,
   previousPrice,
   price,
   imageUri,
+  onItemPress,
 }: ItemProps) => {
   const styles = useStyles();
   const theme = useTheme();
 
   return (
-    <Box>
-      <ImageBackground
-        style={styles.imageView}
-        imageStyle={styles.imageStyle}
-        source={{ uri: imageUri }}
-      >
-        {discount && (
-          <Box style={styles.discount}>
-            <Text style={styles.discountText}>{discount}</Text>
+    <TouchableWithoutFeedback onPress={() => onItemPress(id)}>
+      <Box>
+        <ImageBackground
+          style={styles.imageView}
+          imageStyle={styles.imageStyle}
+          source={{ uri: imageUri }}
+        >
+          {discount && (
+            <Box style={styles.discount}>
+              <Text style={styles.discountText}>{discount}</Text>
+            </Box>
+          )}
+          <Box style={styles.addCartIcon}>
+            <Icon size={18} name="plus" color={theme.colors.primaryContrast} />
           </Box>
-        )}
-        <Box style={styles.addCartIcon}>
-          <Icon size={18} name="plus" color={theme.colors.primaryContrast} />
-        </Box>
-      </ImageBackground>
+        </ImageBackground>
 
-      <Text style={styles.name}>{name}</Text>
-      <Box style={styles.price}>
-        <Text style={styles.currentPrice}>{price}</Text>
-        {previousPrice && (
-          <Text style={styles.previousPrice}>{previousPrice}</Text>
-        )}
+        <Text style={styles.name}>{name}</Text>
+        <Box style={styles.price}>
+          <Text style={styles.currentPrice}>{price}</Text>
+          {previousPrice && (
+            <Text style={styles.previousPrice}>{previousPrice}</Text>
+          )}
+        </Box>
       </Box>
-    </Box>
+    </TouchableWithoutFeedback>
   );
 };
 

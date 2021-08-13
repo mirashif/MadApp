@@ -4,14 +4,20 @@ import { ScrollView, Image, TouchableWithoutFeedback } from "react-native";
 
 import { Box, Icon, makeStyles, Theme, useTheme } from "../components";
 
-import Item, { ItemProps } from "./Item";
+import { IItem } from "./Home";
+import Item from "./Item";
 
 interface HomeRestaurantProps {
   logoUri: string;
-  items: ItemProps[];
+  items: IItem[];
+  onItemPress: (id: number | string) => void;
 }
 
-const HomeRestaurant = ({ items, logoUri }: HomeRestaurantProps) => {
+const HomeRestaurant = ({
+  items,
+  logoUri,
+  onItemPress,
+}: HomeRestaurantProps) => {
   const styles = useStyles();
   const theme = useTheme();
   const navigation = useNavigation();
@@ -36,7 +42,7 @@ const HomeRestaurant = ({ items, logoUri }: HomeRestaurantProps) => {
 
       {items.map((item) => (
         <Box key={item.id} style={styles.restaurantItem}>
-          <Item {...item} />
+          <Item {...{ ...item, onItemPress }} />
         </Box>
       ))}
     </ScrollView>

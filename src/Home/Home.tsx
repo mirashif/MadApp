@@ -1,5 +1,6 @@
-import React from "react";
-import { Image, ScrollView } from "react-native";
+import React, { useCallback, useMemo, useRef } from "react";
+import { Image, ScrollView, View } from "react-native";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
 import {
   Box,
@@ -17,6 +18,15 @@ const verticalBanners = [...Array(6)].map((_, id) => {
   return { id, imageUri: "https://picsum.photos/200/300" };
 });
 
+export interface IItem {
+  id: number | string;
+  discount?: string;
+  name: string;
+  previousPrice?: string;
+  price: string;
+  imageUri: string;
+}
+
 const restaurantItems = [...Array(6)].map((_, id) => {
   return {
     id,
@@ -32,8 +42,37 @@ export default function Home() {
   const styles = useStyles();
   const theme = useTheme();
 
+  const itemSheetRef = useRef<BottomSheetModal>(null);
+
+  const snapPoints = useMemo(() => ["70%", "90%"], []);
+
+  const handleItemPress = useCallback(() => {
+    itemSheetRef.current?.present();
+  }, []);
+
+  const handleItemSheetChanges = useCallback((index: number) => {
+    console.log("handleItemSheetChanges", index);
+  }, []);
+
   return (
     <SafeArea>
+      <BottomSheetModal
+        ref={itemSheetRef}
+        index={0}
+        snapPoints={snapPoints}
+        onChange={handleItemSheetChanges}
+      >
+        <View
+          style={{
+            flex: 1,
+            padding: 24,
+            justifyContent: "center",
+          }}
+        >
+          <Text>Awesome 🎉</Text>
+        </View>
+      </BottomSheetModal>
+
       <ScrollView showsVerticalScrollIndicator={false}>
         <Box mb="l" mx="screen">
           <LocationBar
@@ -74,14 +113,17 @@ export default function Home() {
           🍴 Restaurants
         </Text>
         <HomeRestaurant
+          onItemPress={handleItemPress}
           items={restaurantItems}
           logoUri="https://picsum.photos/40/65"
         />
         <HomeRestaurant
+          onItemPress={handleItemPress}
           items={restaurantItems}
           logoUri="https://picsum.photos/40/65"
         />
         <HomeRestaurant
+          onItemPress={handleItemPress}
           items={restaurantItems}
           logoUri="https://picsum.photos/40/65"
         />
