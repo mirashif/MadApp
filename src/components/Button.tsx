@@ -1,6 +1,10 @@
 import React from "react";
-import { StyleProp, View, ViewStyle } from "react-native";
-import { RectButton } from "react-native-gesture-handler";
+import {
+  StyleProp,
+  View,
+  ViewStyle,
+  TouchableWithoutFeedback,
+} from "react-native";
 
 import { makeStyles, Text, Theme, useTheme } from "./theme";
 
@@ -51,7 +55,7 @@ const Button = (props: ButtonProps) => {
     case "sm":
       height = 38;
       fontSize = 14;
-      fontFamily = "Normal";
+      fontFamily = "Medium";
       break;
     case "lg":
       height = 52;
@@ -84,18 +88,17 @@ const Button = (props: ButtonProps) => {
 
   return (
     <View style={borderStyles}>
-      <RectButton
-        style={[styles.button, buttonStyle, style]}
-        {...{ enabled: !disabled, onPress }}
-      >
-        <Text
-          selectable={false}
-          numberOfLines={1}
-          style={[styles.label, textStyle]}
-        >
-          {children}
-        </Text>
-      </RectButton>
+      <TouchableWithoutFeedback {...{ disabled: disabled, onPress }}>
+        <View style={[styles.button, buttonStyle, style]}>
+          <Text
+            selectable={false}
+            numberOfLines={1}
+            style={[styles.label, textStyle]}
+          >
+            {children}
+          </Text>
+        </View>
+      </TouchableWithoutFeedback>
     </View>
   );
 };

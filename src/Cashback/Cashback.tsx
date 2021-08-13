@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { ScrollView } from "react-native";
+import * as Clipboard from "expo-clipboard";
 
-import { Box, SafeArea, Text } from "../components";
+import { Box, CustomModal, SafeArea, Text } from "../components";
 
 import Card, { assets as CardAssets } from "./Card";
 import Coupon from "./Coupon";
@@ -9,6 +10,13 @@ import Coupon from "./Coupon";
 export const assets = [...CardAssets];
 
 const Cashback = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const handleCopyPress = () => {
+    Clipboard.setString("RBIMHDI-100");
+    setModalVisible(false);
+  };
+
   return (
     <SafeArea>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -40,7 +48,7 @@ const Cashback = () => {
 
             <Box my="xl">
               <Coupon
-                onPress={() => console.log("Cashback Redeem")}
+                onPress={() => setModalVisible(true)}
                 discount="100"
                 minimum="250"
                 points="500"
@@ -50,7 +58,7 @@ const Cashback = () => {
             <Box my="xl">
               <Coupon
                 disabled
-                onPress={() => console.log("Cashback Redeem")}
+                onPress={() => setModalVisible(true)}
                 discount="100"
                 minimum="250"
                 points="2,000"
@@ -59,6 +67,39 @@ const Cashback = () => {
           </Box>
         </Box>
       </ScrollView>
+
+      <CustomModal
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+        buttonTitle="Copy"
+        onButtonPress={handleCopyPress}
+      >
+        <Box alignItems="center" mt="l">
+          <Text fontSize={82} mb="l">
+            🎁
+          </Text>
+
+          <Text fontSize={11}>YOU HAVE REDEEMED A VOUCHER</Text>
+
+          <Text fontSize={24} fontFamily="Bold" color="primary">
+            Get ৳100 OFF
+          </Text>
+
+          <Text fontSize={11}>APPLY THE VOUCHER ON YOUR NEXT ORDER</Text>
+        </Box>
+
+        <Box
+          height={44}
+          justifyContent="center"
+          borderWidth={1}
+          borderColor="lightGray"
+          borderRadius="l"
+          px="l"
+          my="l"
+        >
+          <Text>RBIMHDI-100</Text>
+        </Box>
+      </CustomModal>
     </SafeArea>
   );
 };

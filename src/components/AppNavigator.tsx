@@ -3,6 +3,7 @@ import { Feather } from "@expo/vector-icons";
 import { NavigatorScreenParams, RouteProp } from "@react-navigation/native";
 import {
   createStackNavigator,
+  CardStyleInterpolators,
   StackNavigationProp,
 } from "@react-navigation/stack";
 import {
@@ -15,7 +16,8 @@ import Svg, { Path } from "react-native-svg";
 import { Home, HomeNavigator, HomeStackParamList } from "../Home";
 import { Cashback } from "../Cashback";
 import { Get100 } from "../Get100";
-import { Menu } from "../Menu";
+import { Menu, MenuNavigator, MenuStackParamList } from "../Menu";
+import { AuthStackParamList } from "../Auth";
 
 import { useTheme } from "./theme";
 
@@ -109,14 +111,23 @@ export type RootStackProps<RouteName extends keyof RootStackParamList> = {
 type RootStackParamList = {
   BottomTabs: BottomTabNavigationProp<BottomTabParamList>;
   HomeStack: NavigatorScreenParams<HomeStackParamList>;
+  MenuStack: NavigatorScreenParams<MenuStackParamList>;
+  AuthStack: NavigatorScreenParams<AuthStackParamList>;
 };
 
 const RootStack = createStackNavigator<RootStackParamList>();
 
 const AppNavigator = () => (
-  <RootStack.Navigator headerMode="none">
+  <RootStack.Navigator
+    headerMode="none"
+    initialRouteName="BottomTabs"
+    screenOptions={{
+      cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+    }}
+  >
     <RootStack.Screen name="BottomTabs" component={BottomTabs} />
     <RootStack.Screen name="HomeStack" component={HomeNavigator} />
+    <RootStack.Screen name="MenuStack" component={MenuNavigator} />
   </RootStack.Navigator>
 );
 
