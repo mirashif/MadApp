@@ -1,6 +1,10 @@
 import React, { useRef, useState } from "react";
 import { Image, ImageBackground, ScrollView, View } from "react-native";
-import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import {
+  BottomSheetModal,
+  BottomSheetScrollView,
+  BottomSheetBackdrop,
+} from "@gorhom/bottom-sheet";
 
 // TODO: MODAL BACKDROP
 
@@ -92,6 +96,7 @@ export default function Home() {
         // handleComponent={null}
         onDismiss={handleDismiss}
         onChange={handleItemSheetChange}
+        backdropComponent={BottomSheetBackdrop}
       >
         <BottomSheetScrollView
           showsVerticalScrollIndicator={false}

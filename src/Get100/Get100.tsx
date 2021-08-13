@@ -1,6 +1,7 @@
 import React from "react";
 import { ScrollView, Image } from "react-native";
 
+import type { Theme } from "../components";
 import {
   Box,
   Text,
@@ -10,7 +11,6 @@ import {
   makeStyles,
   Button,
   Icon,
-  Theme,
 } from "../components";
 
 import InviteItem from "./InviteItem";
@@ -74,7 +74,7 @@ const Get100 = () => {
                 }}
               />
               <Box style={styles.step}>
-                <CircularIcon name="send" size={34} color="primary" />
+                <CircularIcon name="send" size={34} color="white" />
                 <Box style={styles.stepDetails}>
                   <Text style={styles.stepTitle}>ENJOY</Text>
                   <Text style={styles.stepDescription}>
@@ -83,7 +83,7 @@ const Get100 = () => {
                 </Box>
               </Box>
               <Box style={styles.step}>
-                <CircularIcon name="heart" size={34} color="primary" />
+                <CircularIcon name="heart" size={34} color="white" />
                 <Box style={styles.stepDetails}>
                   <Text style={styles.stepTitle}>INVITE</Text>
                   <Text style={styles.stepDescription}>
