@@ -1,6 +1,7 @@
 import React from "react";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 import AppNavigator from "./src/components/AppNavigator";
 import { assets as CashbackAssets } from "./src/Cashback";
@@ -20,8 +21,10 @@ const App = () => {
     <ThemeProvider>
       <LoadAssets {...{ assets, fonts }}>
         <SafeAreaProvider>
-          <StatusBar />
-          <AppNavigator />
+          <BottomSheetModalProvider>
+            <StatusBar />
+            <AppNavigator />
+          </BottomSheetModalProvider>
         </SafeAreaProvider>
       </LoadAssets>
     </ThemeProvider>

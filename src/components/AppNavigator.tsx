@@ -6,11 +6,14 @@ import {
   CardStyleInterpolators,
   StackNavigationProp,
 } from "@react-navigation/stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {
+  BottomTabNavigationProp,
+  createBottomTabNavigator,
+} from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Path } from "react-native-svg";
 
-import { Home } from "../Home";
+import { Home, HomeNavigator, HomeStackParamList } from "../Home";
 import { Cashback } from "../Cashback";
 import { Get100 } from "../Get100";
 import { Menu, MenuNavigator, MenuStackParamList } from "../Menu";
@@ -106,7 +109,8 @@ export type RootStackProps<RouteName extends keyof RootStackParamList> = {
 };
 
 type RootStackParamList = {
-  BottomTabs: NavigatorScreenParams<BottomTabParamList>;
+  BottomTabs: BottomTabNavigationProp<BottomTabParamList>;
+  HomeStack: NavigatorScreenParams<HomeStackParamList>;
   MenuStack: NavigatorScreenParams<MenuStackParamList>;
   AuthStack: NavigatorScreenParams<AuthStackParamList>;
 };
@@ -122,6 +126,7 @@ const AppNavigator = () => (
     }}
   >
     <RootStack.Screen name="BottomTabs" component={BottomTabs} />
+    <RootStack.Screen name="HomeStack" component={HomeNavigator} />
     <RootStack.Screen name="MenuStack" component={MenuNavigator} />
   </RootStack.Navigator>
 );

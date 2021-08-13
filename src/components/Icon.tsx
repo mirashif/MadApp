@@ -17,6 +17,8 @@ export const CircularIcon = ({
   name,
   size = 34,
   backgroundColor,
+  color,
+  ...otherProps
 }: IconProps & { backgroundColor?: string }) => {
   const theme = useTheme();
 
@@ -32,12 +34,13 @@ export const CircularIcon = ({
         alignItems: "center",
         justifyContent: "center",
       }}
+      {...otherProps}
     >
       <Icon
         {...{
           name,
-          size: size / 1.7,
-          color: theme.colors.primaryContrast,
+          size: size / 2,
+          color: color || theme.colors.primaryContrast,
         }}
       />
     </View>

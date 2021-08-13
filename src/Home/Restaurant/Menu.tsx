@@ -1,57 +1,41 @@
-import React from "react";
-import { ScrollView, Image } from "react-native";
+import React, { useRef, useState } from "react";
+import Animated from "react-native-reanimated";
+import { onScrollEvent, useValue } from "react-native-redash/lib/module/v1";
 
-import { Box, Icon, makeStyles, Theme, useTheme } from "../../components";
+import { SafeArea } from "../../components";
 
-import Item, { ItemProps } from "./Item";
+import Content, { defaultTabs } from "./Content";
+import Header from "./Header";
 
-interface MenuProps {
-  logoUri: string;
-  items: ItemProps[];
-}
-
-const Menu = ({ items, logoUri }: MenuProps) => {
-  const styles = useStyles();
-  const theme = useTheme();
+const Menu = () => {
+  const scrollView = useRef<Animated.ScrollView>(null);
+  const [tabs, setTabs] = useState(defaultTabs);
+  const y = useValue(0);
+  const onScroll = onScrollEvent({ y });
 
   return (
-    <ScrollView
-      contentContainerStyle={{
-        paddingHorizontal: theme.spacing.screen,
-        marginBottom: theme.spacing.l,
-      }}
-      horizontal
-      showsHorizontalScrollIndicator={false}
-    >
-      <Box style={styles.logo}>
-        <Image style={styles.logoStyle} source={{ uri: logoUri }} />
-        <Icon name="arrow-right" size={24} color="#000000" />
-      </Box>
+    <SafeArea>
+      <Animated.ScrollView
+        showsVerticalScrollIndicator={false}
+        ref={scrollView}
+        scrollEventThrottle={1}
+        {...{ onScroll }}
+      >
+        <Content
+          onMeasurement={(index, tab) => {
+            tabs[index] = tab;
+            setTabs([...tabs]);
+          }}
+        />
+      </Animated.ScrollView>
 
-      {items.map((item) => (
-        <Box key={item.id} style={styles.restaurantItem}>
-          <Item {...item} />
-        </Box>
-      ))}
-    </ScrollView>
+      <Header
+        title="Cheez"
+        image="https://source.unsplash.com/a66sGfOnnqQ"
+        {...{ y, tabs, scrollView }}
+      />
+    </SafeArea>
   );
 };
 
 export default Menu;
-
-const useStyles = makeStyles((theme: Theme) => ({
-  restaurantItem: {
-    marginRight: theme.spacing.xl,
-  },
-  logo: {
-    marginRight: theme.spacing.l,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  logoStyle: {
-    width: 38,
-    height: 65,
-    resizeMode: "contain",
-    marginBottom: theme.spacing.s,
-  },
-}));
