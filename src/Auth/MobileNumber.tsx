@@ -4,19 +4,19 @@ import { TextInput, Alert, ScrollView } from "react-native";
 import { Box, HeaderBar, SafeArea, Text } from "../components";
 import DissmissKeyboard from "../components/DissmissKeyboard";
 import Button from "../components/Button";
+import type { RootStackProps } from "../components/AppNavigator";
 
 import Phone from "./assets/Phone.svg";
 import BDFlag from "./assets/BDFlag.svg";
 
-import { AuthStackProps } from ".";
-
-const MobileNumber = ({ navigation }: AuthStackProps<"MobileNumber">) => {
+const MobileNumber = ({ navigation }: RootStackProps<"AuthStack">) => {
   const [phoneNumber, setPhoneNumber] = useState<null | string>(null);
 
   const handleContinue = () => {
     if (phoneNumber) {
-      navigation.navigate("Verification", {
-        phoneNumber,
+      navigation.navigate("AuthStack", {
+        screen: "Verification",
+        params: { phoneNumber },
       });
     } else {
       Alert.alert("Please enter a phone number");
@@ -29,7 +29,10 @@ const MobileNumber = ({ navigation }: AuthStackProps<"MobileNumber">) => {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <HeaderBar title="Your Details" onBackPress={() => null} />
+        <HeaderBar
+          title="Your Details"
+          onBackPress={() => navigation.navigate("HomeStack")}
+        />
 
         <DissmissKeyboard>
           <Box flex={1} px="screen">

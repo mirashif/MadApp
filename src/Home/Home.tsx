@@ -29,6 +29,7 @@ import HomeRestaurant from "./HomeRestaurant";
 import VariationItem from "./VariationItem";
 import AddonsItem from "./AddonsItem";
 import FloatingCart from "./FloatingCart";
+import AuthSheet from "./AuthSheet";
 
 const FOOTER_SHEET_HEIGHT = 144;
 
@@ -96,6 +97,9 @@ export default function Home() {
   return (
     <SafeArea>
       <FloatingCart />
+
+      <AuthSheet />
+
       {/* ItemSheet */}
       <BottomSheetModal
         ref={itemSheetRef}

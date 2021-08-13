@@ -20,6 +20,7 @@ import { Get100 } from "../Get100";
 import type { MenuStackParamList } from "../Menu";
 import { Menu, MenuNavigator } from "../Menu";
 import type { AuthStackParamList } from "../Auth";
+import { AuthNavigator } from "../Auth";
 
 import { useTheme } from "./theme";
 
@@ -130,6 +131,7 @@ const AppNavigator = () => (
     <RootStack.Screen name="BottomTabs" component={BottomTabs} />
     <RootStack.Screen name="HomeStack" component={HomeNavigator} />
     <RootStack.Screen name="MenuStack" component={MenuNavigator} />
+    <RootStack.Screen name="AuthStack" component={AuthNavigator} />
   </RootStack.Navigator>
 );
 
