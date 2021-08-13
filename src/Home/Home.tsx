@@ -11,6 +11,7 @@ import {
   BottomSheetScrollView,
   BottomSheetBackdrop,
 } from "@gorhom/bottom-sheet";
+import { useIsFocused } from "@react-navigation/native";
 
 import type { Theme } from "../components";
 import {
@@ -74,6 +75,8 @@ export default function Home() {
   const styles = useStyles();
   const theme = useTheme();
 
+  const isFocused = useIsFocused();
+
   const itemSheetRef = useRef<BottomSheetModal>(null);
   const itemFooterSheetRef = useRef<BottomSheetModal>(null);
 
@@ -98,7 +101,7 @@ export default function Home() {
     <SafeArea>
       <FloatingCart />
 
-      <AuthSheet />
+      {isFocused && <AuthSheet />}
 
       {/* ItemSheet */}
       <BottomSheetModal
