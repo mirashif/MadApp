@@ -1,11 +1,10 @@
 import React from "react";
-import { RouteProp } from "@react-navigation/native";
-import {
-  StackNavigationProp,
-  createStackNavigator,
-} from "@react-navigation/stack";
+import type { RouteProp } from "@react-navigation/native";
+import type { StackNavigationProp } from "@react-navigation/stack";
+import { createStackNavigator } from "@react-navigation/stack";
 
 import { Menu } from "./Restaurant";
+import Cart from "./Cart/Cart";
 
 export { default as Home } from "./Home";
 
@@ -16,6 +15,7 @@ export type HomeStackProps<RouteName extends keyof HomeStackParamList> = {
 
 export type HomeStackParamList = {
   Menu: undefined;
+  Cart: undefined;
 };
 
 const HomeStack = createStackNavigator<HomeStackParamList>();
@@ -23,5 +23,6 @@ const HomeStack = createStackNavigator<HomeStackParamList>();
 export const HomeNavigator = () => (
   <HomeStack.Navigator headerMode="none">
     <HomeStack.Screen name="Menu" component={Menu} />
+    <HomeStack.Screen name="Cart" component={Cart} />
   </HomeStack.Navigator>
 );

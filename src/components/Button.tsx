@@ -1,12 +1,9 @@
 import React from "react";
-import {
-  StyleProp,
-  View,
-  ViewStyle,
-  TouchableWithoutFeedback,
-} from "react-native";
+import type { StyleProp, ViewStyle } from "react-native";
+import { View, TouchableWithoutFeedback } from "react-native";
 
-import { makeStyles, Text, Theme, useTheme } from "./theme";
+import type { Theme } from "./theme";
+import { makeStyles, Text, useTheme } from "./theme";
 
 interface ButtonProps {
   children: React.ReactNode;

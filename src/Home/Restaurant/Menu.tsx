@@ -3,6 +3,7 @@ import Animated from "react-native-reanimated";
 import { onScrollEvent, useValue } from "react-native-redash/lib/module/v1";
 
 import { SafeArea } from "../../components";
+import FloatingCart from "../FloatingCart";
 
 import Content, { defaultTabs } from "./Content";
 import Header from "./Header";
@@ -15,6 +16,8 @@ const Menu = () => {
 
   return (
     <SafeArea>
+      <FloatingCart />
+
       <Animated.ScrollView
         showsVerticalScrollIndicator={false}
         ref={scrollView}

@@ -1,8 +1,6 @@
 import React from "react";
-import {
-  NativeSafeAreaViewProps,
-  SafeAreaView,
-} from "react-native-safe-area-context";
+import type { NativeSafeAreaViewProps } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useTheme } from "./theme";
 

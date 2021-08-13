@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Dimensions, ScrollView } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import {
   Box,
@@ -54,6 +55,8 @@ const Cart = () => {
   const theme = useTheme();
   const styles = useStyles();
 
+  const insets = useSafeAreaInsets();
+
   const windowWidth = Dimensions.get("window").width;
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -67,7 +70,7 @@ const Cart = () => {
       return;
     }
 
-    if (tempVoucher?.toLocaleLowerCase() === "madapp") {
+    if (tempVoucher?.toLocaleLowerCase() === "zanvent") {
       setVoucher(tempVoucher);
       setModalVisible(false);
       return;
@@ -85,7 +88,7 @@ const Cart = () => {
     <SafeArea>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 180 }}
+        contentContainerStyle={{ paddingBottom: 180 + insets.bottom }}
       >
         <HeaderBar title="Checkout" />
 
@@ -154,7 +157,7 @@ const Cart = () => {
         bottom={0}
         width={windowWidth}
         backgroundColor="background"
-        style={{ paddingTop: 22, paddingBottom: 16 }}
+        style={{ paddingTop: 22, paddingBottom: 16 + insets.bottom }}
       >
         <Box
           flexDirection="row"
