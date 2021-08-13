@@ -10,7 +10,7 @@ import Coupon from "./Coupon";
 export const assets = [...CardAssets];
 
 const Cashback = () => {
-  const [modalVisible, setModalVisible] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const handleCopyPress = () => {
     Clipboard.setString("RBIMHDI-100");
