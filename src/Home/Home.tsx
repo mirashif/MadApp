@@ -1,22 +1,11 @@
-import React, { useCallback, useMemo, useRef } from "react";
-import {
-  Image,
-  ImageBackground,
-  ScrollView,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
-import {
-  BottomSheetModal,
-  BottomSheetView,
-  useBottomSheetModal,
-} from "@gorhom/bottom-sheet";
+import React, { useRef } from "react";
+import { Image, ImageBackground, ScrollView, View } from "react-native";
+import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 import {
   Box,
   Button,
   CircularIcon,
-  Icon,
   makeStyles,
   SafeArea,
   Text,
@@ -58,14 +47,17 @@ export default function Home() {
   const itemSheetRef = useRef<BottomSheetModal>(null);
   const itemFooterSheetRef = useRef<BottomSheetModal>(null);
 
-  const snapPoints = ["70%", "90%"];
-  const footerSnapPoints = [144];
-
-  const { dismissAll } = useBottomSheetModal();
-
   const handleItemPress = () => {
     itemSheetRef.current?.present();
-    itemFooterSheetRef.current?.present();
+  };
+
+  const handleItemSheetChange = (index: number) => {
+    if (index > -1) itemFooterSheetRef.current?.present();
+  };
+
+  const handleDismiss = () => {
+    itemSheetRef.current?.close();
+    itemFooterSheetRef.current?.close();
   };
 
   return (
@@ -73,22 +65,26 @@ export default function Home() {
       {/* ItemSheet */}
       <BottomSheetModal
         ref={itemSheetRef}
-        snapPoints={snapPoints}
-        handleComponent={null}
-        onDismiss={dismissAll}
+        snapPoints={["70%", "90%"]}
+        // handleComponent={null}
+        onDismiss={handleDismiss}
+        onChange={handleItemSheetChange}
       >
-        {/* Header */}
-        <ImageBackground
-          style={{
-            height: 272,
-          }}
-          imageStyle={{
-            borderTopLeftRadius: 12,
-            borderTopRightRadius: 12,
-          }}
-          source={{ uri: "https://source.unsplash.com/a66sGfOnnqQ/" }}
-        >
-          <TouchableWithoutFeedback onPress={dismissAll}>
+        <BottomSheetScrollView>
+          {/* Header */}
+          <ImageBackground
+            style={{
+              height: 272,
+            }}
+            // imageStyle={{
+            //   borderTopLeftRadius: 12,
+            //   borderTopRightRadius: 12,
+            // }}
+            source={{ uri: "https://source.unsplash.com/a66sGfOnnqQ/" }}
+          >
+            {/* 
+          CLOSE ICON
+          <TouchableWithoutFeedback onPress={handleDismiss}>
             <View
               style={{
                 position: "absolute",
@@ -98,7 +94,10 @@ export default function Home() {
             >
               <Icon name="x" size={24} color="white" />
             </View>
-          </TouchableWithoutFeedback>
+          </TouchableWithoutFeedback> 
+          */}
+            {/* 
+          HANDLE BAR
           <View
             style={{
               alignItems: "center",
@@ -113,44 +112,47 @@ export default function Home() {
                 top: 13,
               }}
             />
-          </View>
-        </ImageBackground>
+          </View> 
+          */}
+          </ImageBackground>
 
-        {/* Main Scrollable */}
-        <View
-          style={{
-            marginVertical: 25,
-            marginHorizontal: 30,
-          }}
-        >
-          <Text
+          {/* Main Scrollable */}
+          <View
             style={{
-              fontFamily: "Normal",
-              fontSize: 28,
-              color: "black",
-              marginBottom: 16,
+              marginVertical: 25,
+              marginHorizontal: 30,
             }}
           >
-            Chicken Alfredo
-          </Text>
-          <Text
-            style={{
-              fontFamily: "Normal",
-              fontSize: 14,
-              color: "#8A8A8A",
-            }}
-          >
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mattis
-            condimentum faucibus viverra non nullam nisl bibendum egestas.
-          </Text>
-        </View>
+            <Text
+              style={{
+                fontFamily: "Normal",
+                fontSize: 28,
+                color: "black",
+                marginBottom: 16,
+              }}
+            >
+              Chicken Alfredo
+            </Text>
+            <Text
+              style={{
+                fontFamily: "Normal",
+                fontSize: 14,
+                color: "#8A8A8A",
+              }}
+            >
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mattis
+              condimentum faucibus viverra non nullam nisl bibendum egestas.
+            </Text>
+          </View>
+        </BottomSheetScrollView>
       </BottomSheetModal>
 
       {/* Footer */}
       <BottomSheetModal
         ref={itemFooterSheetRef}
-        snapPoints={footerSnapPoints}
+        snapPoints={[144]}
         handleComponent={null}
+        stackBehavior="push"
       >
         <View
           style={{
