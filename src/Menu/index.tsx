@@ -9,6 +9,7 @@ import {
 import MyOrders from "./MyOrders/MyOrders";
 import OrderProcessing from "./OrderProcessing/OrderProcessing";
 import MyProfile from "./MyProfile/MyProfile";
+import OrderDetails from "./MyOrders/OrderDetails/OrderDetails";
 
 export { default as Menu } from "./Menu";
 
@@ -19,6 +20,7 @@ export type MenuStackProps<RouteName extends keyof MenuStackParamList> = {
 
 export type MenuStackParamList = {
   MyOrders: undefined;
+  OrderDetails: undefined;
   OrderProcessing: undefined;
   MyProfile: undefined;
 };
@@ -33,6 +35,7 @@ export const MenuNavigator = () => (
     }}
   >
     <MenuStack.Screen name="MyOrders" component={MyOrders} />
+    <MenuStack.Screen name="OrderDetails" component={OrderDetails} />
     <MenuStack.Screen name="OrderProcessing" component={OrderProcessing} />
     <MenuStack.Screen name="MyProfile" component={MyProfile} />
   </MenuStack.Navigator>

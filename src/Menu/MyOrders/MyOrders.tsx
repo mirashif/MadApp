@@ -50,9 +50,19 @@ const MyOrders = ({ navigation }: RootStackProps<"MenuStack">) => {
               }}
             />
 
-            <PastOrderItem variant="CANCELLED" onCTAPress={() => null} />
+            <PastOrderItem
+              variant="CANCELLED"
+              onPress={() => null}
+              onCTAPress={() => null}
+            />
 
-            <PastOrderItem variant="DELIVERED" onCTAPress={() => null} />
+            <PastOrderItem
+              variant="DELIVERED"
+              onCTAPress={() => null}
+              onPress={() =>
+                navigation.navigate("MenuStack", { screen: "OrderDetails" })
+              }
+            />
           </>
         )}
       </ScrollView>
