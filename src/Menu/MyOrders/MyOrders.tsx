@@ -12,6 +12,7 @@ import {
 import { RootStackProps } from "../../components/AppNavigator";
 
 import Item from "./Item";
+import NoOrders from "./NoOrders";
 
 const orders = [
   {
@@ -45,21 +46,37 @@ const MyOrders = ({ navigation }: RootStackProps<"MenuStack">) => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <HeaderBar title="My Orders" />
 
-        <Box style={styles.notice}>
-          <Text color="primary">You earn cashback from every order!</Text>
-        </Box>
-
-        <Box px="screen" py="l">
-          {orders.map((item) => (
-            <Item
-              key={item.id}
-              {...{ ...item }}
-              onPress={() =>
-                navigation.navigate("MenuStack", { screen: "OrderProcessing" })
+        {orders.length === 0 && (
+          <Box style={{ marginTop: 127 }}>
+            <NoOrders
+              onCTAPress={() =>
+                navigation.navigate("BottomTabs", { screen: "Home" })
               }
             />
-          ))}
-        </Box>
+          </Box>
+        )}
+
+        {orders.length > 0 && (
+          <>
+            <Box style={styles.notice}>
+              <Text color="primary">You earn cashback from every order!</Text>
+            </Box>
+
+            <Box px="screen" py="l">
+              {orders.map((item) => (
+                <Item
+                  key={item.id}
+                  {...{ ...item }}
+                  onPress={() =>
+                    navigation.navigate("MenuStack", {
+                      screen: "OrderProcessing",
+                    })
+                  }
+                />
+              ))}
+            </Box>
+          </>
+        )}
       </ScrollView>
     </SafeArea>
   );

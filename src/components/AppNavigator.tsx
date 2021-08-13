@@ -106,7 +106,7 @@ export type RootStackProps<RouteName extends keyof RootStackParamList> = {
 };
 
 type RootStackParamList = {
-  BottomTabs: undefined;
+  BottomTabs: NavigatorScreenParams<BottomTabParamList>;
   MenuStack: NavigatorScreenParams<MenuStackParamList>;
   AuthStack: NavigatorScreenParams<AuthStackParamList>;
 };
