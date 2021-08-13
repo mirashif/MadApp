@@ -45,7 +45,13 @@ const Menu = ({ navigation }: RootStackProps<"MenuStack">) => {
         </Box>
 
         <Box px="xl">
-          <Item icon="😎" label="My Profile" />
+          <Item
+            icon="😎"
+            label="My Profile"
+            onPress={() =>
+              navigation.navigate("MenuStack", { screen: "MyProfile" })
+            }
+          />
           <Item
             icon="🍔"
             label="My Orders"

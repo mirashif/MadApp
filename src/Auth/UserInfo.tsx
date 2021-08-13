@@ -93,10 +93,7 @@ const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
 
           {/* Name */}
           <Box mt="xl">
-            <Text mb="m" fontFamily="Medium" style={{ color: "#111111" }}>
-              Name
-            </Text>
-            <Input onChangeText={(value) => console.log(value)} />
+            <Input label="Name" onChangeText={(value) => console.log(value)} />
           </Box>
 
           {/* Referral Code */}
