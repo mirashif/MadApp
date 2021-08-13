@@ -1,23 +1,25 @@
 import React from "react";
 import { Feather } from "@expo/vector-icons";
-import { NavigatorScreenParams, RouteProp } from "@react-navigation/native";
+import type {
+  NavigatorScreenParams,
+  RouteProp,
+} from "@react-navigation/native";
+import type { StackNavigationProp } from "@react-navigation/stack";
 import {
   createStackNavigator,
   CardStyleInterpolators,
-  StackNavigationProp,
 } from "@react-navigation/stack";
-import {
-  BottomTabNavigationProp,
-  createBottomTabNavigator,
-} from "@react-navigation/bottom-tabs";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Path } from "react-native-svg";
 
-import { Home, HomeNavigator, HomeStackParamList } from "../Home";
+import type { HomeStackParamList } from "../Home";
+import { Home, HomeNavigator } from "../Home";
 import { Cashback } from "../Cashback";
 import { Get100 } from "../Get100";
-import { Menu, MenuNavigator, MenuStackParamList } from "../Menu";
-import { AuthStackParamList } from "../Auth";
+import type { MenuStackParamList } from "../Menu";
+import { Menu, MenuNavigator } from "../Menu";
+import type { AuthStackParamList } from "../Auth";
 
 import { useTheme } from "./theme";
 
@@ -109,7 +111,7 @@ export type RootStackProps<RouteName extends keyof RootStackParamList> = {
 };
 
 type RootStackParamList = {
-  BottomTabs: BottomTabNavigationProp<BottomTabParamList>;
+  BottomTabs: NavigatorScreenParams<BottomTabParamList>;
   HomeStack: NavigatorScreenParams<HomeStackParamList>;
   MenuStack: NavigatorScreenParams<MenuStackParamList>;
   AuthStack: NavigatorScreenParams<AuthStackParamList>;

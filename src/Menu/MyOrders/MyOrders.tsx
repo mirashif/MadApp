@@ -2,7 +2,7 @@ import React from "react";
 import { ScrollView } from "react-native-gesture-handler";
 
 import { Box, HeaderBar, SafeArea } from "../../components";
-import { RootStackProps } from "../../components/AppNavigator";
+import type { RootStackProps } from "../../components/AppNavigator";
 
 import ActiveOrderItem from "./ActiveOrderItem";
 import CashbackNotice from "./CashbackNotice";
