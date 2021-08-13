@@ -59,7 +59,13 @@ const Menu = ({ navigation }: RootStackProps<"MenuStack">) => {
               navigation.navigate("MenuStack", { screen: "MyOrders" })
             }
           />
-          <Item icon="⚙" label="Settings" />
+          <Item
+            icon="⚙"
+            label="Settings"
+            onPress={() =>
+              navigation.navigate("MenuStack", { screen: "Settings" })
+            }
+          />
           <Item icon="🧭" label="Store Locator" />
           <Item icon="🚶‍♂️" label="Logout" />
         </Box>
