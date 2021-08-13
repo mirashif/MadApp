@@ -6,7 +6,11 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import {
+  BottomSheetModal,
+  BottomSheetView,
+  useBottomSheetModal,
+} from "@gorhom/bottom-sheet";
 
 import {
   Box,
@@ -52,27 +56,26 @@ export default function Home() {
   const theme = useTheme();
 
   const itemSheetRef = useRef<BottomSheetModal>(null);
+  const itemFooterSheetRef = useRef<BottomSheetModal>(null);
 
-  const snapPoints = useMemo(() => ["70%", "90%"], []);
+  const snapPoints = ["70%", "90%"];
+  const footerSnapPoints = [144];
 
-  const handleItemPress = useCallback(() => {
+  const { dismissAll } = useBottomSheetModal();
+
+  const handleItemPress = () => {
     itemSheetRef.current?.present();
-  }, []);
-
-  const handleClosePress = () => itemSheetRef.current.close();
-
-  const handleItemSheetChanges = useCallback((index: number) => {
-    console.log("handleItemSheetChanges", index);
-  }, []);
+    itemFooterSheetRef.current?.present();
+  };
 
   return (
     <SafeArea>
+      {/* ItemSheet */}
       <BottomSheetModal
         ref={itemSheetRef}
-        index={0}
         snapPoints={snapPoints}
-        onChange={handleItemSheetChanges}
         handleComponent={null}
+        onDismiss={dismissAll}
       >
         {/* Header */}
         <ImageBackground
@@ -85,7 +88,7 @@ export default function Home() {
           }}
           source={{ uri: "https://source.unsplash.com/a66sGfOnnqQ/" }}
         >
-          <TouchableWithoutFeedback onPress={handleClosePress}>
+          <TouchableWithoutFeedback onPress={dismissAll}>
             <View
               style={{
                 position: "absolute",
@@ -114,9 +117,8 @@ export default function Home() {
         </ImageBackground>
 
         {/* Main Scrollable */}
-        <BottomSheetScrollView
-          contentContainerStyle={{
-            backgroundColor: "pink",
+        <View
+          style={{
             marginVertical: 25,
             marginHorizontal: 30,
           }}
@@ -141,9 +143,15 @@ export default function Home() {
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mattis
             condimentum faucibus viverra non nullam nisl bibendum egestas.
           </Text>
-        </BottomSheetScrollView>
+        </View>
+      </BottomSheetModal>
 
-        {/* Footer */}
+      {/* Footer */}
+      <BottomSheetModal
+        ref={itemFooterSheetRef}
+        snapPoints={footerSnapPoints}
+        handleComponent={null}
+      >
         <View
           style={{
             paddingTop: 20,
