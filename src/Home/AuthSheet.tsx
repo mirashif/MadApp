@@ -10,6 +10,8 @@ const AuthSheet = () => {
 
   const insets = useSafeAreaInsets();
 
+  const HEIGHT = 185 + insets.bottom;
+
   const authSheetRef = useRef<BottomSheetModal>(null);
 
   useEffect(() => {
@@ -19,7 +21,7 @@ const AuthSheet = () => {
   return (
     <BottomSheetModal
       ref={authSheetRef}
-      snapPoints={[185 + insets.bottom]}
+      snapPoints={[HEIGHT]}
       dismissOnPanDown={false}
       handleComponent={null}
       enableOverDrag={false}
@@ -36,7 +38,7 @@ const AuthSheet = () => {
         />
       )}
     >
-      <Box style={{ margin: 30 }}>
+      <Box style={{ margin: 30, height: HEIGHT }}>
         <Text fontSize={24} fontFamily="Bold" mb="m">
           Sign up or login
         </Text>
