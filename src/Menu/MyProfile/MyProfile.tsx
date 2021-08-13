@@ -87,8 +87,8 @@ const MyProfile = () => {
               onChangeText={() => null}
             />
 
-            <Button onPress={() => null} size="lg">
-              Save changes
+            <Button style={{ marginBottom: 50 }} onPress={() => null} size="lg">
+              Save Changes
             </Button>
           </Box>
         </ScrollView>
