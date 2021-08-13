@@ -7,13 +7,14 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 
-import { Box, useTheme } from "./theme";
+import { Box, useTheme, Text } from "./theme";
 import Button from "./Button";
 import Icon from "./Icon";
 
 interface ModalProps {
   visible: boolean;
   children: React.ReactNode;
+  title?: string;
   buttonTitle?: string;
   onButtonPress?: () => void;
   onBackPress?: () => void;
@@ -25,6 +26,7 @@ const CustomModal = ({
   children,
   onRequestClose,
   buttonTitle,
+  title,
   onButtonPress,
   onBackPress,
 }: ModalProps) => {
@@ -50,9 +52,15 @@ const CustomModal = ({
             style={{ paddingHorizontal: 22, paddingTop: 18, paddingBottom: 26 }}
           >
             {onBackPress && (
-              <TouchableWithoutFeedback onPress={onBackPress}>
-                <Icon name="arrow-left" size={24} />
-              </TouchableWithoutFeedback>
+              <Box flexDirection="row">
+                <TouchableWithoutFeedback onPress={onBackPress}>
+                  <Icon name="arrow-left" size={24} />
+                </TouchableWithoutFeedback>
+
+                <Text ml="m" fontSize={24}>
+                  {title}
+                </Text>
+              </Box>
             )}
 
             {children}

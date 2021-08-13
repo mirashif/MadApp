@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Dimensions, ScrollView } from "react-native";
 
 import {
   Box,
+  CustomModal,
   HeaderBar,
   makeStyles,
   SafeArea,
@@ -10,11 +11,13 @@ import {
   useTheme,
 } from "../../components";
 import LocationBar from "../LocationBar";
+import Input from "../../components/Input";
 
 import OrderItem from "./OrderItem";
 import PopularItem from "./PopularItem";
 import { VoucherButton, ClearCartButton, CheckoutButton } from "./Button";
 import OrderSummaryItem, { Discount } from "./Item";
+import VoucherIllustration from "./assets/VoucherIllustration.svg";
 
 const orderItems = [
   {
@@ -52,6 +55,31 @@ const Cart = () => {
   const styles = useStyles();
 
   const windowWidth = Dimensions.get("window").width;
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [tempVoucher, setTempVoucher] = useState<null | string>(null);
+  const [voucher, setVoucher] = useState<null | string>(null);
+  const [wrongVoucher, setWrongVoucher] = useState(false);
+
+  const handleVoucher = () => {
+    if (wrongVoucher) {
+      setWrongVoucher(false);
+      return;
+    }
+
+    if (tempVoucher?.toLocaleLowerCase() === "madapp") {
+      setVoucher(tempVoucher);
+      setModalVisible(false);
+      return;
+    }
+
+    setWrongVoucher(true);
+  };
+
+  const handleModalClose = () => {
+    setModalVisible(false);
+    setWrongVoucher(false);
+  };
 
   return (
     <SafeArea>
@@ -109,8 +137,13 @@ const Cart = () => {
           <OrderSummaryItem title="Delivery fee" description="৳30" />
 
           <Box mt="m">
-            <VoucherButton onPress={() => null} />
-            <Discount amount={20} onDiscountCancel={() => null} />
+            {voucher && (
+              <Discount amount={20} onDiscountCancel={() => setVoucher(null)} />
+            )}
+
+            {!voucher && (
+              <VoucherButton onPress={() => setModalVisible(true)} />
+            )}
           </Box>
         </Box>
       </ScrollView>
@@ -130,17 +163,50 @@ const Cart = () => {
           style={{ paddingLeft: 46, paddingRight: 38 }}
         >
           <Box>
-            <Text style={{ fontSize: 18, color: "#111111" }}>Total</Text>
+            <Text style={{ fontSize: 18 }}>Total</Text>
             <Text style={{ color: "#BBBBBB", fontSize: 11 }}>VAT included</Text>
           </Box>
 
-          <Text style={{ fontSize: 18, color: "#111111" }}>৳829</Text>
+          <Text style={{ fontSize: 18 }}>৳829</Text>
         </Box>
 
         <Box style={{ alignItems: "center", marginTop: 27 }}>
           <CheckoutButton onPress={() => null} />
         </Box>
       </Box>
+
+      <CustomModal
+        visible={modalVisible}
+        onRequestClose={handleModalClose}
+        onBackPress={handleModalClose}
+        buttonTitle={wrongVoucher ? "Try Again" : "Apply"}
+        onButtonPress={handleVoucher}
+        title={wrongVoucher ? "Uh Oh!" : ""}
+      >
+        {wrongVoucher && (
+          <>
+            <Text fontSize={15} style={{ marginTop: 29, marginBottom: 35 }}>
+              The minimum order value for this voucher is ৳130.00 {"\n\n"}{" "}
+              Please add ৳23.00 more to use this voucher
+            </Text>
+          </>
+        )}
+
+        {!wrongVoucher && (
+          <>
+            <Box alignItems="center">
+              <VoucherIllustration />
+            </Box>
+
+            <Box my="m">
+              <Input
+                placeholder="Enter Your Voucher Code"
+                onChangeText={(value) => setTempVoucher(value)}
+              />
+            </Box>
+          </>
+        )}
+      </CustomModal>
     </SafeArea>
   );
 };
