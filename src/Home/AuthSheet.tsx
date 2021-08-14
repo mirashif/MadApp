@@ -1,16 +1,12 @@
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import React, { useEffect, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { StyleSheet } from "react-native";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
 import { Box, Text, Button } from "../components";
 
 const AuthSheet = () => {
   const navigation = useNavigation();
-
-  const insets = useSafeAreaInsets();
-
-  const HEIGHT = 185 + insets.bottom;
 
   const authSheetRef = useRef<BottomSheetModal>(null);
 
@@ -21,7 +17,7 @@ const AuthSheet = () => {
   return (
     <BottomSheetModal
       ref={authSheetRef}
-      snapPoints={[HEIGHT]}
+      snapPoints={[210]}
       dismissOnPanDown={false}
       handleComponent={null}
       enableOverDrag={false}
@@ -29,16 +25,16 @@ const AuthSheet = () => {
         <Box
           style={{
             backgroundColor: "rgba(0, 0, 0, 0.17)",
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
+            ...StyleSheet.absoluteFillObject,
           }}
         />
       )}
     >
-      <Box style={{ margin: 30, height: HEIGHT }}>
+      <Box
+        style={{
+          margin: 30,
+        }}
+      >
         <Text fontSize={24} fontFamily="Bold" mb="m">
           Sign up or login
         </Text>
