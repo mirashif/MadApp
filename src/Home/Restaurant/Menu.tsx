@@ -22,6 +22,8 @@ const Menu = () => {
     new Array(tabs.length).fill(0)
   );
 
+  const [anchor, setAnchor] = useState(0);
+
   const TabScrollViewRef = useRef<ScrollView>(null);
 
   const handleTabScroll = (index: number) => {
@@ -55,8 +57,16 @@ const Menu = () => {
                     layout: { width },
                   },
                 }) => {
-                  measurements[index] = width;
-                  setMeasurements([...measurements]);
+                  // measurements[index] = width;
+                  // setMeasurements([...measurements]);
+                  if (index > 0) {
+                    const a = anchor + width;
+                    setAnchor(a);
+                    const _tabs = tabs;
+                    _tabs[index].anchor = a;
+                  }
+
+                  console.log(anchor);
 
                   // const _tabs = tabs;
                   // _tabs[index].width = width;
