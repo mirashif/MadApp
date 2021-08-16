@@ -1,42 +1,85 @@
-import React, { useRef, useState } from "react";
-import Animated from "react-native-reanimated";
-import { onScrollEvent, useValue } from "react-native-redash/lib/module/v1";
+import React, { useEffect, useRef, useState } from "react";
+import { ScrollView, TouchableWithoutFeedback } from "react-native";
 
-import { SafeArea } from "../../components";
-import FloatingCart from "../FloatingCart";
+import { Box, SafeArea, Text } from "../../components";
 
-import Content, { defaultTabs } from "./Content";
-import Header from "./Header";
+const menu = [
+  { name: "Classic Pizzas" },
+  { name: "Gourmet Pizzas" },
+  { name: "Tomato Soups" },
+  { name: "Potato Mehedi" },
+  { name: "Classic Pizzas2" },
+  { name: "Gourmet Pizzas2" },
+  { name: "Tomato Soups2" },
+  { name: "Potato Mehedi2" },
+];
 
 const Menu = () => {
-  const scrollView = useRef<Animated.ScrollView>(null);
-  const [tabs, setTabs] = useState(defaultTabs);
-  const y = useValue(0);
-  const onScroll = onScrollEvent({ y });
+  const [tabs, setTabs] = useState(
+    menu.map(({ name }) => ({ name, width: 0, anchor: 0 }))
+  );
+  const [measurements, setMeasurements] = useState<number[]>(
+    new Array(tabs.length).fill(0)
+  );
+
+  const TabScrollViewRef = useRef<ScrollView>(null);
+
+  const handleTabScroll = (index: number) => {
+    TabScrollViewRef.current?.scrollTo({
+      x: tabs[index].anchor,
+      y: 0,
+      animated: true,
+    });
+  };
+
+  useEffect(() => {
+    console.log(measurements);
+  }, [measurements]);
 
   return (
     <SafeArea>
-      <FloatingCart insetBottom />
+      <Box flexDirection="row" my="xl">
+        <ScrollView
+          ref={TabScrollViewRef}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+        >
+          {tabs.map((tab, index) => (
+            <TouchableWithoutFeedback
+              onPress={() => handleTabScroll(index)}
+              key={index}
+            >
+              <Box
+                onLayout={({
+                  nativeEvent: {
+                    layout: { width },
+                  },
+                }) => {
+                  measurements[index] = width;
+                  setMeasurements([...measurements]);
 
-      <Animated.ScrollView
-        showsVerticalScrollIndicator={false}
-        ref={scrollView}
-        scrollEventThrottle={1}
-        {...{ onScroll }}
-      >
-        <Content
-          onMeasurement={(index, tab) => {
-            tabs[index] = tab;
-            setTabs([...tabs]);
-          }}
-        />
-      </Animated.ScrollView>
+                  // const _tabs = tabs;
+                  // _tabs[index].width = width;
 
-      <Header
-        title="Cheez"
-        image="https://source.unsplash.com/a66sGfOnnqQ"
-        {...{ y, tabs, scrollView }}
-      />
+                  // let anchor = 0;
+                  // _tabs.forEach((t, i) => {
+                  //   if (i < index) {
+                  //     anchor += t.width;
+                  //   }
+                  // });
+                  // _tabs[index].anchor = anchor;
+                  // setTabs(_tabs);
+                }}
+                py="m"
+                px="xl"
+                backgroundColor="primary"
+              >
+                <Text color="primaryContrast">{tab.name}</Text>
+              </Box>
+            </TouchableWithoutFeedback>
+          ))}
+        </ScrollView>
+      </Box>
     </SafeArea>
   );
 };

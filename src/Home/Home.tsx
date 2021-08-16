@@ -101,7 +101,7 @@ export default function Home() {
     <SafeArea>
       <FloatingCart />
 
-      {isFocused && <AuthSheet />}
+      {isFocused && false && <AuthSheet />}
 
       {/* ItemSheet */}
       <BottomSheetModal
