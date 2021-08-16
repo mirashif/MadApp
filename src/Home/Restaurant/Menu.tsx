@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ScrollView, TouchableWithoutFeedback } from "react-native";
 
 import { Box, SafeArea, Text } from "../../components";
@@ -14,24 +14,38 @@ const menu = [
   { name: "Potato Mehedi2" },
 ];
 
+const tabs = menu.map(({ name }) => ({ name }));
+
 const Menu = () => {
-  const [tabs, setTabs] = useState(
-    menu.map(({ name }) => ({ name, width: 0, anchor: 0 }))
-  );
+  const [tabWidth, setTabWidth] = useState(new Array(menu.length).fill(0));
+  const [tabAnchor, setTabAnchor] = useState(new Array(menu.length).fill(0));
 
   const TabScrollViewRef = useRef<ScrollView>(null);
 
   const handleTabScroll = (index: number) => {
     TabScrollViewRef.current?.scrollTo({
-      x: tabs[index].anchor,
+      x: tabAnchor[index],
       y: 0,
       animated: true,
     });
   };
 
-  useEffect(() => {
-    console.log(tabs);
-  }, [tabs]);
+  const calculateAnchors = useMemo(
+    (currentIndex: number) => {
+      console.log(tabs);
+      tabs.forEach((tab) => {
+        let anchor = 0;
+        _tabs.forEach((t, i) => {
+          if (i < index) {
+            anchor += t.width;
+          }
+        });
+        _tabs[index].anchor = anchor;
+        setTabs(_tabs);
+      });
+    },
+    [tabs]
+  );
 
   return (
     <SafeArea>
@@ -52,14 +66,11 @@ const Menu = () => {
                     layout: { width },
                   },
                 }) => {
-                  tabs[index].width = Math.round(width);
+                  tabWidth[index] = Math.round(width);
 
-                  // if (index === 0) _tabs[index].anchor = 0;
-                  // else
-                  //   _tabs[index].anchor =
-                  //     _tabs[index - 1].anchor + _tabs[index - 1].width;
+                  setTabWidth([...tabWidth]);
 
-                  setTabs([...tabs]);
+                  calculateAnchors(index);
                 }}
                 py="m"
                 px="xl"
