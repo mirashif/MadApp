@@ -18,11 +18,6 @@ const Menu = () => {
   const [tabs, setTabs] = useState(
     menu.map(({ name }) => ({ name, width: 0, anchor: 0 }))
   );
-  const [measurements, setMeasurements] = useState<number[]>(
-    new Array(tabs.length).fill(0)
-  );
-
-  const [anchor, setAnchor] = useState(0);
 
   const TabScrollViewRef = useRef<ScrollView>(null);
 
@@ -35,8 +30,8 @@ const Menu = () => {
   };
 
   useEffect(() => {
-    console.log(measurements);
-  }, [measurements]);
+    console.log(tabs);
+  }, [tabs]);
 
   return (
     <SafeArea>
@@ -57,28 +52,14 @@ const Menu = () => {
                     layout: { width },
                   },
                 }) => {
-                  // measurements[index] = width;
-                  // setMeasurements([...measurements]);
-                  if (index > 0) {
-                    const a = anchor + width;
-                    setAnchor(a);
-                    const _tabs = tabs;
-                    _tabs[index].anchor = a;
-                  }
+                  tabs[index].width = Math.round(width);
 
-                  console.log(anchor);
+                  // if (index === 0) _tabs[index].anchor = 0;
+                  // else
+                  //   _tabs[index].anchor =
+                  //     _tabs[index - 1].anchor + _tabs[index - 1].width;
 
-                  // const _tabs = tabs;
-                  // _tabs[index].width = width;
-
-                  // let anchor = 0;
-                  // _tabs.forEach((t, i) => {
-                  //   if (i < index) {
-                  //     anchor += t.width;
-                  //   }
-                  // });
-                  // _tabs[index].anchor = anchor;
-                  // setTabs(_tabs);
+                  setTabs([...tabs]);
                 }}
                 py="m"
                 px="xl"
