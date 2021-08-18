@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useRef, useState } from "react";
 import { ScrollView, TouchableWithoutFeedback } from "react-native";
 
 import { Box, SafeArea, Text } from "../../components";
@@ -40,16 +34,6 @@ const Menu = () => {
     });
   };
 
-  useEffect(() => {
-    // TODO: update anchor values
-    const anchor = measurements.reduce(
-      (accumulator, value) => accumulator + value,
-      0
-    );
-
-    setAnchors([...anchors]);
-  }, [measurements, anchors]);
-
   return (
     <SafeArea>
       <Box flexDirection="row" my="xl">
@@ -58,10 +42,10 @@ const Menu = () => {
           horizontal
           showsHorizontalScrollIndicator={false}
         >
-          {tabs.map((tab, index) => (
+          {tabs.map((tab, tabIndex) => (
             <TouchableWithoutFeedback
-              onPress={() => handleTabScroll(index)}
-              key={index}
+              onPress={() => handleTabScroll(tabIndex)}
+              key={tabIndex}
             >
               <Box
                 onLayout={({
@@ -69,8 +53,19 @@ const Menu = () => {
                     layout: { width },
                   },
                 }) => {
-                  measurements[index] = Math.round(width);
+                  measurements[tabIndex] = Math.round(width);
                   setMeasurements([...measurements]);
+
+                  // anchors[index] = measurements[index];
+
+                  const accumulator = 0;
+                  anchors.forEach((anchor, anchorIndex) => {
+                    if (anchorIndex < tabIndex) {
+                      anchor = accumulator + measurements[tabIndex];
+                    }
+                  });
+
+                  setAnchors([...anchors]);
                 }}
                 py="m"
                 px="xl"
