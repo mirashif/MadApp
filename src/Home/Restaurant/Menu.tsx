@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ScrollView, TouchableWithoutFeedback } from "react-native";
 
 import { Box, SafeArea, Text } from "../../components";
@@ -23,6 +23,11 @@ const Menu = () => {
   const [anchors, setAnchors] = useState<number[]>(
     new Array(tabs.length).fill(0)
   );
+
+  useEffect(() => {
+    console.log({ measurements });
+    console.log({ anchors });
+  }, [measurements, anchors]);
 
   const TabScrollViewRef = useRef<ScrollView>(null);
 
@@ -53,19 +58,21 @@ const Menu = () => {
                     layout: { width },
                   },
                 }) => {
-                  measurements[tabIndex] = Math.round(width);
-                  setMeasurements([...measurements]);
+                  const _measurements = measurements;
+                  const _anchors = anchors;
 
-                  // anchors[index] = measurements[index];
+                  _measurements[tabIndex] = Math.round(width);
+                  setMeasurements([..._measurements]);
 
-                  const accumulator = 0;
-                  anchors.forEach((anchor, anchorIndex) => {
+                  let tabAnchor = 0;
+                  _anchors.forEach((_, anchorIndex) => {
                     if (anchorIndex < tabIndex) {
-                      anchor = accumulator + measurements[tabIndex];
+                      tabAnchor += _measurements[tabIndex];
                     }
                   });
 
-                  setAnchors([...anchors]);
+                  anchors[tabIndex] = tabAnchor;
+                  setAnchors([..._anchors]);
                 }}
                 py="m"
                 px="xl"
