@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Image, ScrollView, TouchableWithoutFeedback } from "react-native";
-import Animated from "react-native-reanimated";
+import Animated, { useSharedValue } from "react-native-reanimated";
 
 import { Box, SafeArea, Text } from "../../components";
 
@@ -51,6 +51,7 @@ const menu = [
 export const defaultTabs = menu.map(({ name }) => ({ name, anchor: 0 }));
 
 const Menu = () => {
+  const scrollOffsetY = useSharedValue(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [tabs, setTabs] = useState(defaultTabs);
   const [measurements, setMeasurements] = useState<number[]>(
@@ -68,11 +69,11 @@ const Menu = () => {
     setTabs([...tabs]);
   };
 
-  const TabScrollViewRef = useRef<Animated.ScrollView>(null);
+  const TabScrollViewRef = useRef<ScrollView>(null);
   const ContentScrollViewRef = useRef<Animated.ScrollView>(null);
 
   const handleAutoScroll = (index: number) => {
-    TabScrollViewRef.current?.getNode().scrollTo({
+    TabScrollViewRef.current?.scrollTo({
       x: anchors[index],
       y: 0,
       animated: true,
@@ -88,7 +89,11 @@ const Menu = () => {
     nativeEvent: {
       contentOffset: { y },
     },
-  }) => {};
+  }: {
+    nativeEvent: { contentOffset: { y: number } };
+  }) => {
+    scrollOffsetY.value = y;
+  };
 
   return (
     <SafeArea>
