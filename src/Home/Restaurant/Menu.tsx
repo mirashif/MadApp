@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Image, ScrollView, TouchableWithoutFeedback } from "react-native";
+import Animated from "react-native-reanimated";
 
 import { Box, SafeArea, Text } from "../../components";
 
@@ -50,31 +51,14 @@ const menu = [
 export const defaultTabs = menu.map(({ name }) => ({ name, anchor: 0 }));
 
 const Menu = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
   const [tabs, setTabs] = useState(defaultTabs);
-
   const [measurements, setMeasurements] = useState<number[]>(
     new Array(tabs.length).fill(0)
   );
   const [anchors, setAnchors] = useState<number[]>(
     new Array(tabs.length).fill(0)
   );
-
-  const TabScrollViewRef = useRef<ScrollView>(null);
-  const ContentScrollViewRef = useRef<ScrollView>(null);
-
-  const handleAutoScroll = (index: number) => {
-    TabScrollViewRef.current?.scrollTo({
-      x: anchors[index],
-      y: 0,
-      animated: true,
-    });
-
-    ContentScrollViewRef.current?.scrollTo({
-      x: 0,
-      y: tabs[index].anchor,
-      animated: true,
-    });
-  };
 
   const onMeasurement = (
     index: number,
@@ -83,6 +67,28 @@ const Menu = () => {
     tabs[index] = tab;
     setTabs([...tabs]);
   };
+
+  const TabScrollViewRef = useRef<Animated.ScrollView>(null);
+  const ContentScrollViewRef = useRef<Animated.ScrollView>(null);
+
+  const handleAutoScroll = (index: number) => {
+    TabScrollViewRef.current?.getNode().scrollTo({
+      x: anchors[index],
+      y: 0,
+      animated: true,
+    });
+    ContentScrollViewRef.current?.getNode().scrollTo({
+      x: 0,
+      y: tabs[index].anchor,
+      animated: true,
+    });
+  };
+
+  const onScroll = ({
+    nativeEvent: {
+      contentOffset: { y },
+    },
+  }) => {};
 
   return (
     <SafeArea>
@@ -121,20 +127,44 @@ const Menu = () => {
                 _anchors[tabIndex] = tabAnchor;
                 setAnchors([..._anchors]);
               }}
-              py="m"
-              px="xl"
-              backgroundColor="background"
+              style={{
+                flexDirection: "row",
+                height: 50,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
-              <Text color="dark">• {tab.name}</Text>
+              <Text
+                style={{
+                  fontFamily: "Bold",
+                  fontSize: 18,
+                  color: "black",
+                  marginRight: 18,
+                }}
+              >
+                •
+              </Text>
+              <Text
+                style={{
+                  fontFamily: "Bold",
+                  fontSize: 18,
+                  color: "black",
+                  marginRight: 18,
+                }}
+              >
+                {tab.name}
+              </Text>
             </Box>
           </TouchableWithoutFeedback>
         ))}
       </ScrollView>
 
       {/* Content */}
-      <ScrollView
-        ref={ContentScrollViewRef}
+      <Animated.ScrollView
         showsVerticalScrollIndicator={false}
+        ref={ContentScrollViewRef}
+        scrollEventThrottle={1}
+        onScroll={onScroll}
       >
         {menu.map(({ name: menuName, items: menuItems }, i) => (
           <Box
@@ -210,7 +240,7 @@ const Menu = () => {
             </Box>
           </Box>
         ))}
-      </ScrollView>
+      </Animated.ScrollView>
     </SafeArea>
   );
 };
