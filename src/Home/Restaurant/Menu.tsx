@@ -95,16 +95,6 @@ const Menu = () => {
     nativeEvent: { contentOffset: { y: number } };
   }) => {
     y.value = contentOffsetY;
-
-    // tabs.forEach(({ contentAnchor }, contentIndex) => {
-    //   if (y.value >= tabs[tabs.length - 1].contentAnchor)
-    //     setActiveIndex(tabs.length - 1);
-    //   else if (
-    //     y.value >= contentAnchor &&
-    //     y.value < tabs[contentIndex + 1].contentAnchor
-    //   )
-    //     setActiveIndex(contentIndex);
-    // });
   };
 
   return (
