@@ -4,6 +4,11 @@ import Animated, { useSharedValue } from "react-native-reanimated";
 
 import { Box, SafeArea, Text } from "../../components";
 
+interface TabModel {
+  name: string;
+  contentAnchor: number;
+}
+
 const items = [
   {
     name: "Long Hongdae Nights",
@@ -48,16 +53,19 @@ const menu = [
   { name: "Potato Mehedi", items },
 ];
 
-export const defaultTabs = menu.map(({ name }) => ({ name, anchor: 0 }));
+export const defaultTabs: TabModel[] = menu.map(({ name }) => ({
+  name,
+  contentAnchor: 0,
+}));
 
 const Menu = () => {
   const y = useSharedValue(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [tabs, setTabs] = useState(defaultTabs);
-  const [measurements, setMeasurements] = useState<number[]>(
+  const [tabWidthValues, setTabWidthValues] = useState<number[]>(
     new Array(tabs.length).fill(0)
   );
-  const [anchors, setAnchors] = useState<number[]>(
+  const [tabAnchors, setTabAnchors] = useState<number[]>(
     new Array(tabs.length).fill(0)
   );
 
@@ -74,23 +82,18 @@ const Menu = () => {
 
   useEffect(() => {
     TabScrollViewRef.current?.scrollTo({
-      x: anchors[activeIndex],
+      x: tabAnchors[activeIndex],
       y: 0,
       animated: true,
     });
 
     ContentScrollViewRef.current?.getNode().scrollTo({
       x: 0,
-      y: tabs[activeIndex].anchor,
+      y: tabs[activeIndex].contentAnchor,
       animated: true,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeIndex]);
-
-  const handleIndexOnScroll = (_y: number) => {
-    console.log(_y);
-    console.log(anchors);
-  };
 
   const onScroll = ({
     nativeEvent: {
@@ -100,7 +103,16 @@ const Menu = () => {
     nativeEvent: { contentOffset: { y: number } };
   }) => {
     y.value = contentOffsetY;
-    handleIndexOnScroll(y.value);
+
+    // tabs.forEach(({ contentAnchor }, contentIndex) => {
+    //   if (y.value >= tabs[tabs.length - 1].contentAnchor)
+    //     setActiveIndex(tabs.length - 1);
+    //   else if (
+    //     y.value >= contentAnchor &&
+    //     y.value < tabs[contentIndex + 1].contentAnchor
+    //   )
+    //     setActiveIndex(contentIndex);
+    // });
   };
 
   return (
@@ -122,17 +134,16 @@ const Menu = () => {
             key={tabIndex}
           >
             <Box
-              // active={index === activeIndex}
               onLayout={({
                 nativeEvent: {
                   layout: { width },
                 },
               }) => {
-                const _measurements = measurements;
-                const _anchors = anchors;
+                const _measurements = tabWidthValues;
+                const _anchors = tabAnchors;
 
-                _measurements[tabIndex] = Math.round(width);
-                setMeasurements([..._measurements]);
+                _measurements[tabIndex] = width;
+                setTabWidthValues([..._measurements]);
 
                 let tabAnchor = 0;
                 _anchors.forEach((_, anchorIndex) => {
@@ -141,7 +152,7 @@ const Menu = () => {
                   }
                 });
                 _anchors[tabIndex] = tabAnchor;
-                setAnchors([..._anchors]);
+                setTabAnchors([..._anchors]);
               }}
               style={{
                 flexDirection: "row",
@@ -193,7 +204,7 @@ const Menu = () => {
             }) =>
               onMeasurement(i, {
                 name: menuName,
-                anchor,
+                anchor: anchor,
               })
             }
           >
