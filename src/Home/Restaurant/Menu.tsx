@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Image, ScrollView, TouchableWithoutFeedback } from "react-native";
 import Animated, { useSharedValue } from "react-native-reanimated";
 
@@ -72,18 +72,20 @@ const Menu = () => {
   const TabScrollViewRef = useRef<ScrollView>(null);
   const ContentScrollViewRef = useRef<Animated.ScrollView>(null);
 
-  const handleIndexScroll = (index: number) => {
+  useEffect(() => {
     TabScrollViewRef.current?.scrollTo({
-      x: anchors[index],
+      x: anchors[activeIndex],
       y: 0,
       animated: true,
     });
+
     ContentScrollViewRef.current?.getNode().scrollTo({
       x: 0,
-      y: tabs[index].anchor,
+      y: tabs[activeIndex].anchor,
       animated: true,
     });
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeIndex]);
 
   const onScroll = ({
     nativeEvent: {
@@ -101,6 +103,7 @@ const Menu = () => {
       <ScrollView
         contentContainerStyle={{
           flexDirection: "row",
+          paddingHorizontal: 20,
         }}
         ref={TabScrollViewRef}
         horizontal
@@ -108,10 +111,11 @@ const Menu = () => {
       >
         {tabs.map((tab, tabIndex) => (
           <TouchableWithoutFeedback
-            onPress={() => handleIndexScroll(tabIndex)}
+            onPress={() => setActiveIndex(tabIndex)}
             key={tabIndex}
           >
             <Box
+              // active={index === activeIndex}
               onLayout={({
                 nativeEvent: {
                   layout: { width },
@@ -143,7 +147,7 @@ const Menu = () => {
                 style={{
                   fontFamily: "Bold",
                   fontSize: 18,
-                  color: "black",
+                  color: activeIndex === tabIndex ? "#FFB81B" : "black",
                   marginRight: 18,
                 }}
               >
@@ -153,7 +157,7 @@ const Menu = () => {
                 style={{
                   fontFamily: "Bold",
                   fontSize: 18,
-                  color: "black",
+                  color: activeIndex === tabIndex ? "#FFB81B" : "black",
                   marginRight: 18,
                 }}
               >
