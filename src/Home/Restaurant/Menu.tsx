@@ -87,6 +87,11 @@ const Menu = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeIndex]);
 
+  const handleIndexOnScroll = (_y: number) => {
+    console.log(_y);
+    console.log(anchors);
+  };
+
   const onScroll = ({
     nativeEvent: {
       contentOffset: { y: contentOffsetY },
@@ -95,17 +100,19 @@ const Menu = () => {
     nativeEvent: { contentOffset: { y: number } };
   }) => {
     y.value = contentOffsetY;
+    handleIndexOnScroll(y.value);
   };
 
   return (
     <SafeArea>
       {/* TabHeader */}
       <ScrollView
+        ref={TabScrollViewRef}
+        scrollEventThrottle={1}
         contentContainerStyle={{
           flexDirection: "row",
           paddingHorizontal: 20,
         }}
-        ref={TabScrollViewRef}
         horizontal
         showsHorizontalScrollIndicator={false}
       >
