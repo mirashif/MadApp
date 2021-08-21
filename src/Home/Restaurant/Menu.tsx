@@ -51,7 +51,7 @@ const menu = [
 export const defaultTabs = menu.map(({ name }) => ({ name, anchor: 0 }));
 
 const Menu = () => {
-  const scrollOffsetY = useSharedValue(0);
+  const y = useSharedValue(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [tabs, setTabs] = useState(defaultTabs);
   const [measurements, setMeasurements] = useState<number[]>(
@@ -72,7 +72,7 @@ const Menu = () => {
   const TabScrollViewRef = useRef<ScrollView>(null);
   const ContentScrollViewRef = useRef<Animated.ScrollView>(null);
 
-  const handleAutoScroll = (index: number) => {
+  const handleIndexScroll = (index: number) => {
     TabScrollViewRef.current?.scrollTo({
       x: anchors[index],
       y: 0,
@@ -87,12 +87,12 @@ const Menu = () => {
 
   const onScroll = ({
     nativeEvent: {
-      contentOffset: { y },
+      contentOffset: { y: contentOffsetY },
     },
   }: {
     nativeEvent: { contentOffset: { y: number } };
   }) => {
-    scrollOffsetY.value = y;
+    y.value = contentOffsetY;
   };
 
   return (
@@ -108,7 +108,7 @@ const Menu = () => {
       >
         {tabs.map((tab, tabIndex) => (
           <TouchableWithoutFeedback
-            onPress={() => handleAutoScroll(tabIndex)}
+            onPress={() => handleIndexScroll(tabIndex)}
             key={tabIndex}
           >
             <Box
