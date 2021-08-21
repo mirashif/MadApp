@@ -4,11 +4,6 @@ import Animated, { useSharedValue } from "react-native-reanimated";
 
 import { Box, SafeArea, Text } from "../../components";
 
-interface TabModel {
-  name: string;
-  contentAnchor: number;
-}
-
 const items = [
   {
     name: "Long Hongdae Nights",
@@ -53,10 +48,7 @@ const menu = [
   { name: "Potato Mehedi", items },
 ];
 
-export const defaultTabs: TabModel[] = menu.map(({ name }) => ({
-  name,
-  contentAnchor: 0,
-}));
+export const defaultTabs = menu.map(({ name }) => ({ name, anchor: 0 }));
 
 const Menu = () => {
   const y = useSharedValue(0);
@@ -89,7 +81,7 @@ const Menu = () => {
 
     ContentScrollViewRef.current?.getNode().scrollTo({
       x: 0,
-      y: tabs[activeIndex].contentAnchor,
+      y: tabs[activeIndex].anchor,
       animated: true,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -103,28 +95,17 @@ const Menu = () => {
     nativeEvent: { contentOffset: { y: number } };
   }) => {
     y.value = contentOffsetY;
-
-    // tabs.forEach(({ contentAnchor }, contentIndex) => {
-    //   if (y.value >= tabs[tabs.length - 1].contentAnchor)
-    //     setActiveIndex(tabs.length - 1);
-    //   else if (
-    //     y.value >= contentAnchor &&
-    //     y.value < tabs[contentIndex + 1].contentAnchor
-    //   )
-    //     setActiveIndex(contentIndex);
-    // });
   };
 
   return (
     <SafeArea>
       {/* TabHeader */}
       <ScrollView
-        ref={TabScrollViewRef}
-        scrollEventThrottle={1}
         contentContainerStyle={{
           flexDirection: "row",
           paddingHorizontal: 20,
         }}
+        ref={TabScrollViewRef}
         horizontal
         showsHorizontalScrollIndicator={false}
       >
@@ -134,6 +115,7 @@ const Menu = () => {
             key={tabIndex}
           >
             <Box
+              // active={index === activeIndex}
               onLayout={({
                 nativeEvent: {
                   layout: { width },
@@ -142,7 +124,7 @@ const Menu = () => {
                 const _measurements = tabWidthValues;
                 const _anchors = tabAnchors;
 
-                _measurements[tabIndex] = width;
+                _measurements[tabIndex] = Math.round(width);
                 setTabWidthValues([..._measurements]);
 
                 let tabAnchor = 0;
@@ -204,7 +186,7 @@ const Menu = () => {
             }) =>
               onMeasurement(i, {
                 name: menuName,
-                anchor: anchor,
+                anchor,
               })
             }
           >
