@@ -48,7 +48,7 @@ const menu = [
   { name: "Potato Mehedi", items },
 ];
 
-export const defaultTabs = menu.map(({ name }) => ({ name, anchor: 0 }));
+export const defaultTabs = menu.map(({ name }) => ({ name, contentAnchor: 0 }));
 
 const Menu = () => {
   const y = useSharedValue(0);
@@ -63,7 +63,7 @@ const Menu = () => {
 
   const onMeasurement = (
     index: number,
-    tab: { name: string; anchor: number }
+    tab: { name: string; contentAnchor: number }
   ) => {
     tabs[index] = tab;
     setTabs([...tabs]);
@@ -81,7 +81,7 @@ const Menu = () => {
 
     ContentScrollViewRef.current?.getNode().scrollTo({
       x: 0,
-      y: tabs[activeIndex].anchor,
+      y: tabs[activeIndex].contentAnchor,
       animated: true,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -95,6 +95,16 @@ const Menu = () => {
     nativeEvent: { contentOffset: { y: number } };
   }) => {
     y.value = contentOffsetY;
+
+    // tabs.forEach(({ contentAnchor }, contentIndex) => {
+    //   if (y.value >= tabs[tabs.length - 1].contentAnchor)
+    //     setActiveIndex(tabs.length - 1);
+    //   else if (
+    //     y.value >= contentAnchor &&
+    //     y.value < tabs[contentIndex + 1].contentAnchor
+    //   )
+    //     setActiveIndex(contentIndex);
+    // });
   };
 
   return (
@@ -181,12 +191,12 @@ const Menu = () => {
             key={i}
             onLayout={({
               nativeEvent: {
-                layout: { y: anchor },
+                layout: { y: contentAnchor },
               },
             }) =>
               onMeasurement(i, {
                 name: menuName,
-                anchor,
+                contentAnchor,
               })
             }
           >
