@@ -1,11 +1,31 @@
+import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useRef, useState } from "react";
-import { Image, ScrollView, TouchableWithoutFeedback } from "react-native";
-import Animated, { useSharedValue } from "react-native-reanimated";
+import {
+  ScrollView,
+  Image,
+  ImageBackground,
+  Linking,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
+import Animated, {
+  Extrapolate,
+  interpolate,
+  useSharedValue,
+} from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Box, SafeArea, Text } from "../../components";
+import {
+  Box,
+  CircularIcon,
+  Icon,
+  SafeArea,
+  Text,
+  useTheme,
+} from "../../components";
 
 import type { TabModel } from "./Constants";
-import Header from "./Header";
+import { HEADER_IMAGE_HEIGHT, HEADER_HEIGHT } from "./Constants";
 
 const items = [
   {
@@ -59,6 +79,10 @@ export const defaultTabs: TabModel[] = menu.map(({ name }) => ({
 }));
 
 const Menu = () => {
+  const theme = useTheme();
+  const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
+
   const y = useSharedValue(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [tabs, setTabs] = useState(defaultTabs);
@@ -69,6 +93,34 @@ const Menu = () => {
     new Array(tabs.length).fill(0)
   );
 
+  const TabScrollViewRef = useRef<ScrollView>(null);
+  const ContentScrollViewRef = useRef<Animated.ScrollView>(null);
+
+  const height = interpolate(
+    y.value,
+    [0, HEADER_IMAGE_HEIGHT],
+    [HEADER_IMAGE_HEIGHT + HEADER_HEIGHT, HEADER_HEIGHT],
+    Extrapolate.CLAMP
+  );
+  const marginBottom = interpolate(
+    y.value,
+    [0, HEADER_IMAGE_HEIGHT / 2, HEADER_IMAGE_HEIGHT],
+    [HEADER_HEIGHT / 2 + 15, HEADER_HEIGHT / 2, 0],
+    Extrapolate.CLAMP
+  );
+  const opacity = interpolate(
+    y.value,
+    [0, HEADER_IMAGE_HEIGHT - HEADER_HEIGHT, HEADER_IMAGE_HEIGHT],
+    [1, 0, 0],
+    Extrapolate.CLAMP
+  );
+  const translateY = interpolate(
+    y.value,
+    [0, HEADER_IMAGE_HEIGHT - HEADER_HEIGHT, HEADER_IMAGE_HEIGHT],
+    [0, 0, -HEADER_IMAGE_HEIGHT],
+    Extrapolate.CLAMP
+  );
+
   const onMeasurement = (
     index: number,
     tab: { name: string; contentAnchor: number }
@@ -77,8 +129,15 @@ const Menu = () => {
     setTabs([...tabs]);
   };
 
-  const TabScrollViewRef = useRef<ScrollView>(null);
-  const ContentScrollViewRef = useRef<Animated.ScrollView>(null);
+  const onScroll = ({
+    nativeEvent: {
+      contentOffset: { y: contentOffsetY },
+    },
+  }: {
+    nativeEvent: { contentOffset: { y: number } };
+  }) => {
+    y.value = contentOffsetY;
+  };
 
   useEffect(() => {
     TabScrollViewRef.current?.scrollTo({
@@ -95,87 +154,8 @@ const Menu = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeIndex]);
 
-  const onScroll = ({
-    nativeEvent: {
-      contentOffset: { y: contentOffsetY },
-    },
-  }: {
-    nativeEvent: { contentOffset: { y: number } };
-  }) => {
-    y.value = contentOffsetY;
-  };
-
   return (
     <SafeArea>
-      {/* TabHeader */}
-      <ScrollView
-        contentContainerStyle={{
-          flexDirection: "row",
-          paddingHorizontal: 20,
-        }}
-        ref={TabScrollViewRef}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-      >
-        {tabs.map((tab, tabIndex) => (
-          <TouchableWithoutFeedback
-            onPress={() => setActiveIndex(tabIndex)}
-            key={tabIndex}
-          >
-            <Box
-              // active={index === activeIndex}
-              onLayout={({
-                nativeEvent: {
-                  layout: { width },
-                },
-              }) => {
-                const _measurements = tabWidthValues;
-                const _anchors = tabAnchors;
-
-                _measurements[tabIndex] = Math.round(width);
-                setTabWidthValues([..._measurements]);
-
-                let tabAnchor = 0;
-                _anchors.forEach((_, anchorIndex) => {
-                  if (anchorIndex < tabIndex) {
-                    tabAnchor += _measurements[tabIndex];
-                  }
-                });
-                _anchors[tabIndex] = tabAnchor;
-                setTabAnchors([..._anchors]);
-              }}
-              style={{
-                flexDirection: "row",
-                height: 50,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Text
-                style={{
-                  fontFamily: "Bold",
-                  fontSize: 18,
-                  color: activeIndex === tabIndex ? "#FFB81B" : "black",
-                  marginRight: 18,
-                }}
-              >
-                •
-              </Text>
-              <Text
-                style={{
-                  fontFamily: "Bold",
-                  fontSize: 18,
-                  color: activeIndex === tabIndex ? "#FFB81B" : "black",
-                  marginRight: 18,
-                }}
-              >
-                {tab.name}
-              </Text>
-            </Box>
-          </TouchableWithoutFeedback>
-        ))}
-      </ScrollView>
-
       {/* Content */}
       <Animated.ScrollView
         showsVerticalScrollIndicator={false}
@@ -260,11 +240,191 @@ const Menu = () => {
       </Animated.ScrollView>
 
       {/* HEADER */}
-      <Header
-        title="Cheez"
-        image="https://source.unsplash.com/a66sGfOnnqQ"
-        {...{ y, tabs, ContentScrollViewRef }}
-      />
+      <View
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          paddingTop: insets.top,
+        }}
+      >
+        <Animated.View
+          style={{
+            height,
+            position: "relative",
+          }}
+        >
+          <ImageBackground
+            style={{
+              flex: 1,
+            }}
+            source={{ uri: "https://source.unsplash.com/a66sGfOnnqQ" }}
+          >
+            {/* HeaderBar */}
+            <Box
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                height: HEADER_HEIGHT,
+                paddingHorizontal: theme.spacing.xl,
+              }}
+            >
+              <TouchableWithoutFeedback onPress={() => navigation.goBack()}>
+                <Icon name="arrow-left" size={24} color="white" />
+              </TouchableWithoutFeedback>
+              <Text
+                style={{
+                  fontFamily: "Bold",
+                  fontSize: 24,
+                  color: theme.colors.primaryContrast,
+                  marginLeft: theme.spacing.m,
+                }}
+              >
+                Cheez
+              </Text>
+            </Box>
+          </ImageBackground>
+
+          {/* Offer */}
+          <Animated.View
+            style={{
+              position: "absolute",
+              bottom: -(HEADER_HEIGHT / 2),
+              left: 0,
+              right: 0,
+              opacity,
+              transform: [
+                {
+                  translateY,
+                },
+              ],
+            }}
+          >
+            <Box
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                paddingHorizontal: 30,
+              }}
+            >
+              <Box
+                style={{
+                  flex: 1,
+                  borderRadius: theme.borderRadii.l,
+                  backgroundColor: theme.colors.primary,
+                  paddingVertical: 12,
+                  paddingHorizontal: 18,
+                  marginRight: 8,
+                }}
+              >
+                <Text
+                  style={{
+                    fontFamily: "Bold",
+                    fontSize: 16,
+                    color: theme.colors.primaryContrast,
+                  }}
+                >
+                  20% OFF
+                </Text>
+                <Text
+                  style={{
+                    fontFamily: "Normal",
+                    fontSize: 12,
+                    color: theme.colors.primaryContrast,
+                  }}
+                >
+                  Enjoy 20% OFF on the entire menu!
+                </Text>
+              </Box>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  Linking.openURL("tel:8777111223");
+                }}
+              >
+                <CircularIcon name="phone" size={58} />
+              </TouchableWithoutFeedback>
+            </Box>
+          </Animated.View>
+        </Animated.View>
+
+        {/* OFFER MARGIN BOTTOM */}
+        <Animated.View
+          style={{
+            marginBottom,
+          }}
+        />
+
+        {/* TabHeader */}
+        <ScrollView
+          contentContainerStyle={{
+            flexDirection: "row",
+            paddingHorizontal: 20,
+            backgroundColor: "white",
+          }}
+          ref={TabScrollViewRef}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+        >
+          {tabs.map((tab, tabIndex) => (
+            <TouchableWithoutFeedback
+              onPress={() => setActiveIndex(tabIndex)}
+              key={tabIndex}
+            >
+              <Box
+                // active={index === activeIndex}
+                onLayout={({
+                  nativeEvent: {
+                    layout: { width },
+                  },
+                }) => {
+                  const _measurements = tabWidthValues;
+                  const _anchors = tabAnchors;
+
+                  _measurements[tabIndex] = Math.round(width);
+                  setTabWidthValues([..._measurements]);
+
+                  let tabAnchor = 0;
+                  _anchors.forEach((_, anchorIndex) => {
+                    if (anchorIndex < tabIndex) {
+                      tabAnchor += _measurements[tabIndex];
+                    }
+                  });
+                  _anchors[tabIndex] = tabAnchor;
+                  setTabAnchors([..._anchors]);
+                }}
+                style={{
+                  flexDirection: "row",
+                  height: 50,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    fontFamily: "Bold",
+                    fontSize: 18,
+                    color: activeIndex === tabIndex ? "#FFB81B" : "black",
+                    marginRight: 18,
+                  }}
+                >
+                  •
+                </Text>
+                <Text
+                  style={{
+                    fontFamily: "Bold",
+                    fontSize: 18,
+                    color: activeIndex === tabIndex ? "#FFB81B" : "black",
+                    marginRight: 18,
+                  }}
+                >
+                  {tab.name}
+                </Text>
+              </Box>
+            </TouchableWithoutFeedback>
+          ))}
+        </ScrollView>
+      </View>
     </SafeArea>
   );
 };
