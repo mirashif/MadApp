@@ -4,6 +4,10 @@ import Animated, { useSharedValue } from "react-native-reanimated";
 
 import { Box, SafeArea, Text } from "../../components";
 
+import Header from "./Header";
+
+import type { TabModel } from ".";
+
 const items = [
   {
     name: "Long Hongdae Nights",
@@ -48,7 +52,12 @@ const menu = [
   { name: "Potato Mehedi", items },
 ];
 
-export const defaultTabs = menu.map(({ name }) => ({ name, contentAnchor: 0 }));
+export const defaultTabs: TabModel[] = menu.map(({ name }) => ({
+  name,
+  width: 0,
+  anchor: 0,
+  contentAnchor: 0,
+}));
 
 const Menu = () => {
   const y = useSharedValue(0);
@@ -65,7 +74,7 @@ const Menu = () => {
     index: number,
     tab: { name: string; contentAnchor: number }
   ) => {
-    tabs[index] = tab;
+    tabs[index] = { ...tabs[index], ...tab };
     setTabs([...tabs]);
   };
 
@@ -250,6 +259,13 @@ const Menu = () => {
           </Box>
         ))}
       </Animated.ScrollView>
+
+      {/* HEADER */}
+      <Header
+        title="Cheez"
+        image="https://source.unsplash.com/a66sGfOnnqQ"
+        {...{ y, tabs, ContentScrollViewRef }}
+      />
     </SafeArea>
   );
 };
