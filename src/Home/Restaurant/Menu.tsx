@@ -4,9 +4,8 @@ import Animated, { useSharedValue } from "react-native-reanimated";
 
 import { Box, SafeArea, Text } from "../../components";
 
+import type { TabModel } from "./Constants";
 import Header from "./Header";
-
-import type { TabModel } from ".";
 
 const items = [
   {

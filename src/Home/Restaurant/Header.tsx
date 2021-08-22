@@ -11,8 +11,8 @@ import * as Linking from "expo-linking";
 
 import { Box, CircularIcon, Icon, Text, useTheme } from "../../components";
 
-import type { TabModel } from ".";
-import { HEADER_HEIGHT, HEADER_IMAGE_HEIGHT } from ".";
+import type { TabModel } from "./Constants";
+import { HEADER_IMAGE_HEIGHT, HEADER_HEIGHT } from "./Constants";
 
 interface HeaderProps {
   title: string;
