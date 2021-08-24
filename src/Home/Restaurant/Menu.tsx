@@ -6,12 +6,12 @@ import {
   ImageBackground,
   Linking,
   TouchableWithoutFeedback,
-  View,
 } from "react-native";
 import Animated, {
   Extrapolate,
   interpolate,
-  useSharedValue,
+  interpolateNode,
+  useValue,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -83,7 +83,7 @@ const Menu = () => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
 
-  const y = useSharedValue(0);
+  const y = useValue(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [tabs, setTabs] = useState(defaultTabs);
   const [tabWidthValues, setTabWidthValues] = useState<number[]>(
@@ -96,30 +96,26 @@ const Menu = () => {
   const TabScrollViewRef = useRef<ScrollView>(null);
   const ContentScrollViewRef = useRef<Animated.ScrollView>(null);
 
-  const height = interpolate(
-    y.value,
-    [0, HEADER_IMAGE_HEIGHT],
-    [HEADER_IMAGE_HEIGHT + HEADER_HEIGHT, HEADER_HEIGHT],
-    Extrapolate.CLAMP
-  );
-  const marginBottom = interpolate(
-    y.value,
-    [0, HEADER_IMAGE_HEIGHT / 2, HEADER_IMAGE_HEIGHT],
-    [HEADER_HEIGHT / 2 + 15, HEADER_HEIGHT / 2, 0],
-    Extrapolate.CLAMP
-  );
-  const opacity = interpolate(
-    y.value,
-    [0, HEADER_IMAGE_HEIGHT - HEADER_HEIGHT, HEADER_IMAGE_HEIGHT],
-    [1, 0, 0],
-    Extrapolate.CLAMP
-  );
-  const translateY = interpolate(
-    y.value,
-    [0, HEADER_IMAGE_HEIGHT - HEADER_HEIGHT, HEADER_IMAGE_HEIGHT],
-    [0, 0, -HEADER_IMAGE_HEIGHT],
-    Extrapolate.CLAMP
-  );
+  const height = interpolateNode(y, {
+    inputRange: [0, HEADER_IMAGE_HEIGHT],
+    outputRange: [HEADER_IMAGE_HEIGHT + HEADER_HEIGHT, HEADER_HEIGHT],
+    extrapolate: Extrapolate.CLAMP,
+  });
+  const marginBottom = interpolateNode(y, {
+    inputRange: [0, HEADER_IMAGE_HEIGHT / 2, HEADER_IMAGE_HEIGHT],
+    outputRange: [HEADER_HEIGHT / 2 + 15, HEADER_HEIGHT / 2, 0],
+    extrapolate: Extrapolate.CLAMP,
+  });
+  const opacity = interpolateNode(y, {
+    inputRange: [0, HEADER_IMAGE_HEIGHT - HEADER_HEIGHT, HEADER_IMAGE_HEIGHT],
+    outputRange: [1, 0, 0],
+    extrapolate: Extrapolate.CLAMP,
+  });
+  const translateY = interpolateNode(y, {
+    inputRange: [0, HEADER_IMAGE_HEIGHT - HEADER_HEIGHT, HEADER_IMAGE_HEIGHT],
+    outputRange: [0, 0, -HEADER_IMAGE_HEIGHT],
+    extrapolate: Extrapolate.CLAMP,
+  });
 
   const onMeasurement = (
     index: number,
@@ -153,6 +149,10 @@ const Menu = () => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeIndex]);
+
+  useEffect(() => {
+    console.log({ height });
+  }, [height]);
 
   return (
     <SafeArea>
@@ -240,7 +240,7 @@ const Menu = () => {
       </Animated.ScrollView>
 
       {/* HEADER */}
-      <View
+      <Animated.View
         style={{
           position: "absolute",
           top: 0,
@@ -424,7 +424,7 @@ const Menu = () => {
             </TouchableWithoutFeedback>
           ))}
         </ScrollView>
-      </View>
+      </Animated.View>
     </SafeArea>
   );
 };
