@@ -7,22 +7,12 @@ import {
   HeaderBar,
   Icon,
   makeStyles,
+  OrderStageBar,
   SafeArea,
   Text,
   useTheme,
 } from "../../../components";
 import LocationBar from "../../../Home/LocationBar";
-
-const StepsIndicator = ({ active }: { active?: boolean }) => (
-  <Box
-    borderRadius="xl"
-    style={{
-      width: active ? 188 : 14,
-      height: 8,
-      backgroundColor: active ? "#FF385A" : "#CBCBCB",
-    }}
-  />
-);
 
 const OrderProcessing = () => {
   const theme = useTheme();
@@ -63,10 +53,8 @@ const OrderProcessing = () => {
             />
           </Box>
 
-          <Box width={238} justifyContent="space-between" flexDirection="row">
-            <StepsIndicator active />
-            <StepsIndicator />
-            <StepsIndicator />
+          <Box>
+            <OrderStageBar stage={1} />
           </Box>
 
           <Text fontFamily="Normal" fontSize={18} mt="xl">

@@ -5,3 +5,4 @@ export { default as LoadAssets } from "./LoadAssets";
 export { default as SafeArea } from "./SafeArea";
 export { default as HeaderBar } from "./HeaderBar";
 export { default as CustomModal } from "./CustomModal";
+export { default as OrderStageBar } from "./OrderStageBar";
