@@ -54,7 +54,12 @@ const OrderProcessing = () => {
           </Box>
 
           <Box>
-            <OrderStageBar stage={1} />
+            <OrderStageBar
+              stage={1}
+              activeBarWidth={188}
+              inactiveBarWidth={14}
+              containerWidth={238}
+            />
           </Box>
 
           <Text fontFamily="Normal" fontSize={18} mt="xl">

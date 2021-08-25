@@ -1,29 +1,34 @@
 import React from "react";
-import type { ViewStyle } from "react-native";
 
 import { Box } from "./theme";
 
 interface OrderStageBarProps {
   stage: 1 | 2 | 3;
-  style?: ViewStyle;
+  containerWidth: number;
+  activeBarWidth: number;
+  inactiveBarWidth: number;
 }
 
-const Step = ({ active }: { active?: boolean }) => (
-  <Box
-    borderRadius="xl"
-    style={{
-      width: active ? 188 : 14,
-      height: 8,
-      backgroundColor: active ? "#FF385A" : "#CBCBCB",
-    }}
-  />
-);
+const OrderStageBar = ({
+  stage,
+  containerWidth,
+  activeBarWidth,
+  inactiveBarWidth,
+}: OrderStageBarProps) => {
+  const Step = ({ active }: { active?: boolean }) => (
+    <Box
+      borderRadius="xl"
+      style={{
+        width: active ? activeBarWidth : inactiveBarWidth,
+        height: 8,
+        backgroundColor: active ? "#FF385A" : "#CBCBCB",
+      }}
+    />
+  );
 
-const OrderStageBar = ({ stage, style }: OrderStageBarProps) => {
   return (
     <Box
-      {...{ style }}
-      width={238}
+      width={containerWidth}
       justifyContent="space-between"
       flexDirection="row"
     >
