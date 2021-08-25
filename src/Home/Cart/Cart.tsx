@@ -13,6 +13,7 @@ import {
 } from "../../components";
 import LocationBar from "../LocationBar";
 import Input from "../../components/Input";
+import type { HomeStackProps } from "..";
 
 import OrderItem from "./OrderItem";
 import PopularItem from "./PopularItem";
@@ -51,7 +52,7 @@ const popularItems = [...Array(6)].map((_, id) => {
   };
 });
 
-const Cart = () => {
+const Cart = ({ navigation }: HomeStackProps<"Cart">) => {
   const theme = useTheme();
   const styles = useStyles();
 
@@ -90,9 +91,16 @@ const Cart = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 180 + insets.bottom }}
       >
-        <HeaderBar title="Checkout" />
+        <HeaderBar title="Cart" />
 
-        <LocationBar address="5 Rd No. 2/3, Dhaka 1213" label="Scratchboard" />
+        <Box mx="screen">
+          <LocationBar
+            address="5 Rd No. 2/3, Dhaka 1213"
+            label="Scratchboard"
+            editMode
+            onEditPress={() => null}
+          />
+        </Box>
 
         {/*Order Items*/}
         <Box px={"screen"}>
@@ -135,7 +143,7 @@ const Cart = () => {
         </Box>
 
         {/*Order Summary & Voucher*/}
-        <Box style={{ marginTop: 83, paddingLeft: 46, paddingRight: 38 }}>
+        <Box style={{ marginTop: 83, paddingHorizontal: 40 }}>
           <OrderSummaryItem title="Subtotal" description="৳769" />
           <OrderSummaryItem title="Delivery fee" description="৳30" />
 
@@ -163,7 +171,7 @@ const Cart = () => {
           flexDirection="row"
           justifyContent="space-between"
           alignItems="center"
-          style={{ paddingLeft: 46, paddingRight: 38 }}
+          style={{ paddingHorizontal: 40 }}
         >
           <Box>
             <Text style={{ fontSize: 18 }}>Total</Text>
@@ -174,7 +182,7 @@ const Cart = () => {
         </Box>
 
         <Box style={{ alignItems: "center", marginTop: 27 }}>
-          <CheckoutButton onPress={() => null} />
+          <CheckoutButton onPress={() => navigation.navigate("Checkout")} />
         </Box>
       </Box>
 

@@ -7,7 +7,13 @@ interface ButtonProps {
   onPress: () => void;
 }
 
-export const CheckoutButton = ({ onPress }: ButtonProps) => {
+export const CheckoutButton = ({
+  onPress,
+  label = "Checkout",
+}: {
+  onPress: () => void;
+  label?: string;
+}) => {
   return (
     <TouchableWithoutFeedback onPress={onPress}>
       <Box
@@ -20,7 +26,7 @@ export const CheckoutButton = ({ onPress }: ButtonProps) => {
         justifyContent="center"
       >
         <Text color="background" fontSize={17}>
-          Checkout
+          {label}
         </Text>
 
         <Box style={{ position: "absolute", right: 18, top: 15 }}>
