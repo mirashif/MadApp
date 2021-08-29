@@ -2,9 +2,10 @@ import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { ScrollView, Image, TouchableWithoutFeedback } from "react-native";
 
-import { Box, Icon, makeStyles, Theme, useTheme } from "../components";
+import type { Theme } from "../components";
+import { Box, Icon, makeStyles, useTheme } from "../components";
 
-import { IItem } from "./Home";
+import type { IItem } from "./Home";
 import Item from "./Item";
 
 interface HomeRestaurantProps {
