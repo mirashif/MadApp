@@ -5,6 +5,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import { Menu } from "./Restaurant";
 import Cart from "./Cart/Cart";
+import { Checkout } from "./Checkout";
 
 export { default as Home } from "./Home";
 
@@ -16,6 +17,7 @@ export type HomeStackProps<RouteName extends keyof HomeStackParamList> = {
 export type HomeStackParamList = {
   Menu: undefined;
   Cart: undefined;
+  Checkout: undefined;
 };
 
 const HomeStack = createStackNavigator<HomeStackParamList>();
@@ -24,5 +26,6 @@ export const HomeNavigator = () => (
   <HomeStack.Navigator headerMode="none">
     <HomeStack.Screen name="Menu" component={Menu} />
     <HomeStack.Screen name="Cart" component={Cart} />
+    <HomeStack.Screen name="Checkout" component={Checkout} />
   </HomeStack.Navigator>
 );

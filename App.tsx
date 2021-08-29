@@ -18,7 +18,6 @@ const fonts = {
   Bold: require("./assets/fonts/Roboto-Bold.ttf"),
   Medium: require("./assets/fonts/Roboto-Medium.ttf"),
   Normal: require("./assets/fonts/Roboto-Regular.ttf"),
-  SMedium: require("./assets/fonts/Flamante-Roma-Medium.ttf"),
 };
 
 const App = () => {

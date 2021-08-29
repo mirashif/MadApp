@@ -39,7 +39,11 @@ const MyOrders = ({ navigation }: RootStackProps<"MenuStack">) => {
           <>
             <CashbackNotice />
 
-            <ActiveOrderItem />
+            <ActiveOrderItem
+              onPress={() =>
+                navigation.navigate("MenuStack", { screen: "OrderProcessing" })
+              }
+            />
 
             <Box
               height={1}

@@ -1,14 +1,24 @@
 import React from "react";
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 
-import { Icon, makeStyles, Text, Theme, useTheme } from "../components";
+import type { Theme } from "../components";
+import { Icon, makeStyles, Text, useTheme } from "../components";
 
 interface LocationBarProps {
   address: string;
   label: string;
+  showIcon?: boolean;
+  editMode?: boolean;
+  onEditPress?: () => void;
 }
 
-export default function LocationBar({ address, label }: LocationBarProps) {
+export default function LocationBar({
+  address,
+  label,
+  editMode = false,
+  onEditPress,
+  showIcon = true,
+}: LocationBarProps) {
   const styles = useStyles();
   const theme = useTheme();
 
@@ -25,7 +35,18 @@ export default function LocationBar({ address, label }: LocationBarProps) {
           </Text>
         </View>
       </View>
-      <Icon name="chevron-down" size={15} color={theme.colors.gray} />
+
+      {showIcon && (
+        <View>
+          {editMode ? (
+            <Pressable onPress={onEditPress}>
+              <Icon name="edit-2" size={15} color={theme.colors.primary} />
+            </Pressable>
+          ) : (
+            <Icon name="chevron-down" size={15} color={theme.colors.gray} />
+          )}
+        </View>
+      )}
     </View>
   );
 }
@@ -38,6 +59,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    borderWidth: 1,
+    borderColor: theme.colors.lightGray,
   },
   address: {
     color: theme.colors.primary,

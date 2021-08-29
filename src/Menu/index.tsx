@@ -1,13 +1,13 @@
 import React from "react";
-import { RouteProp } from "@react-navigation/native";
+import type { RouteProp } from "@react-navigation/native";
+import type { StackNavigationProp } from "@react-navigation/stack";
 import {
-  StackNavigationProp,
   createStackNavigator,
   CardStyleInterpolators,
 } from "@react-navigation/stack";
 
 import MyOrders from "./MyOrders/MyOrders";
-import OrderProcessing from "./OrderProcessing/OrderProcessing";
+import { OrderProcessing } from "./MyOrders/OrderProcessing";
 import MyProfile from "./MyProfile/MyProfile";
 import OrderDetails from "./MyOrders/OrderDetails/OrderDetails";
 import Settings from "./Settings/Settings";

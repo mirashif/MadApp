@@ -1,11 +1,12 @@
-import React, { ReactNode } from "react";
+import type { ReactNode } from "react";
+import React from "react";
 import {
   createText,
   createBox,
   useTheme as useReTheme,
   ThemeProvider as ReThemeProvider,
 } from "@shopify/restyle";
-import { ImageStyle, TextStyle, ViewStyle } from "react-native";
+import type { ImageStyle, TextStyle, ViewStyle } from "react-native";
 
 const palette = {
   red: "#ff385a",

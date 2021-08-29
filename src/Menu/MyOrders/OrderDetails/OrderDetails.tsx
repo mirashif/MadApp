@@ -1,5 +1,6 @@
 import React from "react";
 import { ScrollView } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import {
   Box,
@@ -11,8 +12,10 @@ import {
   useTheme,
 } from "../../../components";
 import LocationBar from "../../../Home/LocationBar";
+import TakaIcon from "../../../Home/Checkout/assets/taka.svg";
 
 import Item from "./Item";
+import TrackOrder from "./TrackOrder";
 
 const OrderSummaryItem = ({
   title,
@@ -38,10 +41,14 @@ const OrderDetails = () => {
   const theme = useTheme();
   const styles = useStyles();
 
+  const insets = useSafeAreaInsets();
+
   return (
     <SafeArea>
       <ScrollView showsVerticalScrollIndicator={false}>
         <HeaderBar title="Order Details" />
+
+        <TrackOrder />
 
         <Box style={{ paddingHorizontal: 32 }}>
           <Box style={{ marginTop: 16 }}>
@@ -57,10 +64,6 @@ const OrderDetails = () => {
             >
               25809
             </Text>
-
-            <Text mt="m" fontSize={11} style={{ color: "#BBBBBB" }}>
-              July 9th, 2021
-            </Text>
           </Box>
 
           <Box style={{ marginTop: 19 }}>
@@ -68,7 +71,37 @@ const OrderDetails = () => {
             <Item />
           </Box>
 
-          <Box style={{ marginTop: 46 }}>
+          <Box style={{ marginTop: 31 }}>
+            <Text fontFamily="Normal" fontSize={18}>
+              Special Instructions
+            </Text>
+
+            <Text
+              style={{
+                color: "#939393",
+                fontFamily: "Normal",
+              }}
+            >
+              Please do not include vegetables in my meal
+            </Text>
+          </Box>
+
+          <Box style={{ marginTop: 28 }}>
+            <Text style={styles.sectionTitle}>DELIVERED TO</Text>
+            <LocationBar address="5 Rd No. 2/3, Dhaka 1213" label="Office" />
+          </Box>
+
+          <Box style={{ marginTop: 51 }}>
+            <Text style={styles.sectionTitle}>PAYMENT METHOD</Text>
+            <Box mt="l" flexDirection="row" alignItems="center">
+              <TakaIcon />
+              <Text ml="l" fontFamily="Normal">
+                Cash On Delivery
+              </Text>
+            </Box>
+          </Box>
+
+          <Box style={{ marginTop: 26 }}>
             <OrderSummaryItem title="Subtotal" description="৳769.00" />
             <OrderSummaryItem title="Delivery fee" description="৳30.00" />
             <OrderSummaryItem
@@ -78,12 +111,7 @@ const OrderDetails = () => {
             />
           </Box>
 
-          <Box mt="l">
-            <Text style={styles.sectionTitle}>DELIVERED TO</Text>
-            <LocationBar address="5 Rd No. 2/3, Dhaka 1213" label="Office" />
-          </Box>
-
-          <Box style={{ marginTop: 26 }}>
+          <Box style={{ marginTop: 42 }}>
             <Text style={styles.sectionTitle}>TOTAL AMOUNT</Text>
             <Text fontSize={34} fontFamily="Bold" color="primary">
               ৳ 2,809
@@ -91,7 +119,7 @@ const OrderDetails = () => {
           </Box>
 
           <Button
-            style={{ marginTop: 22, marginBottom: 19 }}
+            style={{ marginTop: 22, marginBottom: 19 + insets.bottom }}
             size="lg"
             onPress={() => null}
           >
