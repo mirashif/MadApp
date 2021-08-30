@@ -1,6 +1,7 @@
 import React from "react";
 
-import { Box, makeStyles, Text, Theme } from "../components";
+import type { Theme } from "../components";
+import { Box, makeStyles, Text } from "../components";
 
 interface InviteItemProps {
   name: string;
