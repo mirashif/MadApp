@@ -11,6 +11,7 @@ import { OrderProcessing } from "./MyOrders/OrderProcessing";
 import MyProfile from "./MyProfile/MyProfile";
 import OrderDetails from "./MyOrders/OrderDetails/OrderDetails";
 import Settings from "./Settings/Settings";
+import { StoreLocator } from "./StoreLocator";
 
 export { default as Menu } from "./Menu";
 
@@ -25,6 +26,7 @@ export type MenuStackParamList = {
   OrderProcessing: undefined;
   MyProfile: undefined;
   Settings: undefined;
+  StoreLocator: undefined;
 };
 
 const MenuStack = createStackNavigator<MenuStackParamList>();
@@ -41,5 +43,6 @@ export const MenuNavigator = () => (
     <MenuStack.Screen name="OrderProcessing" component={OrderProcessing} />
     <MenuStack.Screen name="MyProfile" component={MyProfile} />
     <MenuStack.Screen name="Settings" component={Settings} />
+    <MenuStack.Screen name="StoreLocator" component={StoreLocator} />
   </MenuStack.Navigator>
 );
