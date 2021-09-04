@@ -24,6 +24,7 @@ import {
   Text,
   useTheme,
 } from "../components";
+import type { RootStackProps } from "../components/AppNavigator";
 
 import LocationBar from "./LocationBar";
 import HomeRestaurant from "./HomeRestaurant";
@@ -71,7 +72,7 @@ const variations = [
   },
 ];
 
-export default function Home() {
+const Home = ({ navigation }: RootStackProps<"HomeStack">) => {
   const styles = useStyles();
   const theme = useTheme();
 
@@ -291,6 +292,8 @@ export default function Home() {
           <LocationBar
             address="5 Rd No. 2/3, Dhaka 1213"
             label="Scratchboard"
+            editMode
+            onEditPress={() => navigation.navigate("EditLocation")}
           />
         </Box>
 
@@ -343,7 +346,7 @@ export default function Home() {
       </ScrollView>
     </SafeArea>
   );
-}
+};
 
 const useStyles = makeStyles((theme: Theme) => ({
   wideBanner: {
@@ -390,3 +393,5 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: "#8A8A8A",
   },
 }));
+
+export default Home;
