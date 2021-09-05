@@ -1,1 +1,8 @@
-export { default as Menu } from "./Menu";
+import { backgroundImage } from "./HeaderImage";
+
+export { default as Menu } from "./UberEats";
+export const assets = [backgroundImage];
+export const fonts = {
+  UberMoveRegular: require("./assets/UberMoveRegular.ttf"),
+  UberMoveMedium: require("./assets/UberMoveMedium.ttf"),
+};
