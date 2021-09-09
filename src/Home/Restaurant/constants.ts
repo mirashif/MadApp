@@ -38,7 +38,7 @@ const items = [
   },
 ];
 
-const menu = [
+export const menu = [
   { name: "Classic Pizzas", items },
   { name: "Gourmet Pizzas", items },
   { name: "Tomato Soups", items },

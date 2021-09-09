@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Image,
   ImageBackground,
   ScrollView,
   TouchableWithoutFeedback,
@@ -10,7 +11,12 @@ import { useNavigation } from "@react-navigation/native";
 
 import { CircularIcon, Icon, SafeArea, Text, useTheme } from "../../components";
 
-import { defaultTabs, HEADER_HEIGHT, HEADER_IMAGE_HEIGHT } from "./constants";
+import {
+  defaultTabs,
+  HEADER_HEIGHT,
+  HEADER_IMAGE_HEIGHT,
+  menu,
+} from "./constants";
 
 const Menu = () => {
   return (
@@ -20,11 +26,156 @@ const Menu = () => {
         <Offer />
       </View>
       <TabHeader />
+      <Content />
     </SafeArea>
   );
 };
 
 export default Menu;
+
+const Content = () => {
+  const theme = useTheme();
+
+  return (
+    <ScrollView showsVerticalScrollIndicator={false}>
+      {menu.map(({ name, items }, i) => (
+        // menu container
+        <View
+          key={i}
+          style={{
+            paddingHorizontal: theme.spacing.screen,
+            paddingVertical: 15,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 18,
+              fontFamily: "Normal",
+              color: theme.colors.foreground,
+              marginBottom: 4,
+              marginHorizontal: 8,
+            }}
+          >
+            {name}
+          </Text>
+
+          {/* items container */}
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+            }}
+          >
+            {items.map((item, j) => (
+              <Item key={j} {...item} />
+            ))}
+          </View>
+        </View>
+      ))}
+    </ScrollView>
+  );
+};
+
+interface ItemProps {
+  image: string;
+  name: string;
+  price: string;
+}
+
+const Item = ({ image, name, price }: ItemProps) => {
+  const theme = useTheme();
+
+  return (
+    <View
+      style={{
+        margin: 8,
+      }}
+    >
+      <Image
+        style={{
+          height: 150,
+          width: 150,
+          borderRadius: 12,
+          marginBottom: 7,
+        }}
+        source={{ uri: image }}
+      />
+      <Text
+        numberOfLines={1}
+        style={{
+          fontFamily: "Bold",
+          fontSize: 11,
+          color: theme.colors.foreground,
+        }}
+      >
+        {name}
+      </Text>
+      <Text
+        numberOfLines={1}
+        style={{
+          fontFamily: "Normal",
+          fontSize: 11,
+          color: theme.colors.darkGray,
+        }}
+      >
+        {price}
+      </Text>
+    </View>
+  );
+};
+
+const TabHeader = () => {
+  const tabs = defaultTabs;
+
+  return (
+    <View
+      style={{
+        height: HEADER_HEIGHT,
+      }}
+    >
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: 8,
+        }}
+      >
+        {tabs.map(({ name }, index) => (
+          <View
+            key={index}
+            style={{
+              height: HEADER_HEIGHT,
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={{
+                fontFamily: "Bold",
+                color: "black",
+                fontSize: 18,
+                paddingHorizontal: 8,
+              }}
+            >
+              •
+            </Text>
+            <Text
+              style={{
+                fontFamily: "Bold",
+                color: "black",
+                fontSize: 18,
+                paddingHorizontal: 8,
+              }}
+            >
+              {name}
+            </Text>
+          </View>
+        ))}
+      </ScrollView>
+    </View>
+  );
+};
 
 const Offer = () => {
   const theme = useTheme();
@@ -78,58 +229,6 @@ const Offer = () => {
       >
         <CircularIcon name="phone" size={58} />
       </TouchableWithoutFeedback>
-    </View>
-  );
-};
-
-const TabHeader = () => {
-  const tabs = defaultTabs;
-
-  return (
-    <View
-      style={{
-        height: HEADER_HEIGHT,
-      }}
-    >
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingHorizontal: 8,
-        }}
-      >
-        {tabs.map(({ name }, index) => (
-          <View
-            key={index}
-            style={{
-              height: HEADER_HEIGHT,
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <Text
-              style={{
-                fontFamily: "Bold",
-                color: "black",
-                fontSize: 18,
-                paddingHorizontal: 8,
-              }}
-            >
-              •
-            </Text>
-            <Text
-              style={{
-                fontFamily: "Bold",
-                color: "black",
-                fontSize: 18,
-                paddingHorizontal: 8,
-              }}
-            >
-              {name}
-            </Text>
-          </View>
-        ))}
-      </ScrollView>
     </View>
   );
 };
