@@ -26,38 +26,37 @@ const TabHeader = () => {
   const tabs = defaultTabs;
 
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{
+    <View
+      style={{
         height: HEADER_HEIGHT,
-        flexDirection: "row",
       }}
     >
-      {tabs.map(({ name }, index) => (
-        <View
-          key={index}
-          style={{
-            height: HEADER_HEIGHT,
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "pink",
-          }}
-        >
-          <Text
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        {tabs.map(({ name }, index) => (
+          <View
+            key={index}
             style={{
-              fontFamily: "Bold",
-              color: "black",
-              fontSize: 18,
-              marginHorizontal: 20,
+              height: HEADER_HEIGHT,
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "pink",
             }}
           >
-            • {name}
-          </Text>
-        </View>
-      ))}
-    </ScrollView>
+            <Text
+              style={{
+                fontFamily: "Bold",
+                color: "black",
+                fontSize: 18,
+                marginHorizontal: 20,
+              }}
+            >
+              • {name}
+            </Text>
+          </View>
+        ))}
+      </ScrollView>
+    </View>
   );
 };
 
