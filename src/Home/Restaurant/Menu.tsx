@@ -5,22 +5,82 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import * as Linking from "expo-linking";
 import { useNavigation } from "@react-navigation/native";
 
-import { Icon, SafeArea, Text } from "../../components";
+import { CircularIcon, Icon, SafeArea, Text, useTheme } from "../../components";
 
 import { defaultTabs, HEADER_HEIGHT, HEADER_IMAGE_HEIGHT } from "./constants";
 
 const Menu = () => {
   return (
     <SafeArea>
-      <HeaderImage />
+      <View>
+        <HeaderImage />
+        <Offer />
+      </View>
       <TabHeader />
     </SafeArea>
   );
 };
 
 export default Menu;
+
+const Offer = () => {
+  const theme = useTheme();
+
+  return (
+    <View
+      style={{
+        flexDirection: "row",
+        justifyContent: "space-between",
+        paddingHorizontal: 30,
+        // relative to header image
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+      }}
+    >
+      <View
+        style={{
+          flex: 1,
+          borderRadius: theme.borderRadii.l,
+          backgroundColor: theme.colors.primary,
+          paddingVertical: 12,
+          paddingHorizontal: 18,
+          marginRight: 8,
+        }}
+      >
+        <Text
+          style={{
+            fontFamily: "Bold",
+            fontSize: 16,
+            color: "white",
+          }}
+        >
+          20% OFF
+        </Text>
+        <Text
+          style={{
+            fontFamily: "Normal",
+            fontSize: 12,
+            color: "white",
+          }}
+        >
+          Enjoy 20% OFF on the entire menu!
+        </Text>
+      </View>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          Linking.openURL("tel:8777111223");
+        }}
+      >
+        <CircularIcon name="phone" size={58} />
+      </TouchableWithoutFeedback>
+    </View>
+  );
+};
 
 const TabHeader = () => {
   const tabs = defaultTabs;
@@ -81,6 +141,9 @@ const HeaderImage = () => {
     <ImageBackground
       style={{
         height: HEADER_IMAGE_HEIGHT,
+        // offer 50% visible from bottom
+        position: "relative",
+        marginBottom: HEADER_HEIGHT / 2,
       }}
       source={{ uri: "https://source.unsplash.com/a66sGfOnnqQ" }}
     >
