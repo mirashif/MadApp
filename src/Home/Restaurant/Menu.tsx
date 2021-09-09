@@ -31,16 +31,20 @@ const TabHeader = () => {
         height: HEADER_HEIGHT,
       }}
     >
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: 8,
+        }}
+      >
         {tabs.map(({ name }, index) => (
           <View
             key={index}
             style={{
               height: HEADER_HEIGHT,
               flexDirection: "row",
-              justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "pink",
             }}
           >
             <Text
@@ -48,10 +52,20 @@ const TabHeader = () => {
                 fontFamily: "Bold",
                 color: "black",
                 fontSize: 18,
-                marginHorizontal: 20,
+                paddingHorizontal: 8,
               }}
             >
-              • {name}
+              •
+            </Text>
+            <Text
+              style={{
+                fontFamily: "Bold",
+                color: "black",
+                fontSize: 18,
+                paddingHorizontal: 8,
+              }}
+            >
+              {name}
             </Text>
           </View>
         ))}
