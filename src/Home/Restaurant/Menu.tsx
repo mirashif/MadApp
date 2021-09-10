@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Animated,
   Image,
   ImageBackground,
   ScrollView,
@@ -8,6 +9,12 @@ import {
 } from "react-native";
 import * as Linking from "expo-linking";
 import { useNavigation } from "@react-navigation/native";
+import {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  interpolateNode,
+  Extrapolate,
+} from "react-native-reanimated";
 
 import { CircularIcon, Icon, SafeArea, Text, useTheme } from "../../components";
 
@@ -19,25 +26,41 @@ import {
 } from "./constants";
 
 const Menu = () => {
+  const scrollOffsetY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollOffsetY.value = event.contentOffset.y;
+    },
+  });
+
   return (
     <SafeArea>
       <View>
-        <HeaderImage />
+        <HeaderImage y={scrollOffsetY.value} />
         <Offer />
       </View>
       <TabHeader />
-      <Content />
+      <Content scrollHandler={scrollHandler} />
     </SafeArea>
   );
 };
 
 export default Menu;
 
-const Content = () => {
+interface ContentProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  scrollHandler: any;
+}
+
+const Content = ({ scrollHandler }: ContentProps) => {
   const theme = useTheme();
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <Animated.ScrollView
+      showsVerticalScrollIndicator={false}
+      onScroll={scrollHandler}
+    >
       {menu.map(({ name, items }, i) => (
         // menu container
         <View
@@ -73,7 +96,7 @@ const Content = () => {
           </View>
         </View>
       ))}
-    </ScrollView>
+    </Animated.ScrollView>
   );
 };
 
@@ -233,41 +256,56 @@ const Offer = () => {
   );
 };
 
-const HeaderImage = () => {
+interface HeaderImageProps {
+  y: number;
+}
+const HeaderImage = ({ y }: HeaderImageProps) => {
   const navigation = useNavigation();
 
+  const height = interpolateNode(y, {
+    inputRange: [0, HEADER_IMAGE_HEIGHT],
+    outputRange: [HEADER_IMAGE_HEIGHT, HEADER_HEIGHT],
+    extrapolate: Extrapolate.CLAMP,
+  });
+
   return (
-    <ImageBackground
+    <Animated.View
       style={{
-        height: HEADER_IMAGE_HEIGHT,
+        height,
         // offer 50% visible from bottom
         position: "relative",
         marginBottom: HEADER_HEIGHT / 2,
       }}
-      source={{ uri: "https://source.unsplash.com/a66sGfOnnqQ" }}
     >
-      <View
+      <ImageBackground
         style={{
-          flexDirection: "row",
-          alignItems: "center",
-          height: HEADER_HEIGHT,
-          paddingHorizontal: 20,
+          flex: 1,
         }}
+        source={{ uri: "https://source.unsplash.com/a66sGfOnnqQ" }}
       >
-        <TouchableWithoutFeedback onPress={() => navigation.goBack()}>
-          <Icon name="arrow-left" size={24} color="white" />
-        </TouchableWithoutFeedback>
-        <Text
+        <View
           style={{
-            fontFamily: "Bold",
-            fontSize: 24,
-            color: "white",
-            marginLeft: 15,
+            flexDirection: "row",
+            alignItems: "center",
+            height: HEADER_HEIGHT,
+            paddingHorizontal: 20,
           }}
         >
-          Cheez
-        </Text>
-      </View>
-    </ImageBackground>
+          <TouchableWithoutFeedback onPress={() => navigation.goBack()}>
+            <Icon name="arrow-left" size={24} color="white" />
+          </TouchableWithoutFeedback>
+          <Text
+            style={{
+              fontFamily: "Bold",
+              fontSize: 24,
+              color: "white",
+              marginLeft: 15,
+            }}
+          >
+            Cheez
+          </Text>
+        </View>
+      </ImageBackground>
+    </Animated.View>
   );
 };
