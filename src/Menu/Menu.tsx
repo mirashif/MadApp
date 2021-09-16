@@ -5,6 +5,7 @@ import type { Theme } from "../components";
 import { Box, Text, useTheme, SafeArea, makeStyles } from "../components";
 import type { RootStackProps } from "../components/AppNavigator";
 import { useAuth } from "../state/hooks/useAuth";
+import { useUser } from "../state/hooks/useUser";
 
 import Item from "./Item";
 
@@ -13,6 +14,7 @@ const Menu = ({ navigation }: RootStackProps<"MenuStack">) => {
   const styles = useStyles();
 
   const { deauthenticate } = useAuth();
+  const { user } = useUser();
 
   const handleLogout = () => {
     deauthenticate();
@@ -42,7 +44,7 @@ const Menu = ({ navigation }: RootStackProps<"MenuStack">) => {
               marginTop: 18,
             }}
           >
-            Rabbi Mehedi
+            {user?.firstName} {user?.lastName}
           </Text>
         </Box>
 
