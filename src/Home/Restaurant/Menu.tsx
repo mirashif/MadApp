@@ -48,6 +48,7 @@ const Content = ({ onScroll }) => {
   return (
     <Animated.ScrollView
       showsVerticalScrollIndicator={false}
+      scrollEventThrottle={1}
       onScroll={onScroll}
     >
       {menu.map(({ name, items }, i) => (
@@ -198,10 +199,17 @@ const Offer = ({ y }) => {
     extrapolate: Extrapolate.CLAMP,
   });
 
+  const translateY = interpolateNode(y, {
+    inputRange: [HEADER_IMAGE_HEIGHT / 2, HEADER_IMAGE_HEIGHT],
+    outputRange: [0, -HEADER_IMAGE_HEIGHT],
+    extrapolateLeft: Extrapolate.CLAMP,
+  });
+
   return (
     <Animated.View
       style={{
         opacity,
+        transform: [{ translateY }],
         flexDirection: "row",
         justifyContent: "space-between",
         paddingHorizontal: 30,
