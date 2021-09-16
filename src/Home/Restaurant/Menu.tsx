@@ -32,7 +32,7 @@ const Menu = () => {
     <SafeArea>
       <View>
         <HeaderImage y={y} />
-        <Offer />
+        <Offer y={y} />
       </View>
       <TabHeader />
       <Content onScroll={onScroll} />
@@ -48,7 +48,6 @@ const Content = ({ onScroll }) => {
   return (
     <Animated.ScrollView
       showsVerticalScrollIndicator={false}
-      scrollEventThrottle={1}
       onScroll={onScroll}
     >
       {menu.map(({ name, items }, i) => (
@@ -190,12 +189,19 @@ const TabHeader = () => {
   );
 };
 
-const Offer = () => {
+const Offer = ({ y }) => {
   const theme = useTheme();
 
+  const opacity = interpolateNode(y, {
+    inputRange: [0, HEADER_IMAGE_HEIGHT / 2],
+    outputRange: [1, 0],
+    extrapolate: Extrapolate.CLAMP,
+  });
+
   return (
-    <View
+    <Animated.View
       style={{
+        opacity,
         flexDirection: "row",
         justifyContent: "space-between",
         paddingHorizontal: 30,
@@ -242,7 +248,7 @@ const Offer = () => {
       >
         <CircularIcon name="phone" size={58} />
       </TouchableWithoutFeedback>
-    </View>
+    </Animated.View>
   );
 };
 
