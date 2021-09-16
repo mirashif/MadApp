@@ -26,6 +26,7 @@ import {
   useTheme,
 } from "../components";
 import { useAuth } from "../state/hooks/useAuth";
+import { useStories } from "../state/hooks/useStories";
 
 import LocationBar from "./LocationBar";
 import HomeRestaurant from "./HomeRestaurant";
@@ -35,10 +36,6 @@ import FloatingCart from "./FloatingCart";
 import AuthSheet from "./AuthSheet";
 
 const FOOTER_SHEET_HEIGHT = 144;
-
-const verticalBanners = [...Array(6)].map((_, id) => {
-  return { id, imageUri: "https://picsum.photos/200/300" };
-});
 
 export interface IItem {
   id: number | string;
@@ -83,6 +80,7 @@ const Home = observer(() => {
   const itemFooterSheetRef = useRef<BottomSheetModal>(null);
 
   const { authenticated } = useAuth();
+  const { stories } = useStories();
 
   const [selectedVariationID, setSelectedVariationID] = useState<
     null | string | number
@@ -315,10 +313,10 @@ const Home = observer(() => {
             horizontal
             showsHorizontalScrollIndicator={false}
           >
-            {verticalBanners.map(({ id, imageUri }) => (
+            {stories.map(({ id, thumbnailImageURI }) => (
               <Box key={id} style={styles.verticalBanner}>
                 <Image
-                  source={{ uri: imageUri }}
+                  source={{ uri: thumbnailImageURI }}
                   style={styles.verticalBannerImage}
                 />
               </Box>
