@@ -13,6 +13,7 @@ import {
   Icon,
 } from "../components";
 import { useInvites } from "../state/hooks/useInvites";
+import { useUser } from "../state/hooks/useUser";
 
 import InviteItem from "./InviteItem";
 
@@ -29,6 +30,7 @@ const Get100 = () => {
   const styles = useStyles();
 
   const { invites } = useInvites();
+  const { attributes } = useUser();
 
   return (
     <SafeArea>
@@ -102,9 +104,10 @@ const Get100 = () => {
           <Box style={styles.couponShare}>
             <Box style={styles.coupon}>
               <Text numberOfLines={1} style={styles.couponText}>
-                RABBILITV
+                {attributes?.referralCode}
               </Text>
             </Box>
+            {/* TODO: Implement share */}
             <Button
               onPress={() => console.log("My coupon share")}
               size="lg"
