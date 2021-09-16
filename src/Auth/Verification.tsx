@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import OTPInputView from "@twotalltotems/react-native-otp-input";
 import { Alert, ScrollView } from "react-native";
 import { observer } from "mobx-react";
-import { useNavigation } from "@react-navigation/native";
+import { StackActions, useNavigation } from "@react-navigation/native";
 
 import { Box, HeaderBar, makeStyles, SafeArea, Text } from "../components";
 import DissmissKeyboard from "../components/DissmissKeyboard";
 import Button from "../components/Button";
 import { useAuth } from "../state/hooks/useAuth";
+import { useUser } from "../state/hooks/useUser";
 
 import OTPVerify from "./assets/OTPVerify.svg";
 
@@ -20,6 +21,7 @@ const Verification = observer(({ route }: AuthStackProps<"Verification">) => {
   const { phoneNumber } = route.params;
 
   const { authenticate, authenticated } = useAuth();
+  const { user } = useUser();
   const [otp, setOtp] = useState<null | string>(null);
 
   const handleContinue = async () => {
@@ -36,9 +38,19 @@ const Verification = observer(({ route }: AuthStackProps<"Verification">) => {
 
   useEffect(() => {
     if (authenticated) {
-      navigation.navigate("BottomTabs", { screen: "Home" });
+      if (user) {
+        if (user.firstName && user.lastName) {
+          navigation.dispatch(
+            StackActions.replace("BottomTabs", { screen: "Home" })
+          );
+        } else {
+          navigation.dispatch(
+            StackActions.replace("AuthStack", { screen: "UserInfo" })
+          );
+        }
+      }
     }
-  }, [authenticated, navigation]);
+  }, [authenticated, navigation, user]);
 
   return (
     <SafeArea>

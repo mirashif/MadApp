@@ -15,9 +15,10 @@ import {
   Text,
   useTheme,
 } from "../components";
-import { RootStackProps } from "../components/AppNavigator";
+import type { RootStackProps } from "../components/AppNavigator";
 import Button from "../components/Button";
 import Input from "../components/Input";
+import { useUser } from "../state/hooks/useUser";
 
 import Referral from "./assets/Referral.svg";
 import Success from "./assets/Success.svg";
@@ -25,11 +26,15 @@ import Success from "./assets/Success.svg";
 const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
   const theme = useTheme();
 
+  const { user, updateUser } = useUser();
+
   const [refCode, setRefCode] = useState<null | string>(null);
   const [tempRefCode, setTempRefCode] = useState<null | string>(null);
   const [wrongRefCode, setWrongRefCode] = useState(false);
   const [refModalVisible, setRefModalVisible] = useState(false);
   const [successModalVisible, setSuccessModalVisible] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
 
   /**
    * When user presses back button it takes to the mobile number screen
@@ -68,6 +73,15 @@ const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
     setRefModalVisible(false);
   };
 
+  const handleFinish = async () => {
+    if (user) {
+      if (firstName && lastName) {
+        await updateUser({ firstName, lastName });
+        setSuccessModalVisible(true);
+      }
+    }
+  };
+
   return (
     <SafeArea>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -93,7 +107,17 @@ const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
 
           {/* Name */}
           <Box mt="xl">
-            <Input label="Name" onChangeText={(value) => console.log(value)} />
+            <Input
+              label="First Name"
+              onChangeText={(value) => setFirstName(value)}
+            />
+          </Box>
+
+          <Box mt="xl">
+            <Input
+              label="Last Name"
+              onChangeText={(value) => setLastName(value)}
+            />
           </Box>
 
           {/* Referral Code */}
@@ -188,7 +212,7 @@ const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
           </Box>
 
           <Box style={{ paddingTop: 16, paddingBottom: 40, marginTop: 14 }}>
-            <Button onPress={() => setSuccessModalVisible(true)} size="lg">
+            <Button onPress={handleFinish} size="lg">
               Let's Go!
             </Button>
           </Box>
@@ -238,7 +262,10 @@ const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
         visible={successModalVisible}
         onRequestClose={() => setSuccessModalVisible(false)}
         buttonTitle="Let’s go"
-        onButtonPress={() => setSuccessModalVisible(false)}
+        onButtonPress={() => {
+          setSuccessModalVisible(false);
+          navigation.navigate("BottomTabs", { screen: "Home" });
+        }}
       >
         <Box
           alignItems="center"
