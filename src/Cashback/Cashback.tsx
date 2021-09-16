@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ScrollView } from "react-native";
 import * as Clipboard from "expo-clipboard";
+import { observer } from "mobx-react";
 
 import { Box, CustomModal, SafeArea, Text } from "../components";
 import { useCashbacks } from "../state/hooks/useCashbacks";
@@ -11,7 +12,7 @@ import Coupon from "./Coupon";
 
 export const assets = [...CardAssets];
 
-const Cashback = () => {
+const Cashback = observer(() => {
   const { cashbacks } = useCashbacks();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedCashback, setSelectedCashback] =
@@ -108,6 +109,6 @@ const Cashback = () => {
       </CustomModal>
     </SafeArea>
   );
-};
+});
 
 export default Cashback;
