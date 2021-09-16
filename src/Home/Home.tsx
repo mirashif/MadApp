@@ -32,6 +32,7 @@ import { useRestaurants } from "../state/hooks/useRestaurants";
 import { useRestaurantPopularItems } from "../state/hooks/useRestaurantPopularItems";
 import type { ItemWithAvailabilityType } from "../state/store/ItemStore";
 import { useCart } from "../state/hooks/useCart";
+import { useBanners } from "../state/hooks/useBanners";
 
 import LocationBar from "./LocationBar";
 import HomeRestaurant from "./HomeRestaurant";
@@ -77,6 +78,7 @@ const Home = observer(() => {
   const { stories } = useStories();
   const { restaurants } = useRestaurants();
   const { length: cartItemCount } = useCart();
+  const { banners } = useBanners();
 
   const [selectedVariationID, setSelectedVariationID] = useState<
     null | string | number
@@ -310,14 +312,16 @@ const Home = observer(() => {
           />
         </Box>
 
-        <Box mb="l" mx="screen" style={styles.wideBanner}>
-          <Image
-            source={{
-              uri: "https://picsum.photos/600/300",
-            }}
-            style={styles.wideBannerImage}
-          />
-        </Box>
+        {banners.length > 0 && (
+          <Box mb="l" mx="screen" style={styles.wideBanner}>
+            <Image
+              source={{
+                uri: banners[0].imageURI,
+              }}
+              style={styles.wideBannerImage}
+            />
+          </Box>
+        )}
 
         <Box mb="xl">
           <ScrollView
