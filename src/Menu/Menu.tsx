@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 import React from "react";
 import { Image, ScrollView, TouchableWithoutFeedback } from "react-native";
 
@@ -9,7 +10,7 @@ import { useUser } from "../state/hooks/useUser";
 
 import Item from "./Item";
 
-const Menu = ({ navigation }: RootStackProps<"MenuStack">) => {
+const Menu = observer(({ navigation }: RootStackProps<"MenuStack">) => {
   const theme = useTheme();
   const styles = useStyles();
 
@@ -86,7 +87,7 @@ const Menu = ({ navigation }: RootStackProps<"MenuStack">) => {
       </ScrollView>
     </SafeArea>
   );
-};
+});
 
 export default Menu;
 

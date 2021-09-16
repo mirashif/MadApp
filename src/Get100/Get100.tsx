@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 import React from "react";
 import { ScrollView, Image } from "react-native";
 
@@ -25,7 +26,7 @@ const madAppLogo = {
 
 export const assets = [madAppLogo.src];
 
-const Get100 = () => {
+const Get100 = observer(() => {
   const theme = useTheme();
   const styles = useStyles();
 
@@ -176,7 +177,7 @@ const Get100 = () => {
       </ScrollView>
     </SafeArea>
   );
-};
+});
 
 export default Get100;
 

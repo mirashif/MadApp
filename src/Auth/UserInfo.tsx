@@ -5,6 +5,7 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
 } from "react-native";
+import { observer } from "mobx-react";
 
 import {
   Box,
@@ -23,7 +24,7 @@ import { useUser } from "../state/hooks/useUser";
 import Referral from "./assets/Referral.svg";
 import Success from "./assets/Success.svg";
 
-const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
+const UserInfo = observer(({ navigation }: RootStackProps<"AuthStack">) => {
   const theme = useTheme();
 
   const { user, updateUser } = useUser();
@@ -280,6 +281,6 @@ const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
       </CustomModal>
     </SafeArea>
   );
-};
+});
 
 export default UserInfo;
