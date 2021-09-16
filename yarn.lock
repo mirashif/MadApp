@@ -5026,6 +5026,11 @@ jsonify@~0.0.0:
     array-includes "^3.1.2"
     object.assign "^4.1.2"
 
+khali@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/khali/-/khali-1.2.1.tgz#40f72da2ade8aab041bf01e44f47533a6fe2ccd6"
+  integrity sha512-kuV/f6Xr00lZHAoS32m8G2joY01adcRbg6tNIQ4JwtXdbJV8KklLugeeWpb1ap55Z+IHxAOzkhPWqttiNuBFGg==
+
 kind-of@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-1.1.0.tgz#140a3d2d41a36d2efcfa9377b62c24f8495a5c44"

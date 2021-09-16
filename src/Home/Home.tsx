@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Image,
   ImageBackground,
@@ -13,6 +13,7 @@ import {
 } from "@gorhom/bottom-sheet";
 import { useIsFocused } from "@react-navigation/native";
 import { observer } from "mobx-react";
+import isKhali from "khali";
 
 import type { Theme } from "../components";
 import {
@@ -27,6 +28,9 @@ import {
 } from "../components";
 import { useAuth } from "../state/hooks/useAuth";
 import { useStories } from "../state/hooks/useStories";
+import { useRestaurants } from "../state/hooks/useRestaurants";
+import { useRestaurantPopularItems } from "../state/hooks/useRestaurantPopularItems";
+import type { ItemWithAvailabilityType } from "../state/store/ItemStore";
 
 import LocationBar from "./LocationBar";
 import HomeRestaurant from "./HomeRestaurant";
@@ -45,17 +49,6 @@ export interface IItem {
   price: string;
   imageUri: string;
 }
-
-const restaurantItems = [...Array(6)].map((_, id) => {
-  return {
-    id,
-    imageUri: "https://source.unsplash.com/a66sGfOnnqQ/200x200",
-    discount: "20% OFF",
-    name: "Madame Lucy",
-    price: "৳ 369.00",
-    previousPrice: "৳ 468.00",
-  };
-});
 
 const variations = [
   {
@@ -81,10 +74,14 @@ const Home = observer(() => {
 
   const { authenticated } = useAuth();
   const { stories } = useStories();
+  const { restaurants } = useRestaurants();
 
   const [selectedVariationID, setSelectedVariationID] = useState<
     null | string | number
   >(null);
+  const [popularItems, setPopularItems] = useState<
+    ItemWithAvailabilityType[][]
+  >([]);
 
   const handleItemPress = () => {
     itemSheetRef.current?.present();
@@ -98,6 +95,21 @@ const Home = observer(() => {
     itemSheetRef.current?.close();
     itemFooterSheetRef.current?.close();
   };
+
+  useEffect(() => {
+    if (!isKhali(restaurants)) {
+      restaurants.forEach(({ id }, index) => {
+        const { items } = useRestaurantPopularItems(id);
+
+        const _popular = popularItems;
+
+        _popular[index] = isKhali(items) ? [] : items;
+
+        setPopularItems(_popular);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [restaurants]);
 
   return (
     <SafeArea>
@@ -327,21 +339,14 @@ const Home = observer(() => {
         <Text mb="l" mx="screen" variant="sectionTitle">
           🍴 Restaurants
         </Text>
-        <HomeRestaurant
-          onItemPress={handleItemPress}
-          items={restaurantItems}
-          logoUri="https://picsum.photos/40/65"
-        />
-        <HomeRestaurant
-          onItemPress={handleItemPress}
-          items={restaurantItems}
-          logoUri="https://picsum.photos/40/65"
-        />
-        <HomeRestaurant
-          onItemPress={handleItemPress}
-          items={restaurantItems}
-          logoUri="https://picsum.photos/40/65"
-        />
+
+        {popularItems.map((item, index) => (
+          <HomeRestaurant
+            restaurant={restaurants[index]}
+            onItemPress={handleItemPress}
+            items={item}
+          />
+        ))}
       </ScrollView>
     </SafeArea>
   );
