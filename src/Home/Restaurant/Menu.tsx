@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useRef } from "react";
 import {
-  Animated,
   Image,
   ImageBackground,
   ScrollView,
@@ -9,12 +8,11 @@ import {
 } from "react-native";
 import * as Linking from "expo-linking";
 import { useNavigation } from "@react-navigation/native";
-import {
-  useSharedValue,
-  useAnimatedScrollHandler,
+import Animated, {
   interpolateNode,
   Extrapolate,
 } from "react-native-reanimated";
+import { onScrollEvent, useValue } from "react-native-redash/lib/module/v1";
 
 import { CircularIcon, Icon, SafeArea, Text, useTheme } from "../../components";
 
@@ -26,40 +24,32 @@ import {
 } from "./constants";
 
 const Menu = () => {
-  const scrollOffsetY = useSharedValue(0);
-
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      scrollOffsetY.value = event.contentOffset.y;
-    },
-  });
+  const scrollView = useRef<Animated.ScrollView>(null);
+  const y = useValue(0);
+  const onScroll = onScrollEvent({ y });
 
   return (
     <SafeArea>
       <View>
-        <HeaderImage y={scrollOffsetY.value} />
+        <HeaderImage y={y} />
         <Offer />
       </View>
       <TabHeader />
-      <Content scrollHandler={scrollHandler} />
+      <Content onScroll={onScroll} />
     </SafeArea>
   );
 };
 
 export default Menu;
 
-interface ContentProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  scrollHandler: any;
-}
-
-const Content = ({ scrollHandler }: ContentProps) => {
+const Content = ({ onScroll }) => {
   const theme = useTheme();
 
   return (
     <Animated.ScrollView
       showsVerticalScrollIndicator={false}
-      onScroll={scrollHandler}
+      scrollEventThrottle={1}
+      onScroll={onScroll}
     >
       {menu.map(({ name, items }, i) => (
         // menu container
@@ -256,10 +246,7 @@ const Offer = () => {
   );
 };
 
-interface HeaderImageProps {
-  y: number;
-}
-const HeaderImage = ({ y }: HeaderImageProps) => {
+const HeaderImage = ({ y }) => {
   const navigation = useNavigation();
 
   const height = interpolateNode(y, {
