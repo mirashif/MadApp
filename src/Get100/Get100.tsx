@@ -12,6 +12,7 @@ import {
   Button,
   Icon,
 } from "../components";
+import { useInvites } from "../state/hooks/useInvites";
 
 import InviteItem from "./InviteItem";
 
@@ -26,6 +27,8 @@ export const assets = [madAppLogo.src];
 const Get100 = () => {
   const theme = useTheme();
   const styles = useStyles();
+
+  const { invites } = useInvites();
 
   return (
     <SafeArea>
@@ -138,25 +141,33 @@ const Get100 = () => {
                     fontFamily: "Normal",
                   }}
                 >
-                  2
+                  {invites.length}
                 </Text>
               </Box>
             </Box>
 
             {/* Empty state */}
-            <Text
-              style={{
-                fontSize: 14,
-                fontFamily: "Normal",
-                color: theme.colors.gray,
-              }}
-            >
-              None of your friends signed up yet! They will show up here once
-              they do.
-            </Text>
+            {invites.length === 0 && (
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontFamily: "Normal",
+                  color: theme.colors.gray,
+                }}
+              >
+                None of your friends signed up yet! They will show up here once
+                they do.
+              </Text>
+            )}
 
             {/* Not Empty state */}
-            <InviteItem name="Omran Jamal" id="+88 017#####123" />
+            {invites.map((invite) => (
+              <InviteItem
+                key={invite.id}
+                name={invite.name}
+                id={invite.number}
+              />
+            ))}
           </Box>
         </Box>
       </ScrollView>
