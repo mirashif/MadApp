@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 import { Box, CustomModal, SafeArea, Text } from "../components";
 import { useCashbacks } from "../state/hooks/useCashbacks";
 import type { CashbackWithAvailabilityType } from "../state/store/CashbackStore";
+import { useUser } from "../state/hooks/useUser";
 
 import Card, { assets as CardAssets } from "./Card";
 import Coupon from "./Coupon";
@@ -14,6 +15,8 @@ export const assets = [...CardAssets];
 
 const Cashback = observer(() => {
   const { cashbacks } = useCashbacks();
+  const { user, attributes } = useUser();
+
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedCashback, setSelectedCashback] =
     useState<null | CashbackWithAvailabilityType>(null);
@@ -30,7 +33,10 @@ const Cashback = observer(() => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <Box paddingHorizontal="screen">
           <Box my="xl">
-            <Card points="1,707" name="Rabbi Mehedi" />
+            <Card
+              points={attributes?.points || 0}
+              name={`${user?.firstName} ${user?.lastName}`}
+            />
           </Box>
 
           <Box mb="xl">
