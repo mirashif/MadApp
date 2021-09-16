@@ -261,13 +261,19 @@ const HeaderImage = ({ y }) => {
     extrapolate: Extrapolate.CLAMP,
   });
 
+  const marginBottom = interpolateNode(y, {
+    inputRange: [0, HEADER_IMAGE_HEIGHT],
+    outputRange: [HEADER_HEIGHT / 2, 0],
+    extrapolate: Extrapolate.CLAMP,
+  });
+
   return (
     <Animated.View
       style={{
         height,
         // offer 50% visible from bottom
         position: "relative",
-        marginBottom: HEADER_HEIGHT / 2,
+        marginBottom,
       }}
     >
       <ImageBackground
