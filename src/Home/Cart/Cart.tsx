@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Dimensions, ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { observer } from "mobx-react";
 
 import {
   Box,
@@ -14,6 +15,7 @@ import {
 import LocationBar from "../LocationBar";
 import Input from "../../components/Input";
 import type { HomeStackProps } from "..";
+import { useCart } from "../../state/hooks/useCart";
 
 import OrderItem from "./OrderItem";
 import PopularItem from "./PopularItem";
@@ -52,13 +54,15 @@ const popularItems = [...Array(6)].map((_, id) => {
   };
 });
 
-const Cart = ({ navigation }: HomeStackProps<"Cart">) => {
+const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
   const theme = useTheme();
   const styles = useStyles();
 
   const insets = useSafeAreaInsets();
 
   const windowWidth = Dimensions.get("window").width;
+
+  const { receipt } = useCart();
 
   const [modalVisible, setModalVisible] = useState(false);
   const [tempVoucher, setTempVoucher] = useState<null | string>(null);
@@ -144,12 +148,21 @@ const Cart = ({ navigation }: HomeStackProps<"Cart">) => {
 
         {/*Order Summary & Voucher*/}
         <Box style={{ marginTop: 83, paddingHorizontal: 40 }}>
-          <OrderSummaryItem title="Subtotal" description="৳769" />
-          <OrderSummaryItem title="Delivery fee" description="৳30" />
+          <OrderSummaryItem
+            title="Subtotal"
+            description={`৳${receipt.subtotal}`}
+          />
+          <OrderSummaryItem
+            title="Delivery fee"
+            description={`৳${receipt.deliveryCharge}`}
+          />
 
           <Box mt="m">
             {voucher && (
-              <Discount amount={20} onDiscountCancel={() => setVoucher(null)} />
+              <Discount
+                amount={receipt.discount}
+                onDiscountCancel={() => setVoucher(null)}
+              />
             )}
 
             {!voucher && (
@@ -178,7 +191,7 @@ const Cart = ({ navigation }: HomeStackProps<"Cart">) => {
             <Text style={{ color: "#BBBBBB", fontSize: 11 }}>VAT included</Text>
           </Box>
 
-          <Text style={{ fontSize: 18 }}>৳829</Text>
+          <Text style={{ fontSize: 18 }}>৳{receipt.total}</Text>
         </Box>
 
         <Box style={{ alignItems: "center", marginTop: 27 }}>
@@ -220,7 +233,7 @@ const Cart = ({ navigation }: HomeStackProps<"Cart">) => {
       </CustomModal>
     </SafeArea>
   );
-};
+});
 
 const useStyles = makeStyles(() => ({
   sectionTitle: {
