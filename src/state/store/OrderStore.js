@@ -1,60 +1,58 @@
-import { makeAutoObservable } from "mobx";
+import {makeAutoObservable} from 'mobx';
 
 export class OrderStore {
-  listening = 0;
-  listener = null;
+    listening = 0;
+    listener = null;
 
-  // {[orderID: string]: Order}
-  orders = {};
+    // {[orderID: string]: Order}
+    orders = {};
 
-  // Set<string>[]
-  _pages = [];
-  recentOrders = [];
+    // Set<string>[]
+    _pages = [];
+    recentOrders = [];
 
-  // If all orders has been loaded or not.
-  allLoaded = false;
+    // If all orders has been loaded or not.
+    allLoaded = false;
 
-  constructor(parent) {
-    this.parent = parent;
+    constructor(parent) {
+        this.parent = parent;
 
-    makeAutoObservable(this, {}, { autoBind: true });
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  listen() {}
-
-  unlisten() {
-    if (this.listener) {
-      this.listener();
+        makeAutoObservable(this, {}, {autoBind: true});
     }
-  }
 
-  watch() {
-    this.listening++;
-  }
+    listen() {}
 
-  unwatch() {
-    this.listening--;
-  }
+    unlisten() {
+        if (this.listener) {
+            this.listener();
+        }
+    }
 
-  getOrder(orderID) {
-    return this.orders[orderID];
-  }
+    watch() {
+        this.listening++;
+    }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  *loadPage() {}
+    unwatch() {
+        this.listening--;
+    }
 
-  get(orderID) {
-    return this.orders[orderID];
-  }
+    getOrder(orderID) {
+        return this.orders[orderID];
+    }
 
-  get all() {
-    return Object.values(this.orders);
-  }
+    *loadPage() {}
 
-  get pages() {
-    return [this.recentOrders.map((id) => this.orders[id])].concat(
-      this._pages.map((page) => [...page].map((id) => this.orders[id]))
-    );
-  }
+    get(orderID) {
+        return this.orders[orderID];
+    }
+
+    get all() {
+        return Object.values(this.orders);
+    }
+
+    get pages() {
+        return [this.recentOrders.map((id) => this.orders[id])].concat(
+            this._pages.map((page) => [...page].map((id) => this.orders[id])),
+        );
+    }
 }

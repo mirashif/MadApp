@@ -1,9 +1,9 @@
-import { useAppState } from "../StateContext";
+import {useAppState} from '../StateContext';
 
 export function useInvites() {
-  const invites = useAppState("invites");
+    const invites = useAppState('invites');
 
-  return {
-    invites: invites.all,
-  };
+    return {
+        invites: invites.all,
+    };
 }

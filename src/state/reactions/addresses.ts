@@ -1,21 +1,21 @@
-import { reaction } from "mobx";
-
-import { withCleanup } from "../helpers/withCleanup";
-import type { Store } from "../store";
+import {reaction} from 'mobx';
+import {withCleanup} from '../helpers/withCleanup';
+import {Store} from '../store';
 
 export function addressReactions(store: Store) {
-  reaction(
-    () => !!store.auth.user,
-    withCleanup((shouldListen) => {
-      console.log("LISTENING: Addresses");
+    reaction(
+        () => !!store.auth.user,
+        withCleanup((shouldListen) => {
+            console.log('LISTENING: Addresses');
 
-      if (shouldListen) {
-        store.addresses.listen();
-      }
+            if (shouldListen) {
+                store.addresses.listen();
+            }
 
-      return () => {
-        store.addresses.unlisten();
-      };
-    })
-  );
+            return () => {
+                store.addresses.unlisten();
+            };
+        }),
+        {fireImmediately: true},
+    );
 }

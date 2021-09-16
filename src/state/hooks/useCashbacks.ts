@@ -1,9 +1,9 @@
-import { useAppState } from "../StateContext";
+import {useAppState} from '../StateContext';
 
 export function useCashbacks() {
-  const cashbacks = useAppState("cashbacks");
+    const cashbacks = useAppState('cashbacks');
 
-  return {
-    cashbacks: cashbacks.all,
-  };
+    return {
+        cashbacks: cashbacks.all,
+    };
 }

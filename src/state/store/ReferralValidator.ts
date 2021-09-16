@@ -1,61 +1,58 @@
-import { makeAutoObservable } from "mobx";
+import {flow, makeAutoObservable} from 'mobx';
+import {Store} from './index';
+import {composeFlow} from '../helpers/composeFlow';
 
-import { composeFlow } from "../helpers/composeFlow";
-
-import type { Store } from "./index";
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ReferralType {}
 
 export class ReferralValidator {
-  parent: Store;
+    parent: Store;
 
-  referral: string | null = null;
-  isValidating = false;
+    referral: string | null = null;
+    isValidating: boolean = false;
 
-  error: string | null = null;
-  errorCode: string | null = null;
+    error: string | null = null;
+    errorCode: string | null = null;
 
-  isValid: boolean | null = null;
+    isValid: boolean | null = null;
 
-  constructor(parent: Store) {
-    this.parent = parent;
+    constructor(parent: Store) {
+        this.parent = parent;
 
-    makeAutoObservable(this, {}, { autoBind: true });
-  }
-
-  setReferral(referral: string) {
-    this.referral = referral;
-  }
-
-  *validate() {
-    this.isValidating = true;
-
-    try {
-      const isReferralValid = this.parent.firebase
-        .functions()
-        .httpsCallable("referrals-isReferralValid");
-
-      const result = (yield* composeFlow(
-        isReferralValid({
-          referralCode: this.referral,
-        })
-      )).data;
-
-      if (result.valid) {
-        this.error = null;
-        this.isValid = true;
-      } else {
-        this.error = result?.reason;
-        this.errorCode = result?.code;
-        this.isValid = false;
-      }
-    } catch (ex) {
-      throw ex;
-    } finally {
-      this.isValidating = false;
+        makeAutoObservable(this, {}, {autoBind: true});
     }
 
-    return true;
-  }
+    setReferral(referral: string) {
+        this.referral = referral;
+    }
+
+    *validate() {
+        this.isValidating = true;
+
+        try {
+            const isReferralValid = this.parent.firebase
+                .functions()
+                .httpsCallable('referrals-isReferralValid');
+
+            const result = (yield* composeFlow(
+                isReferralValid({
+                    referralCode: this.referral,
+                }),
+            )).data;
+
+            if (result.valid) {
+                this.error = null;
+                this.isValid = true;
+            } else {
+                this.error = result?.reason;
+                this.errorCode = result?.code;
+                this.isValid = false;
+            }
+        } catch (ex) {
+            throw ex;
+        } finally {
+            this.isValidating = false;
+        }
+
+        return true;
+    }
 }

@@ -1,1 +1,1 @@
-export const TIME_SYMBOL = Symbol("TIMESTAMP");
+export const TIME_SYMBOL = Symbol('TIMESTAMP');

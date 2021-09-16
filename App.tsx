@@ -3,6 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { LogBox } from "react-native";
+import "react-native-get-random-values";
 
 import AppNavigator from "./src/components/AppNavigator";
 import { assets as CashbackAssets } from "./src/Cashback";

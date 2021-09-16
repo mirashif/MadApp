@@ -1,52 +1,52 @@
 export function runWithCancel(func, ...args) {
-  const gen = func(...args);
+    const gen = func(...args);
 
-  let cancelled, cancel;
+    let cancelled, cancel;
 
-  const promise = new Promise((resolve, reject) => {
-    cancel = (data = { reason: "TIMEOUT" }) => {
-      cancelled = true;
-      reject(data);
-    };
+    const promise = new Promise((resolve, reject) => {
+        cancel = (data = {reason: 'TIMEOUT'}) => {
+            cancelled = true;
+            reject(data);
+        };
 
-    function onFulfilled(res) {
-      if (!cancelled) {
-        let result;
+        function onFulfilled(res) {
+            if (!cancelled) {
+                let result;
 
-        try {
-          result = gen.next(res);
-        } catch (e) {
-          return reject(e);
+                try {
+                    result = gen.next(res);
+                } catch (e) {
+                    return reject(e);
+                }
+
+                next(result);
+
+                return null;
+            }
         }
 
-        next(result);
+        function onRejected(err) {
+            let result;
 
-        return null;
-      }
-    }
+            try {
+                result = gen.throw(err);
+            } catch (e) {
+                return reject(e);
+            }
 
-    function onRejected(err) {
-      let result;
+            next(result);
+        }
 
-      try {
-        result = gen.throw(err);
-      } catch (e) {
-        return reject(e);
-      }
+        function next({done, value}) {
+            if (done) {
+                return resolve(value);
+            }
 
-      next(result);
-    }
+            return value.then(onFulfilled, onRejected);
+        }
 
-    function next({ done, value }) {
-      if (done) {
-        return resolve(value);
-      }
+        onFulfilled();
+    });
 
-      return value.then(onFulfilled, onRejected);
-    }
-
-    onFulfilled();
-  });
-
-  return { promise, cancel };
+    return {promise, cancel};
 }

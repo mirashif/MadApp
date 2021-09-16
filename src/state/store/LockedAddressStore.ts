@@ -1,26 +1,25 @@
-import { makeAutoObservable } from "mobx";
-
-import type { Store } from "./index";
+import {makeAutoObservable} from 'mobx';
+import {Store} from './index';
 
 export class LockedAddressStore {
-  parent: Store;
+    parent: Store;
 
-  // Address ID
-  _locked: string | null = null;
+    // Address ID
+    _locked: string | null = null;
 
-  constructor(parent: Store) {
-    this.parent = parent;
+    constructor(parent: Store) {
+        this.parent = parent;
 
-    makeAutoObservable(this, {}, { autoBind: true });
-  }
+        makeAutoObservable(this, {}, {autoBind: true});
+    }
 
-  lockAddress(addressID: string) {
-    this._locked = addressID;
-  }
+    lockAddress(addressID: string) {
+        this._locked = addressID;
+    }
 
-  get lockedAddress() {
-    return this._locked
-      ? this.parent.addresses.get(this._locked)
-      : this.parent.addresses.defaultAddress;
-  }
+    get lockedAddress() {
+        return this._locked
+            ? this.parent.addresses.get(this._locked)
+            : this.parent.addresses.defaultAddress;
+    }
 }

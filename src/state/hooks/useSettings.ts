@@ -1,10 +1,10 @@
-import { useAppState } from "../StateContext";
+import {useAppState} from '../StateContext';
 
 export function useSettings() {
-  const user = useAppState("user");
+    const user = useAppState('user');
 
-  return {
-    settings: user.settings,
-    updateSettings: user.updateSettings,
-  };
+    return {
+        settings: user.settings,
+        updateSettings: user.updateSettings,
+    };
 }

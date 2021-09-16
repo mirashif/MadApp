@@ -12,6 +12,7 @@ import {
   BottomSheetBackdrop,
 } from "@gorhom/bottom-sheet";
 import { useIsFocused } from "@react-navigation/native";
+import { observer } from "mobx-react";
 
 import type { Theme } from "../components";
 import {
@@ -24,6 +25,7 @@ import {
   Text,
   useTheme,
 } from "../components";
+import { useAuth } from "../state/hooks/useAuth";
 
 import LocationBar from "./LocationBar";
 import HomeRestaurant from "./HomeRestaurant";
@@ -71,7 +73,7 @@ const variations = [
   },
 ];
 
-export default function Home() {
+const Home = observer(() => {
   const styles = useStyles();
   const theme = useTheme();
 
@@ -79,6 +81,8 @@ export default function Home() {
 
   const itemSheetRef = useRef<BottomSheetModal>(null);
   const itemFooterSheetRef = useRef<BottomSheetModal>(null);
+
+  const { authenticated } = useAuth();
 
   const [selectedVariationID, setSelectedVariationID] = useState<
     null | string | number
@@ -101,7 +105,7 @@ export default function Home() {
     <SafeArea>
       <FloatingCart />
 
-      {isFocused && false && <AuthSheet />}
+      {isFocused && !authenticated && <AuthSheet />}
 
       {/* ItemSheet */}
       <BottomSheetModal
@@ -343,7 +347,9 @@ export default function Home() {
       </ScrollView>
     </SafeArea>
   );
-}
+});
+
+export default Home;
 
 const useStyles = makeStyles((theme: Theme) => ({
   wideBanner: {

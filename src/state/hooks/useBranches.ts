@@ -1,10 +1,10 @@
-import { useAppState } from "../StateContext";
+import {useAppState} from '../StateContext';
 
 export function useBranches() {
-  const branches = useAppState("branches");
+    const branches = useAppState('branches');
 
-  return {
-    branches: branches.all,
-    availableBranches: branches.availableBranches,
-  };
+    return {
+        branches: branches.all,
+        availableBranches: branches.availableBranches,
+    };
 }

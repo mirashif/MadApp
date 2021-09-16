@@ -1,11 +1,11 @@
-import { useAppState } from "../StateContext";
+import {useAppState} from '../StateContext';
 
 export function useUser() {
-  const user = useAppState("user");
+    const user = useAppState('user');
 
-  return {
-    user: user.user,
-    attributes: user.userAttributes,
-    updateUser: user.updateUser,
-  };
+    return {
+        user: user.user,
+        attributes: user.userAttributes,
+        updateUser: user.updateUser,
+    };
 }

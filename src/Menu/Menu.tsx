@@ -1,21 +1,23 @@
 import React from "react";
 import { Image, ScrollView, TouchableWithoutFeedback } from "react-native";
 
-import {
-  Box,
-  Text,
-  useTheme,
-  SafeArea,
-  makeStyles,
-  Theme,
-} from "../components";
-import { RootStackProps } from "../components/AppNavigator";
+import type { Theme } from "../components";
+import { Box, Text, useTheme, SafeArea, makeStyles } from "../components";
+import type { RootStackProps } from "../components/AppNavigator";
+import { useAuth } from "../state/hooks/useAuth";
 
 import Item from "./Item";
 
 const Menu = ({ navigation }: RootStackProps<"MenuStack">) => {
   const theme = useTheme();
   const styles = useStyles();
+
+  const { deauthenticate } = useAuth();
+
+  const handleLogout = () => {
+    deauthenticate();
+    navigation.navigate("BottomTabs", { screen: "Home" });
+  };
 
   return (
     <SafeArea>
@@ -67,7 +69,7 @@ const Menu = ({ navigation }: RootStackProps<"MenuStack">) => {
             }
           />
           <Item icon="🧭" label="Store Locator" />
-          <Item icon="🚶‍♂️" label="Logout" />
+          <Item icon="🚶‍♂️" label="Logout" onPress={handleLogout} />
         </Box>
 
         <Box style={{ marginHorizontal: 72, marginVertical: 12 }}>

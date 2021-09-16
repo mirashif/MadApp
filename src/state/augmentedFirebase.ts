@@ -1,37 +1,51 @@
-import originalAuth from "@react-native-firebase/auth";
-import originalFirestore from "@react-native-firebase/firestore";
-import originalFunctions from "@react-native-firebase/functions";
+import originalAuth from '@react-native-firebase/auth';
+import originalFirestore from '@react-native-firebase/firestore';
+import originalFunctions from '@react-native-firebase/functions';
 
 let initialized = false;
 
 export interface AugmentedFirebaseType {
-  auth: () => ReturnType<typeof originalAuth>;
-  firestore: () => ReturnType<typeof originalFirestore>;
-  functions: () => ReturnType<typeof originalFunctions>;
+    auth: () => ReturnType<typeof originalAuth>;
+    firestore: () => ReturnType<typeof originalFirestore>;
+    functions: () => ReturnType<typeof originalFunctions>;
 }
 
 export async function augmentedFirebase(): Promise<AugmentedFirebaseType> {
-  if (!initialized) {
-    if (__DEV__) {
-      console.log("FIREBASE: FAKED");
+    if (!initialized) {
+        if (__DEV__) {
+            const host = process.env.FIRE_EMULATOR_HOST || 'localhost';
 
-      await originalFirestore().settings({
-        cacheSizeBytes: originalFirestore.CACHE_SIZE_UNLIMITED,
-      });
+            const firestorePort =
+                parseInt(`${process.env.FIRE_FIRESTORE_PORT}`) || 8080;
 
-      originalFirestore().useEmulator("localhost", 8080);
-      originalFunctions().useFunctionsEmulator("http://localhost:5001");
-      originalAuth().useEmulator("http://localhost:9099");
+            const functionsPort =
+                parseInt(`${process.env.FIRE_FIRESTORE_PORT}`) || 5001;
 
-      await new Promise((accept) => setTimeout(accept, 2000));
+            const authPort =
+                parseInt(`${process.env.FIRE_FIRESTORE_PORT}`) || 9099;
+
+            console.log('FIREBASE: FAKED', host);
+
+            originalFirestore().useEmulator(`${host}`, firestorePort);
+
+            await originalFirestore().settings({
+                cacheSizeBytes: originalFirestore.CACHE_SIZE_UNLIMITED,
+            });
+
+            originalFunctions().useFunctionsEmulator(
+                `http://${host}:${functionsPort}`,
+            );
+            originalAuth().useEmulator(`http://${host}:${authPort}`);
+
+            await new Promise((accept) => setTimeout(accept, 500));
+        }
+
+        initialized = true;
     }
 
-    initialized = true;
-  }
-
-  return {
-    auth: () => originalAuth(),
-    firestore: () => originalFirestore(),
-    functions: () => originalFunctions(),
-  };
+    return {
+        auth: () => originalAuth(),
+        firestore: () => originalFirestore(),
+        functions: () => originalFunctions(),
+    };
 }

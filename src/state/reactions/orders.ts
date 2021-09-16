@@ -2,18 +2,18 @@ import {reaction} from 'mobx';
 import {withCleanup} from '../helpers/withCleanup';
 import {Store} from '../store';
 
-export function branchReactions(store: Store) {
+export function orderReactions(store: Store) {
     reaction(
-        () => true,
+        () => !!store.auth.user,
         withCleanup((shouldListen) => {
-            console.log('LISTENING: Branches');
+            console.log('LISTENING: Orders');
 
             if (shouldListen) {
-                store.branches.listen();
+                store.orders.listen();
             }
 
             return () => {
-                store.branches.unlisten();
+                store.orders.unlisten();
             };
         }),
         {fireImmediately: true},
