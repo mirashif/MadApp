@@ -3,15 +3,15 @@ import React from "react";
 import { Box, Button, Text, useTheme } from "../components";
 
 interface CouponProps {
-  discount: string;
-  minimum: string;
-  points: string;
+  name: string;
+  minimum: number;
+  points: number;
   disabled?: boolean;
   onPress: () => void;
 }
 
 const Coupon = ({
-  discount,
+  name,
   minimum,
   points,
   onPress,
@@ -29,7 +29,7 @@ const Coupon = ({
             color: theme.colors.primary,
           }}
         >
-          Get ৳{discount} Off
+          Get ৳{name} Off
         </Text>
         <Text
           style={{
