@@ -31,6 +31,7 @@ import { useStories } from "../state/hooks/useStories";
 import { useRestaurants } from "../state/hooks/useRestaurants";
 import { useRestaurantPopularItems } from "../state/hooks/useRestaurantPopularItems";
 import type { ItemWithAvailabilityType } from "../state/store/ItemStore";
+import { useCart } from "../state/hooks/useCart";
 
 import LocationBar from "./LocationBar";
 import HomeRestaurant from "./HomeRestaurant";
@@ -75,6 +76,7 @@ const Home = observer(() => {
   const { authenticated } = useAuth();
   const { stories } = useStories();
   const { restaurants } = useRestaurants();
+  const { length: cartItemCount } = useCart();
 
   const [selectedVariationID, setSelectedVariationID] = useState<
     null | string | number
@@ -113,7 +115,7 @@ const Home = observer(() => {
 
   return (
     <SafeArea>
-      <FloatingCart />
+      {cartItemCount > 0 && <FloatingCart />}
 
       {isFocused && !authenticated && <AuthSheet />}
 
