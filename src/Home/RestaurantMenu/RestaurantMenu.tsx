@@ -15,15 +15,8 @@ const RestaurantMenu = () => {
   const y = useValue(0);
   const onScroll = onScrollEvent({ y });
 
-  // const anchorX: number[] = [];
-  // const handleAnchorX = (index: number, length: number) => {
-  //   anchorX[index] = length;
-  // };
-
-  // const anchorY: number[] = [];
-  // const handleAnchorY = (index: number, length: number) => {
-  //   anchorY[index] = length;
-  // };
+  const anchorX: number[] = [];
+  const anchorY: number[] = [];
 
   return (
     <SafeArea>
@@ -31,8 +24,17 @@ const RestaurantMenu = () => {
         <HeaderImage y={y} />
         <Offer y={y} />
       </View>
-      <TabHeader onMeasurement={() => console.log("X")} />
-      <Content onMeasurement={() => console.log("Y")} onScroll={onScroll} />
+      <TabHeader
+        onMeasurement={(index, length) => {
+          anchorX[index] = length;
+        }}
+      />
+      <Content
+        onMeasurement={(index, length) => {
+          anchorY[index] = length;
+        }}
+        onScroll={onScroll}
+      />
     </SafeArea>
   );
 };
