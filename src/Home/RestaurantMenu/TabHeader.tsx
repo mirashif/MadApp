@@ -5,7 +5,11 @@ import { Text } from "../../components";
 
 import { defaultTabs, HEADER_HEIGHT } from "./constants";
 
-const TabHeader = () => {
+interface TabHeaderProps {
+  onMeasurement: (index: number, length: number) => void;
+}
+
+const TabHeader = ({ onMeasurement }: TabHeaderProps) => {
   const tabs = defaultTabs;
 
   return (
@@ -24,6 +28,11 @@ const TabHeader = () => {
         {tabs.map(({ name }, index) => (
           <View
             key={index}
+            onLayout={({
+              nativeEvent: {
+                layout: { x: length },
+              },
+            }) => onMeasurement(index, length)}
             style={{
               height: HEADER_HEIGHT,
               flexDirection: "row",

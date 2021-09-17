@@ -7,7 +7,13 @@ import { Text, useTheme } from "../../components";
 import { menu } from "./constants";
 import Item from "./Item";
 
-const Content = ({ onScroll }) => {
+interface ContentProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onScroll: any;
+  onMeasurement: (index: number, length: number) => void;
+}
+
+const Content = ({ onScroll, onMeasurement }: ContentProps) => {
   const theme = useTheme();
 
   return (
@@ -16,10 +22,15 @@ const Content = ({ onScroll }) => {
       scrollEventThrottle={1}
       onScroll={onScroll}
     >
-      {menu.map(({ name, items }, i) => (
+      {menu.map(({ name, items }, index) => (
         // menu container
         <View
-          key={i}
+          key={index}
+          onLayout={({
+            nativeEvent: {
+              layout: { x: length },
+            },
+          }) => onMeasurement(index, length)}
           style={{
             paddingHorizontal: theme.spacing.screen,
             paddingVertical: 15,
