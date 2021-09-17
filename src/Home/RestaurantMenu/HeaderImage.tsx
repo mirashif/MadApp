@@ -10,7 +10,11 @@ import { Icon, Text } from "../../components";
 
 import { HEADER_HEIGHT, HEADER_IMAGE_HEIGHT } from "./constants";
 
-const HeaderImage = ({ y }) => {
+interface HeaderImageProps {
+  y: Animated.Value<number>;
+}
+
+const HeaderImage = ({ y }: HeaderImageProps) => {
   const navigation = useNavigation();
 
   const height = interpolateNode(y, {

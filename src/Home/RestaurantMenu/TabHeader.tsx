@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, TouchableWithoutFeedback, View } from "react-native";
 
 import { Text } from "../../components";
 
@@ -7,9 +7,10 @@ import { defaultTabs, HEADER_HEIGHT } from "./constants";
 
 interface TabHeaderProps {
   onMeasurement: (index: number, length: number) => void;
+  onTabPress: (index: number) => void;
 }
 
-const TabHeader = ({ onMeasurement }: TabHeaderProps) => {
+const TabHeader = ({ onMeasurement, onTabPress }: TabHeaderProps) => {
   const tabs = defaultTabs;
 
   return (
@@ -26,40 +27,44 @@ const TabHeader = ({ onMeasurement }: TabHeaderProps) => {
         }}
       >
         {tabs.map(({ name }, index) => (
-          <View
+          <TouchableWithoutFeedback
+            onPress={() => onTabPress(index)}
             key={index}
-            onLayout={({
-              nativeEvent: {
-                layout: { x: length },
-              },
-            }) => onMeasurement(index, length)}
-            style={{
-              height: HEADER_HEIGHT,
-              flexDirection: "row",
-              alignItems: "center",
-            }}
           >
-            <Text
+            <View
+              onLayout={({
+                nativeEvent: {
+                  layout: { x: length },
+                },
+              }) => onMeasurement(index, length)}
               style={{
-                fontFamily: "Bold",
-                color: "black",
-                fontSize: 18,
-                paddingHorizontal: 8,
+                height: HEADER_HEIGHT,
+                flexDirection: "row",
+                alignItems: "center",
               }}
             >
-              •
-            </Text>
-            <Text
-              style={{
-                fontFamily: "Bold",
-                color: "black",
-                fontSize: 18,
-                paddingHorizontal: 8,
-              }}
-            >
-              {name}
-            </Text>
-          </View>
+              <Text
+                style={{
+                  fontFamily: "Bold",
+                  color: "black",
+                  fontSize: 18,
+                  paddingHorizontal: 8,
+                }}
+              >
+                •
+              </Text>
+              <Text
+                style={{
+                  fontFamily: "Bold",
+                  color: "black",
+                  fontSize: 18,
+                  paddingHorizontal: 8,
+                }}
+              >
+                {name}
+              </Text>
+            </View>
+          </TouchableWithoutFeedback>
         ))}
       </ScrollView>
     </View>

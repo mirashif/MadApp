@@ -11,7 +11,7 @@ import Offer from "./Offer";
 import TabHeader from "./TabHeader";
 
 const RestaurantMenu = () => {
-  const scrollView = useRef<Animated.ScrollView>(null);
+  const scrollViewRef = useRef<Animated.ScrollView>(null);
   const y = useValue(0);
   const onScroll = onScrollEvent({ y });
 
@@ -25,11 +25,18 @@ const RestaurantMenu = () => {
         <Offer y={y} />
       </View>
       <TabHeader
+        onTabPress={(index: number) => {
+          scrollViewRef.current?.getNode().scrollTo({
+            y: anchorY[index],
+            animated: true,
+          });
+        }}
         onMeasurement={(index, length) => {
           anchorX[index] = length;
         }}
       />
       <Content
+        scrollView={scrollViewRef}
         onMeasurement={(index, length) => {
           anchorY[index] = length;
         }}

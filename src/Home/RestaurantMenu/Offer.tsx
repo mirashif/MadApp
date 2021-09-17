@@ -10,7 +10,11 @@ import { CircularIcon, Text, useTheme } from "../../components";
 
 import { HEADER_IMAGE_HEIGHT } from "./constants";
 
-const Offer = ({ y }) => {
+interface OfferProps {
+  y: Animated.Value<number>;
+}
+
+const Offer = ({ y }: OfferProps) => {
   const theme = useTheme();
 
   const opacity = interpolateNode(y, {

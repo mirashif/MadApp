@@ -10,14 +10,17 @@ import Item from "./Item";
 interface ContentProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onScroll: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  scrollView: any;
   onMeasurement: (index: number, length: number) => void;
 }
 
-const Content = ({ onScroll, onMeasurement }: ContentProps) => {
+const Content = ({ onScroll, onMeasurement, scrollView }: ContentProps) => {
   const theme = useTheme();
 
   return (
     <Animated.ScrollView
+      ref={scrollView}
       showsVerticalScrollIndicator={false}
       scrollEventThrottle={1}
       onScroll={onScroll}
