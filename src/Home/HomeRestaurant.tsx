@@ -33,7 +33,9 @@ const HomeRestaurant = ({
       showsHorizontalScrollIndicator={false}
     >
       <TouchableWithoutFeedback
-        onPress={() => navigation.navigate("HomeStack", { screen: "Menu" })}
+        onPress={() =>
+          navigation.navigate("HomeStack", { screen: "RestaurantMenu" })
+        }
       >
         <Box style={styles.logo}>
           <Image style={styles.logoStyle} source={{ uri: logoUri }} />

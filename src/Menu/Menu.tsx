@@ -1,15 +1,9 @@
 import React from "react";
 import { Image, ScrollView, TouchableWithoutFeedback } from "react-native";
 
-import {
-  Box,
-  Text,
-  useTheme,
-  SafeArea,
-  makeStyles,
-  Theme,
-} from "../components";
-import { RootStackProps } from "../components/AppNavigator";
+import type { Theme } from "../components";
+import { Box, Text, useTheme, SafeArea, makeStyles } from "../components";
+import type { RootStackProps } from "../components/AppNavigator";
 
 import Item from "./Item";
 
