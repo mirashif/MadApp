@@ -29,7 +29,7 @@ const RestaurantMenu = () => {
         <Offer y={y} />
       </View>
       <TabHeader
-        y={y}
+        activeIndex={activeIndex}
         onTabPress={(index: number) => {
           scrollViewRef.current?.getNode().scrollTo({
             y: anchorY[index],
