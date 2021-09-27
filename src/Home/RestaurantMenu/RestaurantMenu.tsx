@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { View } from "react-native";
 import type Animated from "react-native-reanimated";
 import { onScrollEvent, useValue } from "react-native-redash/lib/module/v1";
@@ -14,9 +14,8 @@ const RestaurantMenu = () => {
   const scrollViewRef = useRef<Animated.ScrollView>(null);
   const y = useValue(0);
   const onScroll = onScrollEvent({ y });
-
-  const anchorX: number[] = [];
-  const anchorY: number[] = [];
+  const [anchorX, setAnchorX] = useState<number[]>([]);
+  const [anchorY, setAnchorY] = useState<number[]>([]);
 
   return (
     <SafeArea>
@@ -26,19 +25,27 @@ const RestaurantMenu = () => {
       </View>
       <TabHeader
         onTabPress={(index: number) => {
+          console.log(index);
+          console.log(anchorY);
+          console.log(anchorY[index]);
+
           scrollViewRef.current?.getNode().scrollTo({
             y: anchorY[index],
             animated: true,
           });
         }}
         onMeasurement={(index, length) => {
-          anchorX[index] = length;
+          const _anchorX = anchorX;
+          _anchorX[index] = length;
+          setAnchorX(_anchorX);
         }}
       />
       <Content
         scrollView={scrollViewRef}
         onMeasurement={(index, length) => {
-          anchorY[index] = length;
+          const _anchorY = anchorY;
+          _anchorY[index] = length;
+          setAnchorY(_anchorY);
         }}
         onScroll={onScroll}
       />
