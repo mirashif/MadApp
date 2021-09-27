@@ -1,6 +1,5 @@
 import React from "react";
 import { ScrollView, TouchableWithoutFeedback, View } from "react-native";
-import Animated from "react-native-reanimated";
 
 import { Text } from "../../components";
 
@@ -9,14 +8,9 @@ import { defaultTabs, HEADER_HEIGHT } from "./constants";
 interface TabHeaderProps {
   onMeasurement: (index: number, length: number) => void;
   onTabPress: (index: number) => void;
-  activeIndex: number;
 }
 
-const TabHeader = ({
-  onMeasurement,
-  onTabPress,
-  activeIndex,
-}: TabHeaderProps) => {
+const TabHeader = ({ onMeasurement, onTabPress }: TabHeaderProps) => {
   const tabs = defaultTabs;
 
   return (
@@ -37,7 +31,7 @@ const TabHeader = ({
             onPress={() => onTabPress(index)}
             key={index}
           >
-            <Animated.View
+            <View
               onLayout={({
                 nativeEvent: {
                   layout: { x: length },
@@ -54,7 +48,7 @@ const TabHeader = ({
                   fontFamily: "Bold",
                   fontSize: 18,
                   paddingHorizontal: 8,
-                  color: activeIndex === index ? "#FFB81B" : "black",
+                  color: "#FFB81B",
                 }}
               >
                 •
@@ -64,12 +58,12 @@ const TabHeader = ({
                   fontFamily: "Bold",
                   fontSize: 18,
                   paddingHorizontal: 8,
-                  color: activeIndex === index ? "#FFB81B" : "black",
+                  color: "#FFB81B",
                 }}
               >
                 {name}
               </Text>
-            </Animated.View>
+            </View>
           </TouchableWithoutFeedback>
         ))}
       </ScrollView>
