@@ -31,7 +31,7 @@ const Content = ({ onScroll, onMeasurement, scrollView }: ContentProps) => {
           key={index}
           onLayout={({
             nativeEvent: {
-              layout: { x: length },
+              layout: { y: length },
             },
           }) => onMeasurement(index, length)}
           style={{
