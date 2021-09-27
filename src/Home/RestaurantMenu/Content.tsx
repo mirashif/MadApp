@@ -11,18 +11,18 @@ interface ContentProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onScroll: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  scrollView: any;
+  scrollViewRef: any;
   onMeasurement: (index: number, length: number) => void;
 }
 
-const Content = ({ onScroll, onMeasurement, scrollView }: ContentProps) => {
+const Content = ({ onScroll, onMeasurement, scrollViewRef }: ContentProps) => {
   const theme = useTheme();
 
   return (
     <Animated.ScrollView
-      ref={scrollView}
+      ref={scrollViewRef}
       showsVerticalScrollIndicator={false}
-      scrollEventThrottle={1}
+      scrollEventThrottle={16}
       onScroll={onScroll}
     >
       {menu.map(({ name, items }, index) => (

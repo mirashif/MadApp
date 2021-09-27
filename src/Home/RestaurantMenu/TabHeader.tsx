@@ -1,5 +1,6 @@
 import React from "react";
 import { ScrollView, TouchableWithoutFeedback, View } from "react-native";
+import Animated, { useDerivedValue } from "react-native-reanimated";
 
 import { Text } from "../../components";
 
@@ -8,10 +9,15 @@ import { defaultTabs, HEADER_HEIGHT } from "./constants";
 interface TabHeaderProps {
   onMeasurement: (index: number, length: number) => void;
   onTabPress: (index: number) => void;
+  y: Animated.SharedValue<number>;
 }
 
-const TabHeader = ({ onMeasurement, onTabPress }: TabHeaderProps) => {
+const TabHeader = ({ onMeasurement, onTabPress, y }: TabHeaderProps) => {
   const tabs = defaultTabs;
+
+  const activeIndex = useDerivedValue(() => {
+    return true;
+  });
 
   return (
     <View
@@ -31,7 +37,7 @@ const TabHeader = ({ onMeasurement, onTabPress }: TabHeaderProps) => {
             onPress={() => onTabPress(index)}
             key={index}
           >
-            <View
+            <Animated.View
               onLayout={({
                 nativeEvent: {
                   layout: { x: length },
@@ -46,9 +52,9 @@ const TabHeader = ({ onMeasurement, onTabPress }: TabHeaderProps) => {
               <Text
                 style={{
                   fontFamily: "Bold",
-                  color: "black",
                   fontSize: 18,
                   paddingHorizontal: 8,
+                  color: activeIndex ? "#FFB81B" : "black",
                 }}
               >
                 •
@@ -56,14 +62,14 @@ const TabHeader = ({ onMeasurement, onTabPress }: TabHeaderProps) => {
               <Text
                 style={{
                   fontFamily: "Bold",
-                  color: "black",
                   fontSize: 18,
                   paddingHorizontal: 8,
+                  color: activeIndex ? "#FFB81B" : "black",
                 }}
               >
                 {name}
               </Text>
-            </View>
+            </Animated.View>
           </TouchableWithoutFeedback>
         ))}
       </ScrollView>
