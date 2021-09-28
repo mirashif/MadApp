@@ -1,7 +1,8 @@
 import React from "react";
 import { ScrollView, TouchableWithoutFeedback, View } from "react-native";
 
-import { Text } from "../../components";
+import type { Theme } from "../../components";
+import { makeStyles, Text } from "../../components";
 
 import { defaultTabs, HEADER_HEIGHT } from "./constants";
 
@@ -11,6 +12,7 @@ interface TabHeaderProps {
 }
 
 const TabHeader = ({ onMeasurement, onTabPress }: TabHeaderProps) => {
+  const styles = useStyles();
   const tabs = defaultTabs;
 
   return (
@@ -37,32 +39,10 @@ const TabHeader = ({ onMeasurement, onTabPress }: TabHeaderProps) => {
                   layout: { x: length },
                 },
               }) => onMeasurement(index, length)}
-              style={{
-                height: HEADER_HEIGHT,
-                flexDirection: "row",
-                alignItems: "center",
-              }}
+              style={styles.tab}
             >
-              <Text
-                style={{
-                  fontFamily: "Bold",
-                  fontSize: 18,
-                  paddingHorizontal: 8,
-                  color: "#FFB81B",
-                }}
-              >
-                •
-              </Text>
-              <Text
-                style={{
-                  fontFamily: "Bold",
-                  fontSize: 18,
-                  paddingHorizontal: 8,
-                  color: "#FFB81B",
-                }}
-              >
-                {name}
-              </Text>
+              <Text style={styles.tabLabel}>•</Text>
+              <Text style={styles.tabLabel}>{name}</Text>
             </View>
           </TouchableWithoutFeedback>
         ))}
@@ -72,3 +52,17 @@ const TabHeader = ({ onMeasurement, onTabPress }: TabHeaderProps) => {
 };
 
 export default TabHeader;
+
+const useStyles = makeStyles((theme: Theme) => ({
+  tab: {
+    height: HEADER_HEIGHT,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  tabLabel: {
+    fontFamily: "Bold",
+    fontSize: 18,
+    paddingHorizontal: 8,
+    color: "#FFB81B",
+  },
+}));
