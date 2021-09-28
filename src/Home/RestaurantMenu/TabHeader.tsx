@@ -9,9 +9,14 @@ import { defaultTabs, HEADER_HEIGHT } from "./constants";
 interface TabHeaderProps {
   onMeasurement: (index: number, length: number) => void;
   onTabPress: (index: number) => void;
+  activeIndex: number;
 }
 
-const TabHeader = ({ onMeasurement, onTabPress }: TabHeaderProps) => {
+const TabHeader = ({
+  onMeasurement,
+  onTabPress,
+  activeIndex,
+}: TabHeaderProps) => {
   const styles = useStyles();
   const tabs = defaultTabs;
 
@@ -41,8 +46,22 @@ const TabHeader = ({ onMeasurement, onTabPress }: TabHeaderProps) => {
               }) => onMeasurement(index, length)}
               style={styles.tab}
             >
-              <Text style={styles.tabLabel}>•</Text>
-              <Text style={styles.tabLabel}>{name}</Text>
+              <Text
+                style={[
+                  styles.tabLabel,
+                  { color: activeIndex === index ? "#FFB81B" : "black" },
+                ]}
+              >
+                •
+              </Text>
+              <Text
+                style={[
+                  styles.tabLabel,
+                  { color: activeIndex === index ? "#FFB81B" : "black" },
+                ]}
+              >
+                {name}
+              </Text>
             </View>
           </TouchableWithoutFeedback>
         ))}
@@ -53,7 +72,7 @@ const TabHeader = ({ onMeasurement, onTabPress }: TabHeaderProps) => {
 
 export default TabHeader;
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   tab: {
     height: HEADER_HEIGHT,
     flexDirection: "row",

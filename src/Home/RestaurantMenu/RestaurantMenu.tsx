@@ -22,6 +22,8 @@ const RestaurantMenu = () => {
     y.value = event.contentOffset.y;
   });
 
+  const [activeIndex, setActiveIndex] = useState<number>(0);
+
   return (
     <SafeArea>
       <View>
@@ -29,6 +31,7 @@ const RestaurantMenu = () => {
         <Offer y={y} />
       </View>
       <TabHeader
+        activeIndex={activeIndex}
         onTabPress={(index: number) => {
           scrollViewRef.current?.getNode().scrollTo({
             y: anchorY[index],
