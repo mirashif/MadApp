@@ -6,12 +6,24 @@ export interface BannerType {
     imageURI: string;
 }
 
+export class Banner {
+    parent: BannerStore;
+    data: BannerType;
+
+    constructor(parent: BannerStore, data: BannerType) {
+        this.parent = parent;
+        this.data = data;
+
+        makeAutoObservable(this, {}, {autoBind: true});
+    }
+}
+
 export class BannerStore {
     parent: Store;
     listener: (() => void) | null = null;
 
     banners: {
-        [key: string]: BannerType;
+        [key: string]: Banner;
     } = {};
 
     constructor(parent: Store) {
@@ -21,7 +33,7 @@ export class BannerStore {
     }
 
     upsert(id: string, data: BannerType): void {
-        this.banners[id] = data;
+        this.banners[id] = new Banner(this, data);
     }
 
     remove(id: string): void {
@@ -53,16 +65,16 @@ export class BannerStore {
         }
     }
 
-    get all(): BannerType[] {
+    get all(): Banner[] {
         return Object.values(this.banners).sort((a, b) => {
             return (
-                (this.parent.app.globals?.bannerOrder[a.id] || 0) -
-                (this.parent.app.globals?.bannerOrder[b.id] || 0)
+                (this.parent.app.globals?.bannerOrder?.[a.data.id] || 0) -
+                (this.parent.app.globals?.bannerOrder?.[b.data.id] || 0)
             );
         });
     }
 
-    get(id: string): BannerType | null {
+    get(id: string): Banner | null {
         return this.banners[id] || null;
     }
 }

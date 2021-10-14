@@ -11,8 +11,27 @@ export interface CashbackType {
     cashbackCouponCode: string;
 }
 
-export interface CashbackWithAvailabilityType extends CashbackType {
-    isAvailable: boolean;
+export class Cashback {
+    parent: CashbackStore;
+    data: CashbackType;
+
+    constructor(parent: CashbackStore, data: CashbackType) {
+        this.parent = parent;
+        this.data = data;
+
+        makeAutoObservable(this, {}, {autoBind: true});
+    }
+
+    get id() {
+        return this.data.id;
+    }
+
+    get isAvailable() {
+        return (
+            this.data?.requiredPoints <=
+            (this.parent.parent.user.userAttributes?.points || 0)
+        );
+    }
 }
 
 export class CashbackStore {
@@ -20,7 +39,7 @@ export class CashbackStore {
     listener: (() => void) | null = null;
 
     cashbacks: {
-        [id: string]: CashbackType;
+        [id: string]: Cashback;
     } = {};
 
     constructor(parent: Store) {
@@ -30,7 +49,7 @@ export class CashbackStore {
     }
 
     upsert(id: string, data: CashbackType): void {
-        this.cashbacks[id] = data;
+        this.cashbacks[id] = new Cashback(this, data);
     }
 
     remove(id: string): void {
@@ -62,25 +81,16 @@ export class CashbackStore {
         }
     }
 
-    get all(): CashbackWithAvailabilityType[] {
-        return Object.values(this.cashbacks)
-            .sort((a, b) => {
-                return (
-                    (this.parent.app.globals?.cashbackOrder[a.id] || 0) -
-                    (this.parent.app.globals?.cashbackOrder[b.id] || 0)
-                );
-            })
-            .map((cashback) => {
-                return {
-                    ...cashback,
-                    isAvailable:
-                        cashback?.requiredPoints <=
-                        (this.parent.user.userAttributes?.points || 0),
-                };
-            });
+    get all(): Cashback[] {
+        return Object.values(this.cashbacks).sort((a, b) => {
+            return (
+                (this.parent.app.globals?.cashbackOrder?.[a.data.id] || 0) -
+                (this.parent.app.globals?.cashbackOrder?.[b.data.id] || 0)
+            );
+        });
     }
 
-    get(id: string): CashbackType | null {
+    get(id: string): Cashback | null {
         return this.cashbacks[id] || null;
     }
 }

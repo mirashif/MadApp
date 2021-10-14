@@ -12,12 +12,24 @@ export interface InviteType {
     updatedAt: FirebaseFirestoreTypes.Timestamp;
 }
 
+export class Invite {
+    parent: InviteStore;
+    data: InviteType;
+
+    constructor(parent: InviteStore, data: InviteType) {
+        this.parent = parent;
+        this.data = data;
+
+        makeAutoObservable(this, {}, {autoBind: true});
+    }
+}
+
 export class InviteStore {
     parent: Store;
     listener: (() => void) | null = null;
 
     invites: {
-        [key: string]: InviteType;
+        [key: string]: Invite;
     } = {};
 
     constructor(parent: Store) {
@@ -27,7 +39,7 @@ export class InviteStore {
     }
 
     upsert(id: string, data: InviteType): void {
-        this.invites[id] = data;
+        this.invites[id] = new Invite(this, data);
     }
 
     remove(id: string): void {
@@ -65,16 +77,16 @@ export class InviteStore {
         }
     }
 
-    get all(): InviteType[] {
+    get all(): Invite[] {
         return Object.values(this.invites).sort((a, b) => {
             return (
-                (b?.createdAt?.toMillis() || 0) -
-                (a?.createdAt?.toMillis() || 0)
+                (b?.data?.createdAt?.toMillis() || 0) -
+                (a?.data?.createdAt?.toMillis() || 0)
             );
         });
     }
 
-    get(id: string): InviteType | null {
+    get(id: string): Invite | null {
         return this.invites[id] || null;
     }
 }

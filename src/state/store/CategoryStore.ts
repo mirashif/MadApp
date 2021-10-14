@@ -1,6 +1,6 @@
 import {makeAutoObservable} from 'mobx';
 import {Store} from '.';
-import {AddonType, VariantGroupType} from './ItemStore';
+import {AddonType, Item, VariantGroupType} from './ItemStore';
 
 export interface CategoryType {
     id: string;
@@ -29,10 +29,50 @@ export interface CategoryType {
     addons: {
         [addonID: string]: AddonType;
     };
+
+    addonLimit: number;
 }
 
-export interface CategoryWithAvailabilityType extends CategoryType {
-    isAvailable: boolean;
+export class Category {
+    parent: CategoryStore;
+    data: CategoryType;
+
+    constructor(parent: CategoryStore, data: CategoryType) {
+        this.parent = parent;
+        this.data = data;
+
+        makeAutoObservable(this, {}, {autoBind: true});
+    }
+
+    get id() {
+        return this.data.id;
+    }
+
+    get isAvailable() {
+        const currentBranch = this.parent.parent.restaurants.get(
+            this.data.restaurantID,
+        )?.availableBranches[0];
+
+        return !this.data.isAvailable
+            ? false
+            : !currentBranch?.data.unavailableCategories?.[this.id];
+    }
+
+    get items(): Item[] {
+        const category = this.parent.parent.categories.get(this.id);
+
+        return Object.keys(
+            this.parent.parent.items.itemsByCategory[this.id] || {},
+        )
+            .map((id) => this.parent.parent.items.items[id] || null)
+            .filter((item) => !!item)
+            .sort((a, b) => {
+                const orderA = category?.data?.itemOrder?.[a.id] || 0;
+                const orderB = category?.data?.itemOrder?.[b.id] || 0;
+
+                return orderA - orderB;
+            });
+    }
 }
 
 export class CategoryStore {
@@ -40,7 +80,7 @@ export class CategoryStore {
     listener: (() => void) | null = null;
 
     categories: {
-        [id: string]: CategoryType;
+        [id: string]: Category;
     } = {};
 
     categoriesByRestaurant: {
@@ -56,7 +96,7 @@ export class CategoryStore {
     }
 
     upsert(id: string, data: CategoryType): void {
-        this.categories[id] = data;
+        this.categories[id] = new Category(this, data);
 
         if (!(data.restaurantID in this.categoriesByRestaurant)) {
             this.categoriesByRestaurant[data.restaurantID] = {};
@@ -66,7 +106,7 @@ export class CategoryStore {
     }
 
     remove(id: string): void {
-        const restaurantID = this.categories[id].restaurantID;
+        const restaurantID = this.categories[id].data.restaurantID;
 
         delete this.categoriesByRestaurant[restaurantID][id];
         delete this.categories[id];
@@ -97,41 +137,7 @@ export class CategoryStore {
         }
     }
 
-    categoriesFor(restaurantID: string): CategoryWithAvailabilityType[] {
-        const currentBranch =
-            this.parent.branches.availableFor(restaurantID)[0];
-
-        return Object.keys(this.categoriesByRestaurant[restaurantID] || {})
-            .map((key) => this.categories[key])
-            .map((category) => {
-                const isAvailable = !category.isAvailable
-                    ? false
-                    : !currentBranch?.unavailableCategories?.[category.id];
-
-                return {
-                    ...category,
-                    isAvailable: isAvailable,
-                };
-            });
-    }
-
-    get(id: string): CategoryWithAvailabilityType | null {
-        if (!this.categories[id]) {
-            return null;
-        }
-
-        const category = this.categories[id];
-        const restaurantID = category.restaurantID;
-        const currentBranch =
-            this.parent.branches.availableFor(restaurantID)[0];
-
-        const isAvailable = !category.isAvailable
-            ? false
-            : !currentBranch?.unavailableCategories?.[id];
-
-        return {
-            ...category,
-            isAvailable: isAvailable,
-        };
+    get(id: string): Category | null {
+        return this.categories[id] || null;
     }
 }

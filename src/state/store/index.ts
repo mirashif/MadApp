@@ -19,6 +19,8 @@ import {AugmentedFirebaseType} from '../augmentedFirebase';
 import {InviteStore} from './InviteStore';
 import {ItemStore} from './ItemStore';
 import {OrderStore} from './OrderStore';
+import {DealStore} from './DealStore';
+import {FreebieStore} from './FreebieStore';
 
 export interface RootStoreType {
     app: AppStore;
@@ -37,6 +39,8 @@ export interface RootStoreType {
     invites: InviteStore;
     items: ItemStore;
     orders: OrderStore;
+    deals: DealStore;
+    freebies: FreebieStore;
 }
 
 export class Store implements RootStoreType {
@@ -59,6 +63,8 @@ export class Store implements RootStoreType {
     invites = new InviteStore(this);
     items = new ItemStore(this);
     orders = new OrderStore(this);
+    deals = new DealStore(this);
+    freebies = new FreebieStore(this);
 
     constructor(firebase: AugmentedFirebaseType) {
         this.firebase = firebase;

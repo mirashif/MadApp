@@ -1,5 +1,6 @@
 import {makeAutoObservable} from 'mobx';
 import {Store} from './index';
+import {Category} from './CategoryStore';
 
 export interface AddonType {
     id: string;
@@ -62,8 +63,7 @@ export interface ItemType {
     isAvailable?: boolean;
     isPopular?: boolean;
 
-    tag?: string;
-    originalPrice?: number;
+    tags?: string[];
 
     price: number;
     name: string;
@@ -89,10 +89,159 @@ export interface ItemType {
     addons: {
         [addonID: string]: AddonType;
     };
+
+    addonLimit: number;
 }
 
-export interface ItemWithAvailabilityType extends ItemType {
-    isAvailable: boolean;
+export class Addon {
+    parent: Item;
+    data: AddonType;
+
+    constructor(parent: Item, data: AddonType) {
+        this.parent = parent;
+        this.data = data;
+    }
+}
+
+export class Variant {
+    parent: VariantGroup;
+    data: VariantType;
+
+    constructor(parent: VariantGroup, data: VariantType) {
+        this.parent = parent;
+        this.data = data;
+    }
+}
+
+export class VariantGroup {
+    parent: Item;
+    data: VariantGroupType;
+
+    constructor(parent: Item, data: VariantGroupType) {
+        this.parent = parent;
+        this.data = data;
+    }
+
+    get variants() {
+        return Object.values(this.data.variants || {})
+            .sort(
+                (va, vb) =>
+                    (this.data?.variantOrder?.[va.id] || 0) -
+                    (this.data?.variantOrder?.[vb.id] || 0),
+            )
+            .map((data) => new Variant(this, data));
+    }
+}
+
+export class Item {
+    parent: ItemStore;
+    data: ItemType;
+
+    constructor(parent: ItemStore, data: ItemType) {
+        this.parent = parent;
+        this.data = data;
+
+        makeAutoObservable(this, {}, {autoBind: true});
+    }
+
+    get category(): Category | null {
+        return this.parent.parent.categories.get(this.id);
+    }
+
+    get id() {
+        return this.data.id;
+    }
+
+    get originalPrice(): number {
+        return this.data.price;
+    }
+
+    get price(): number {
+        const deal = this.deal;
+
+        if (!deal || !deal.isApplicable) {
+            return this.originalPrice;
+        }
+
+        const dealPrice = deal.genericScript(this.originalPrice);
+
+        if (dealPrice === true || dealPrice === false) {
+            return this.originalPrice;
+        }
+
+        return dealPrice;
+    }
+
+    get isAvailable(): boolean {
+        return this.parent.isItemAvailable(this.data);
+    }
+
+    get addons() {
+        const root = this.parent.parent;
+        const category = root.categories.get(this.data.categoryID);
+
+        const order = this?.data?.addonOrder || category?.data.addonOrder || {};
+
+        const addons = Object.values(
+            this?.data?.addons || category?.data.addons || {},
+        ).map((data) => new Addon(this, data));
+
+        return addons.sort(
+            (a, b) => (order[a.data.id] || 0) - (order[b.data.id] || 0),
+        );
+    }
+
+    get variantGroups() {
+        const root = this.parent.parent;
+        const category = root.categories.get(this.data.categoryID);
+
+        const order =
+            this?.data.variantGroupOrder ||
+            category?.data.variantGroupOrder ||
+            {};
+
+        const groups: VariantGroup[] = Object.values(
+            this?.data.variantGroups || category?.data.variantGroups || {},
+        ).map((data) => new VariantGroup(this, data));
+
+        return groups.sort(
+            (a, b) => (order[a.data.id] || 0) - (order[b.data.id] || 0),
+        );
+    }
+
+    get deals() {
+        const itemDeals = this.parent.parent.deals.getForItem(this.id);
+
+        if (itemDeals.length) {
+            return itemDeals;
+        }
+
+        const categoryDeals = this.parent.parent.deals.getForCategory(
+            this.data.categoryID,
+        );
+
+        if (categoryDeals.length) {
+            return categoryDeals;
+        }
+
+        const restaurantDeals = this.parent.parent.deals.getForRestaurant(
+            this.data.restaurantID,
+        );
+
+        if (restaurantDeals.length) {
+            return restaurantDeals;
+        }
+
+        if (this.parent.parent.deals.universals.length >= 0) {
+            return this.parent.parent.deals.universals;
+        }
+
+        return [];
+    }
+
+    get deal() {
+        return this.deals[0] || null;
+    }
 }
 
 export class ItemStore {
@@ -100,7 +249,7 @@ export class ItemStore {
     listener: (() => void) | null = null;
 
     items: {
-        [id: string]: ItemType;
+        [id: string]: Item;
     } = {};
 
     itemsByRestaurant: {
@@ -126,7 +275,7 @@ export class ItemStore {
             this.remove(id);
         }
 
-        this.items[id] = data;
+        this.items[id] = new Item(this, data);
 
         if (!(data.restaurantID in this.itemsByRestaurant)) {
             this.itemsByRestaurant[data.restaurantID] = {};
@@ -141,8 +290,8 @@ export class ItemStore {
     }
 
     remove(id: string): void {
-        delete this.itemsByCategory[this.items[id].categoryID][id];
-        delete this.itemsByRestaurant[this.items[id].restaurantID][id];
+        delete this.itemsByCategory[this.items[id].data.categoryID][id];
+        delete this.itemsByRestaurant[this.items[id].data.restaurantID][id];
 
         delete this.items[id];
     }
@@ -182,127 +331,55 @@ export class ItemStore {
                 return false;
             }
 
-            const branch = this.parent.branches.availableFor(restaurant.id)[0];
+            const branch = restaurant.availableBranches[0];
 
             if (!branch) {
                 return false;
             }
 
-            return !(item.id in (branch?.unavailableItems || {}));
+            return !(item.id in (branch?.data?.unavailableItems || {}));
         }
     }
 
-    getForCategory(categoryID: string): ItemWithAvailabilityType[] {
-        const category = this.parent.categories.get(categoryID);
-
-        return Object.keys(this.itemsByCategory[categoryID] || {})
-            .map((id) => this.items[id] || null)
-            .filter((item) => !!item)
-            .map((item) => {
-                return {
-                    ...item,
-                    isAvailable: this.isItemAvailable(item),
-                };
-            })
-            .sort((a, b) => {
-                const orderA = category?.itemOrder?.[a.id] || 0;
-                const orderB = category?.itemOrder?.[b.id] || 0;
-
-                return orderA - orderB;
-            });
-    }
-
-    getForRestaurant(restaurantID: string): ItemWithAvailabilityType[] {
+    getForRestaurant(restaurantID: string): Item[] {
         const restaurant = this.parent.restaurants.get(restaurantID);
 
         return Object.keys(this.itemsByRestaurant[restaurantID] || {})
             .map((id) => this.items[id] || null)
             .filter((item) => !!item)
-            .map((item) => {
-                return {
-                    ...item,
-                    isAvailable: this.isItemAvailable(item),
-                };
-            })
             .sort((a, b) => {
-                const categoryA = this.parent.categories.get(a.categoryID);
-                const categoryB = this.parent.categories.get(b.categoryID);
+                const categoryA = this.parent.categories.get(a.data.categoryID);
+                const categoryB = this.parent.categories.get(b.data.categoryID);
 
                 if (!categoryA || !categoryB) {
                     return 0;
                 }
 
                 const orderA =
-                    (restaurant?.categoryOrder?.[categoryA.id] || 0) * 1000 +
-                    (categoryA?.itemOrder?.[a.id] || 0);
+                    (restaurant?.data?.categoryOrder?.[categoryA.id] || 0) *
+                        1000 +
+                    (categoryA?.data.itemOrder?.[a.id] || 0);
 
                 const orderB =
-                    (restaurant?.categoryOrder?.[categoryB.id] || 0) * 1000 +
-                    (categoryB?.itemOrder?.[b.id] || 0);
+                    (restaurant?.data?.categoryOrder?.[categoryB.id] || 0) *
+                        1000 +
+                    (categoryB?.data?.itemOrder?.[b.id] || 0);
 
                 return orderA - orderB;
             });
     }
 
-    popularForRestaurant(restaurantID: string): ItemWithAvailabilityType[] {
+    popularForRestaurant(restaurantID: string): Item[] {
         return this.getForRestaurant(restaurantID).filter(
-            (item) => item.isPopular,
+            (item) => item.data.isPopular,
         );
     }
 
-    get(id: string): ItemWithAvailabilityType | null {
+    get(id: string): Item | null {
         if (!this.items[id]) {
             return null;
         }
 
-        return {
-            ...this.items[id],
-            isAvailable: this.isItemAvailable(this.items[id]),
-        };
-    }
-
-    itemVariantGroups(id: string): VariantGroupOrderedViewType[] {
-        const item = this.items[id];
-
-        if (!item) {
-            return [];
-        }
-
-        const category = this.parent.categories.get(item.id);
-
-        const order =
-            item?.variantGroupOrder || category?.variantGroupOrder || {};
-
-        const groups: VariantGroupType[] = Object.values(
-            item?.variantGroups || category?.variantGroups || {},
-        );
-
-        return groups
-            .sort((a, b) => (order[a.id] || 0) - (order[b.id] || 0))
-            .map((group) => {
-                return {
-                    ...group,
-                    variants: Object.values(group.variants || {}).sort(
-                        (va, vb) =>
-                            (group?.variantOrder?.[va.id] || 0) -
-                            (group?.variantOrder?.[vb.id] || 0),
-                    ),
-                };
-            });
-    }
-
-    itemAddons(id: string) {
-        const item = this.items[id];
-
-        if (!item) {
-            return [];
-        }
-
-        const category = this.parent.categories.get(item.categoryID);
-
-        const order = item?.addonOrder || category?.addonOrder || {};
-        const addons = Object.values(item?.addons || category?.addons || {});
-
-        return addons.sort((a, b) => (order[a.id] || 0) - (order[b.id] || 0));
+        return this.items[id];
     }
 }

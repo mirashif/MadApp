@@ -18,6 +18,10 @@ export interface GlobalsType {
         [id: string]: number;
     };
 
+    dealOrder?: {
+        [id: string]: number;
+    };
+
     deliveryCharge?: number;
     vatPercentage?: number;
     serviceChargePercentage?: number;

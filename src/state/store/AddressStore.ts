@@ -18,12 +18,36 @@ export interface UnsavedAddress {
     label?: string;
 
     lastUsed?: FirebaseFirestoreTypes.Timestamp;
-
-    [DISTANCE_SYMBOL]?: number;
 }
 
 export interface AddressType extends UnsavedAddress {
     id: string;
+}
+
+export class Address {
+    parent: AddressStore;
+    data: AddressType;
+
+    constructor(parent: AddressStore, data: AddressType) {
+        this.parent = parent;
+        this.data = data;
+
+        makeAutoObservable(this, {}, {autoBind: true});
+    }
+
+    get distance() {
+        return geodist(
+            this.parent.location,
+            {
+                lon: this.data.lon,
+                lat: this.data.lat,
+            },
+            {
+                unit: 'meters',
+                exact: true,
+            },
+        ) as number;
+    }
 }
 
 export class AddressStore {
@@ -31,7 +55,7 @@ export class AddressStore {
     listener: (() => void) | null = null;
 
     addresses: {
-        [id: string]: AddressType;
+        [id: string]: Address;
     } = {};
 
     location: {lat: number; lon: number} | null = null;
@@ -44,7 +68,7 @@ export class AddressStore {
     }
 
     upsert(id: string, data: AddressType) {
-        this.addresses[id] = data;
+        this.addresses[id] = new Address(this, data);
     }
 
     remove(id: string) {
@@ -81,15 +105,15 @@ export class AddressStore {
 
     get all() {
         return Object.values(this.addresses).sort((a, b) => {
-            if (!a?.lastUsed || !b?.lastUsed) {
+            if (!a?.data?.lastUsed || !b?.data?.lastUsed) {
                 return -1;
             }
 
-            return a.lastUsed.toMillis() - b.lastUsed.toMillis();
+            return a?.data?.lastUsed.toMillis() - b?.data.lastUsed?.toMillis();
         });
     }
 
-    get(id: string): AddressType | null {
+    get(id: string): Address | null {
         if (id === 'location') {
             if (this.location) {
                 return this.locationAddress;
@@ -135,41 +159,23 @@ export class AddressStore {
         return id;
     }
 
-    get locationAddress(): AddressType | null {
+    get locationAddress(): Address | null {
         // TODO
         return this.location
-            ? {
+            ? new Address(this, {
                   id: 'location',
                   address: '',
                   directions: '',
                   lat: this.location.lat,
                   lon: this.location.lon,
-              }
+              })
             : null;
     }
 
     get nearbyAddresses() {
         return this.all
-            .map((address) => {
-                address[DISTANCE_SYMBOL] = geodist(
-                    this.location,
-                    {
-                        lon: address.lon,
-                        lat: address.lat,
-                    },
-                    {
-                        unit: 'meters',
-                        exact: true,
-                    },
-                ) as number;
-
-                return address;
-            })
-            .filter((address) => (address?.[DISTANCE_SYMBOL] || 0) < 4000)
-            .sort(
-                (a, b) =>
-                    (a?.[DISTANCE_SYMBOL] || 0) - (b?.[DISTANCE_SYMBOL] || 0),
-            );
+            .filter((address) => (address?.distance || 0) < 4000)
+            .sort((a, b) => (a?.distance || 0) - (b?.distance || 0));
     }
 
     get closestAddress() {

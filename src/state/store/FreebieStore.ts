@@ -1,20 +1,21 @@
 import {makeAutoObservable} from 'mobx';
-import {Store} from './index';
-import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
+import {Store} from '.';
 
-export interface StoryType {
+export interface FreebieType {
     id: string;
 
-    thumbnailImageURI: string;
+    name: string;
+    description: string;
     imageURI: string;
-    postedAt: FirebaseFirestoreTypes.Timestamp;
+
+    value: number;
 }
 
-export class Story {
-    parent: StoryStore;
-    data: StoryType;
+export class Freebie {
+    parent: FreebieStore;
+    data: FreebieType;
 
-    constructor(parent: StoryStore, data: StoryType) {
+    constructor(parent: FreebieStore, data: FreebieType) {
         this.parent = parent;
         this.data = data;
 
@@ -22,12 +23,12 @@ export class Story {
     }
 }
 
-export class StoryStore {
+export class FreebieStore {
     parent: Store;
     listener: (() => void) | null = null;
 
-    stories: {
-        [id: string]: Story;
+    banners: {
+        [key: string]: Freebie;
     } = {};
 
     constructor(parent: Store) {
@@ -36,24 +37,24 @@ export class StoryStore {
         makeAutoObservable(this, {}, {autoBind: true});
     }
 
-    upsert(id: string, data: StoryType): void {
-        this.stories[id] = new Story(this, data);
+    upsert(id: string, data: FreebieType): void {
+        this.banners[id] = new Freebie(this, data);
     }
 
     remove(id: string): void {
-        delete this.stories[id];
+        delete this.banners[id];
     }
 
     listen(): void {
         this.listener = this.parent.firebase
             .firestore()
-            .collection('stories')
+            .collection('freebies')
             .onSnapshot((snap) => {
                 snap.docChanges().forEach((change) => {
                     if (change.type === 'added' || change.type === 'modified') {
                         this.upsert(
                             change.doc.id,
-                            <StoryType>change.doc.data(),
+                            <FreebieType>change.doc.data(),
                         );
                     } else if (change.type === 'removed') {
                         this.remove(change.doc.id);
@@ -69,16 +70,16 @@ export class StoryStore {
         }
     }
 
-    get all(): Story[] {
-        return Object.values(this.stories).sort((a, b) => {
+    get all(): Freebie[] {
+        return Object.values(this.banners).sort((a, b) => {
             return (
-                (this.parent.app.globals?.storyOrder?.[a.data.id] || 0) -
-                (this.parent.app.globals?.storyOrder?.[b.data.id] || 0)
+                (this.parent.app.globals?.bannerOrder?.[a.data.id] || 0) -
+                (this.parent.app.globals?.bannerOrder?.[b.data.id] || 0)
             );
         });
     }
 
-    get(id: string): Story | null {
-        return this.stories[id] || null;
+    get(id: string): Freebie | null {
+        return this.banners[id] || null;
     }
 }

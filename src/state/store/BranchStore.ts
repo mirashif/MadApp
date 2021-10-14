@@ -31,12 +31,50 @@ export interface BranchWithAvailabilityType extends BranchType {
     isAvailable: boolean;
 }
 
+export class Branch {
+    parent: BranchStore;
+    data: BranchType;
+
+    constructor(parent: BranchStore, data: BranchType) {
+        this.parent = parent;
+        this.data = data;
+
+        makeAutoObservable(this, {}, {autoBind: true});
+    }
+
+    get isAvailable() {
+        const lockedAddress = this.parent.parent.lockedAddress.lockedAddress;
+
+        if (!lockedAddress) {
+            return false;
+        }
+
+        const distance = geodist(
+            {
+                lon: lockedAddress.data.lon,
+                lat: lockedAddress.data.lat,
+            },
+            {
+                lon: this.data.location.lon,
+                lat: this.data.location.lat,
+            },
+            {unit: 'meters'},
+        );
+
+        return distance < 2000;
+    }
+
+    get restaurant() {
+        return this.parent.parent.restaurants.get(this.data.restaurantID);
+    }
+}
+
 export class BranchStore {
     parent: Store;
     listener: (() => void) | null = null;
 
     branches: {
-        [key: string]: BranchType;
+        [key: string]: Branch;
     } = {};
 
     constructor(parent: Store) {
@@ -46,7 +84,7 @@ export class BranchStore {
     }
 
     upsert(id: string, data: BranchType): void {
-        this.branches[id] = data;
+        this.branches[id] = new Branch(this, data);
     }
 
     remove(id: string): void {
@@ -78,72 +116,15 @@ export class BranchStore {
         }
     }
 
-    isBranchAvailable(id: string): boolean {
-        // TODO: this is not the final form
-
-        if (!this.branches[id]) {
-            return false;
-        }
-
-        const branch = this.branches[id];
-        const lockedAddress = this.parent.lockedAddress.lockedAddress;
-
-        if (!branch || !lockedAddress) {
-            return false;
-        }
-
-        const distance = geodist(
-            {
-                lon: lockedAddress.lon,
-                lat: lockedAddress.lat,
-            },
-            {
-                lon: branch.location.lon,
-                lat: branch.location.lat,
-            },
-            {unit: 'meters'},
-        );
-
-        return distance < 2000;
-    }
-
-    get all() {
-        return Object.values(this.branches).map((branch) => {
-            return {
-                ...branch,
-                isAvailable: this.isBranchAvailable(branch.id),
-            };
-        });
+    get all(): Branch[] {
+        return Object.values(this.branches);
     }
 
     get availableBranches() {
         return this.all.filter((branch) => branch.isAvailable);
     }
 
-    availableFor(restaurantID: string): BranchType[] {
-        return this.availableBranches.filter(
-            (branch) => branch.restaurantID === restaurantID,
-        );
-    }
-
-    get(id: string): BranchWithAvailabilityType | null {
-        if (this.branches[id]) {
-            return null;
-        }
-
-        return {
-            ...this.branches[id],
-            isAvailable: this.isBranchAvailable(id),
-        };
-    }
-
-    restaurantOf(branchID: string): RestaurantWithAvailabilityType | null {
-        const branch = this.get(branchID);
-
-        if (!branch) {
-            return null;
-        }
-
-        return this.parent.restaurants.get(branch.restaurantID);
+    get(id: string): Branch | null {
+        return this.branches[id] || null;
     }
 }

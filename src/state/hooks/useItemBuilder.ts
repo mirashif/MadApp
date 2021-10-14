@@ -1,13 +1,13 @@
 import {useAppState} from '../StateContext';
 import {useMemo} from 'react';
-import {ItemBuilder} from '../store/ItemBuilder';
+import {Cartable} from '../store/ItemBuilder';
 
 export function useItemBuilder(itemID: string) {
     const store = useAppState();
 
     const builder = useMemo(() => {
         if (itemID) {
-            return new ItemBuilder(store, itemID);
+            return new Cartable(store, itemID);
         } else {
             return null;
         }
