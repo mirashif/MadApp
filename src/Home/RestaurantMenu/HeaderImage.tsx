@@ -11,19 +11,19 @@ import { Icon, Text } from "../../components";
 import { HEADER_HEIGHT, HEADER_IMAGE_HEIGHT } from "./constants";
 
 interface HeaderImageProps {
-  y: Animated.SharedValue<number>;
+  y: Animated.Value<number>;
 }
 
 const HeaderImage = ({ y }: HeaderImageProps) => {
   const navigation = useNavigation();
 
-  const height = interpolateNode(y.value, {
+  const height = interpolateNode(y, {
     inputRange: [0, HEADER_IMAGE_HEIGHT],
     outputRange: [HEADER_IMAGE_HEIGHT, HEADER_HEIGHT],
     extrapolate: Extrapolate.CLAMP,
   });
 
-  const marginBottom = interpolateNode(y.value, {
+  const marginBottom = interpolateNode(y, {
     inputRange: [0, HEADER_IMAGE_HEIGHT],
     outputRange: [HEADER_HEIGHT / 2, 0],
     extrapolate: Extrapolate.CLAMP,

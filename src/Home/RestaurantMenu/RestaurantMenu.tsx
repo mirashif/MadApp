@@ -1,10 +1,7 @@
 import React, { useRef, useState } from "react";
 import { View } from "react-native";
 import type Animated from "react-native-reanimated";
-import {
-  useAnimatedScrollHandler,
-  useSharedValue,
-} from "react-native-reanimated";
+import { onScrollEvent, useValue } from "react-native-redash/lib/module/v1";
 
 import { SafeArea } from "../../components";
 
@@ -17,10 +14,8 @@ const RestaurantMenu = () => {
   const [anchorX, setAnchorX] = useState<number[]>([]);
   const [anchorY, setAnchorY] = useState<number[]>([]);
   const scrollViewRef = useRef<Animated.ScrollView>(null);
-  const y = useSharedValue(0);
-  const scrollHandler = useAnimatedScrollHandler((event) => {
-    y.value = event.contentOffset.y;
-  });
+  const y = useValue(0);
+  const scrollHandler = onScrollEvent({ y });
 
   const [activeIndex, setActiveIndex] = useState<number>(0);
 
