@@ -4,6 +4,8 @@ import * as Linking from "expo-linking";
 import Animated, {
   interpolateNode,
   Extrapolate,
+  useAnimatedStyle,
+  interpolate,
 } from "react-native-reanimated";
 
 import { CircularIcon, Text, useTheme } from "../../components";
@@ -17,32 +19,42 @@ interface OfferProps {
 const Offer = ({ y }: OfferProps) => {
   const theme = useTheme();
 
-  const opacity = interpolateNode(y.value, {
-    inputRange: [0, HEADER_IMAGE_HEIGHT / 2],
-    outputRange: [1, 0],
-    extrapolate: Extrapolate.CLAMP,
-  });
+  const animatedStyles = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      y.value,
+      [0, HEADER_IMAGE_HEIGHT / 2],
+      [1, 0],
+      Extrapolate.CLAMP
+    );
 
-  const translateY = interpolateNode(y.value, {
-    inputRange: [HEADER_IMAGE_HEIGHT / 2, HEADER_IMAGE_HEIGHT],
-    outputRange: [0, -HEADER_IMAGE_HEIGHT],
-    extrapolateLeft: Extrapolate.CLAMP,
+    const translateY = interpolate(
+      y.value,
+      [HEADER_IMAGE_HEIGHT / 2, HEADER_IMAGE_HEIGHT],
+      [0, -HEADER_IMAGE_HEIGHT],
+      Extrapolate.CLAMP
+    );
+
+    return {
+      opacity,
+      transform: [{ translateY }],
+    };
   });
 
   return (
     <Animated.View
-      style={{
-        opacity,
-        transform: [{ translateY }],
-        flexDirection: "row",
-        justifyContent: "space-between",
-        paddingHorizontal: 30,
-        // relative to header image
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
-      }}
+      style={[
+        {
+          flexDirection: "row",
+          justifyContent: "space-between",
+          paddingHorizontal: 30,
+          // relative to header image
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+        },
+        animatedStyles,
+      ]}
     >
       <View
         style={{
