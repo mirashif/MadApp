@@ -11,19 +11,19 @@ import { CircularIcon, Text, useTheme } from "../../components";
 import { HEADER_IMAGE_HEIGHT } from "./constants";
 
 interface OfferProps {
-  y: Animated.Value<number>;
+  y: Animated.SharedValue<number>;
 }
 
 const Offer = ({ y }: OfferProps) => {
   const theme = useTheme();
 
-  const opacity = interpolateNode(y, {
+  const opacity = interpolateNode(y.value, {
     inputRange: [0, HEADER_IMAGE_HEIGHT / 2],
     outputRange: [1, 0],
     extrapolate: Extrapolate.CLAMP,
   });
 
-  const translateY = interpolateNode(y, {
+  const translateY = interpolateNode(y.value, {
     inputRange: [HEADER_IMAGE_HEIGHT / 2, HEADER_IMAGE_HEIGHT],
     outputRange: [0, -HEADER_IMAGE_HEIGHT],
     extrapolateLeft: Extrapolate.CLAMP,

@@ -2,8 +2,9 @@ import React from "react";
 import { ImageBackground, TouchableWithoutFeedback, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Animated, {
-  interpolateNode,
   Extrapolate,
+  interpolate,
+  useAnimatedStyle,
 } from "react-native-reanimated";
 
 import { Icon, Text } from "../../components";
@@ -11,32 +12,42 @@ import { Icon, Text } from "../../components";
 import { HEADER_HEIGHT, HEADER_IMAGE_HEIGHT } from "./constants";
 
 interface HeaderImageProps {
-  y: Animated.Value<number>;
+  y: Animated.SharedValue<number>;
 }
 
 const HeaderImage = ({ y }: HeaderImageProps) => {
   const navigation = useNavigation();
 
-  const height = interpolateNode(y, {
-    inputRange: [0, HEADER_IMAGE_HEIGHT],
-    outputRange: [HEADER_IMAGE_HEIGHT, HEADER_HEIGHT],
-    extrapolate: Extrapolate.CLAMP,
-  });
+  const animatedStyles = useAnimatedStyle(() => {
+    const height = interpolate(
+      y.value,
+      [0, HEADER_IMAGE_HEIGHT],
+      [HEADER_IMAGE_HEIGHT, HEADER_HEIGHT],
+      Extrapolate.CLAMP
+    );
 
-  const marginBottom = interpolateNode(y, {
-    inputRange: [0, HEADER_IMAGE_HEIGHT],
-    outputRange: [HEADER_HEIGHT / 2, 0],
-    extrapolate: Extrapolate.CLAMP,
+    const marginBottom = interpolate(
+      y.value,
+      [0, HEADER_IMAGE_HEIGHT],
+      [HEADER_HEIGHT / 2, 0],
+      Extrapolate.CLAMP
+    );
+
+    return {
+      height,
+      marginBottom,
+    };
   });
 
   return (
     <Animated.View
-      style={{
-        height,
-        // offer 50% visible from bottom
-        position: "relative",
-        marginBottom,
-      }}
+      style={[
+        {
+          // offer 50% visible from bottom
+          position: "relative",
+        },
+        animatedStyles,
+      ]}
     >
       <ImageBackground
         style={{
