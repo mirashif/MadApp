@@ -1,13 +1,6 @@
 {
   "extends": "expo/tsconfig.base",
-  "include": ["src"],
-  "exclude": ["node_modules"],
   "compilerOptions": {
-    "paths": {
-      "react-native-redash/lib/module/v1": [
-        "./node_modules/react-native-redash/lib/typescript/v1/index.d.ts"
-      ]
-    },
     "allowSyntheticDefaultImports": true,
     "jsx": "react-native",
     "lib": ["dom", "esnext"],
@@ -26,6 +19,13 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "forceConsistentCasingInFileNames": true
-  }
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "react-native-redash/lib/module/v1": [
+        "./node_modules/react-native-redash/lib/typescript/v1/index.d.ts"
+      ]
+    }
+  },
+  "exclude": ["node_modules"],
+  "include": ["src"]
 }
