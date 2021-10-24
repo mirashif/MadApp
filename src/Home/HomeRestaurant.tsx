@@ -4,19 +4,20 @@ import { ScrollView, Image, TouchableWithoutFeedback } from "react-native";
 
 import type { Theme } from "../components";
 import { Box, Icon, makeStyles, useTheme } from "../components";
+import type { ItemWithAvailabilityType } from "../state/store/ItemStore";
+import type { RestaurantWithAvailabilityType } from "../state/store/RestaurantStore";
 
-import type { IItem } from "./Home";
 import Item from "./Item";
 
 interface HomeRestaurantProps {
-  logoUri: string;
-  items: IItem[];
-  onItemPress: (id: number | string) => void;
+  restaurant: RestaurantWithAvailabilityType;
+  items: ItemWithAvailabilityType[];
+  onItemPress: (item: ItemWithAvailabilityType) => void;
 }
 
 const HomeRestaurant = ({
   items,
-  logoUri,
+  restaurant,
   onItemPress,
 }: HomeRestaurantProps) => {
   const styles = useStyles();
@@ -38,7 +39,10 @@ const HomeRestaurant = ({
         }
       >
         <Box style={styles.logo}>
-          <Image style={styles.logoStyle} source={{ uri: logoUri }} />
+          <Image
+            style={styles.logoStyle}
+            source={{ uri: restaurant.logoImageURI }}
+          />
           <Icon name="arrow-right" size={24} color="#000000" />
         </Box>
       </TouchableWithoutFeedback>

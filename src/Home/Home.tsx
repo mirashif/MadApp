@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Image,
   ImageBackground,
@@ -12,6 +12,8 @@ import {
   BottomSheetBackdrop,
 } from "@gorhom/bottom-sheet";
 import { useIsFocused } from "@react-navigation/native";
+import { observer } from "mobx-react";
+import isKhali from "khali";
 
 import type { Theme } from "../components";
 import {
@@ -24,6 +26,13 @@ import {
   Text,
   useTheme,
 } from "../components";
+import { useAuth } from "../state/hooks/useAuth";
+import { useStories } from "../state/hooks/useStories";
+import { useRestaurants } from "../state/hooks/useRestaurants";
+import { useRestaurantPopularItems } from "../state/hooks/useRestaurantPopularItems";
+import type { ItemWithAvailabilityType } from "../state/store/ItemStore";
+import { useCart } from "../state/hooks/useCart";
+import { useBanners } from "../state/hooks/useBanners";
 
 import LocationBar from "./LocationBar";
 import HomeRestaurant from "./HomeRestaurant";
@@ -34,10 +43,6 @@ import AuthSheet from "./AuthSheet";
 
 const FOOTER_SHEET_HEIGHT = 144;
 
-const verticalBanners = [...Array(6)].map((_, id) => {
-  return { id, imageUri: "https://picsum.photos/200/300" };
-});
-
 export interface IItem {
   id: number | string;
   discount?: string;
@@ -46,17 +51,6 @@ export interface IItem {
   price: string;
   imageUri: string;
 }
-
-const restaurantItems = [...Array(6)].map((_, id) => {
-  return {
-    id,
-    imageUri: "https://source.unsplash.com/a66sGfOnnqQ/200x200",
-    discount: "20% OFF",
-    name: "Madame Lucy",
-    price: "৳ 369.00",
-    previousPrice: "৳ 468.00",
-  };
-});
 
 const variations = [
   {
@@ -71,7 +65,7 @@ const variations = [
   },
 ];
 
-export default function Home() {
+const Home = observer(() => {
   const styles = useStyles();
   const theme = useTheme();
 
@@ -80,9 +74,18 @@ export default function Home() {
   const itemSheetRef = useRef<BottomSheetModal>(null);
   const itemFooterSheetRef = useRef<BottomSheetModal>(null);
 
+  const { authenticated } = useAuth();
+  const { stories } = useStories();
+  const { restaurants } = useRestaurants();
+  const { length: cartItemCount } = useCart();
+  const { banners } = useBanners();
+
   const [selectedVariationID, setSelectedVariationID] = useState<
     null | string | number
   >(null);
+  const [popularItems, setPopularItems] = useState<
+    ItemWithAvailabilityType[][]
+  >([]);
 
   const handleItemPress = () => {
     itemSheetRef.current?.present();
@@ -97,11 +100,26 @@ export default function Home() {
     itemFooterSheetRef.current?.close();
   };
 
+  useEffect(() => {
+    if (!isKhali(restaurants)) {
+      restaurants.forEach(({ id }, index) => {
+        const { items } = useRestaurantPopularItems(id);
+
+        const _popular = popularItems;
+
+        _popular[index] = isKhali(items) ? [] : items;
+
+        setPopularItems(_popular);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [restaurants]);
+
   return (
     <SafeArea>
-      <FloatingCart />
+      {cartItemCount > 0 && <FloatingCart />}
 
-      {isFocused && false && <AuthSheet />}
+      {isFocused && !authenticated && <AuthSheet />}
 
       {/* ItemSheet */}
       <BottomSheetModal
@@ -294,14 +312,16 @@ export default function Home() {
           />
         </Box>
 
-        <Box mb="l" mx="screen" style={styles.wideBanner}>
-          <Image
-            source={{
-              uri: "https://picsum.photos/600/300",
-            }}
-            style={styles.wideBannerImage}
-          />
-        </Box>
+        {banners.length > 0 && (
+          <Box mb="l" mx="screen" style={styles.wideBanner}>
+            <Image
+              source={{
+                uri: banners[0].imageURI,
+              }}
+              style={styles.wideBannerImage}
+            />
+          </Box>
+        )}
 
         <Box mb="xl">
           <ScrollView
@@ -311,10 +331,10 @@ export default function Home() {
             horizontal
             showsHorizontalScrollIndicator={false}
           >
-            {verticalBanners.map(({ id, imageUri }) => (
+            {stories.map(({ id, thumbnailImageURI }) => (
               <Box key={id} style={styles.verticalBanner}>
                 <Image
-                  source={{ uri: imageUri }}
+                  source={{ uri: thumbnailImageURI }}
                   style={styles.verticalBannerImage}
                 />
               </Box>
@@ -325,25 +345,20 @@ export default function Home() {
         <Text mb="l" mx="screen" variant="sectionTitle">
           🍴 Restaurants
         </Text>
-        <HomeRestaurant
-          onItemPress={handleItemPress}
-          items={restaurantItems}
-          logoUri="https://picsum.photos/40/65"
-        />
-        <HomeRestaurant
-          onItemPress={handleItemPress}
-          items={restaurantItems}
-          logoUri="https://picsum.photos/40/65"
-        />
-        <HomeRestaurant
-          onItemPress={handleItemPress}
-          items={restaurantItems}
-          logoUri="https://picsum.photos/40/65"
-        />
+
+        {popularItems.map((item, index) => (
+          <HomeRestaurant
+            restaurant={restaurants[index]}
+            onItemPress={handleItemPress}
+            items={item}
+          />
+        ))}
       </ScrollView>
     </SafeArea>
   );
-}
+});
+
+export default Home;
 
 const useStyles = makeStyles((theme: Theme) => ({
   wideBanner: {

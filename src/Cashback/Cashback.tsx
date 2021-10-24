@@ -1,20 +1,31 @@
 import React, { useState } from "react";
 import { ScrollView } from "react-native";
 import * as Clipboard from "expo-clipboard";
+import { observer } from "mobx-react";
 
 import { Box, CustomModal, SafeArea, Text } from "../components";
+import { useCashbacks } from "../state/hooks/useCashbacks";
+import type { CashbackWithAvailabilityType } from "../state/store/CashbackStore";
+import { useUser } from "../state/hooks/useUser";
 
 import Card, { assets as CardAssets } from "./Card";
 import Coupon from "./Coupon";
 
 export const assets = [...CardAssets];
 
-const Cashback = () => {
+const Cashback = observer(() => {
+  const { cashbacks } = useCashbacks();
+  const { user, attributes } = useUser();
+
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedCashback, setSelectedCashback] =
+    useState<null | CashbackWithAvailabilityType>(null);
 
   const handleCopyPress = () => {
-    Clipboard.setString("RBIMHDI-100");
-    setModalVisible(false);
+    if (selectedCashback) {
+      Clipboard.setString(selectedCashback.cashbackCouponCode);
+      setModalVisible(false);
+    }
   };
 
   return (
@@ -22,7 +33,10 @@ const Cashback = () => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <Box paddingHorizontal="screen">
           <Box my="xl">
-            <Card points="1,707" name="Rabbi Mehedi" />
+            <Card
+              points={attributes?.points || 0}
+              name={`${user?.firstName} ${user?.lastName}`}
+            />
           </Box>
 
           <Box mb="xl">
@@ -46,31 +60,30 @@ const Cashback = () => {
               🏆 Discount Coupons
             </Text>
 
-            <Box my="xl">
-              <Coupon
-                onPress={() => setModalVisible(true)}
-                discount="100"
-                minimum="250"
-                points="500"
-              />
-            </Box>
-
-            <Box my="xl">
-              <Coupon
-                disabled
-                onPress={() => setModalVisible(true)}
-                discount="100"
-                minimum="250"
-                points="2,000"
-              />
-            </Box>
+            {cashbacks.map((cashback) => (
+              <Box my="xl" key={cashback.id}>
+                <Coupon
+                  disabled={!cashback.isAvailable}
+                  onPress={() => {
+                    setSelectedCashback(cashback);
+                    setModalVisible(true);
+                  }}
+                  name={cashback.name}
+                  minimum={cashback.minimumOrderAmount}
+                  points={cashback.requiredPoints}
+                />
+              </Box>
+            ))}
           </Box>
         </Box>
       </ScrollView>
 
       <CustomModal
         visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
+        onRequestClose={() => {
+          setModalVisible(false);
+          setSelectedCashback(null);
+        }}
         buttonTitle="Copy"
         onButtonPress={handleCopyPress}
       >
@@ -82,7 +95,7 @@ const Cashback = () => {
           <Text fontSize={11}>YOU HAVE REDEEMED A VOUCHER</Text>
 
           <Text fontSize={24} fontFamily="Bold" color="primary">
-            Get ৳100 OFF
+            {selectedCashback?.name}
           </Text>
 
           <Text fontSize={11}>APPLY THE VOUCHER ON YOUR NEXT ORDER</Text>
@@ -97,11 +110,11 @@ const Cashback = () => {
           px="l"
           my="l"
         >
-          <Text>RBIMHDI-100</Text>
+          <Text>{selectedCashback?.cashbackCouponCode}</Text>
         </Box>
       </CustomModal>
     </SafeArea>
   );
-};
+});
 
 export default Cashback;

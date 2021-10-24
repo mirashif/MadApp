@@ -1,39 +1,33 @@
 import React from "react";
 import { ImageBackground, TouchableWithoutFeedback } from "react-native";
 
-import { Box, Icon, makeStyles, Text, Theme, useTheme } from "../components";
+import type { Theme } from "../components";
+import { Box, Icon, makeStyles, Text, useTheme } from "../components";
+import type { ItemWithAvailabilityType } from "../state/store/ItemStore";
 
-import { IItem } from "./Home";
-
-interface ItemProps extends IItem {
-  onItemPress: (id: number | string) => void;
+interface ItemProps extends ItemWithAvailabilityType {
+  onItemPress: (item: ItemWithAvailabilityType) => void;
 }
 
-const Item = ({
-  id,
-  discount,
-  name,
-  previousPrice,
-  price,
-  imageUri,
-  onItemPress,
-}: ItemProps) => {
+const Item = (item: ItemProps) => {
   const styles = useStyles();
   const theme = useTheme();
 
+  const { name, originalPrice, price, thumbnailURI, onItemPress } = item;
+
   return (
-    <TouchableWithoutFeedback onPress={() => onItemPress(id)}>
+    <TouchableWithoutFeedback onPress={() => onItemPress(item)}>
       <Box>
         <ImageBackground
           style={styles.imageView}
           imageStyle={styles.imageStyle}
-          source={{ uri: imageUri }}
+          source={{ uri: thumbnailURI }}
         >
-          {discount && (
+          {/* {discount && (
             <Box style={styles.discount}>
               <Text style={styles.discountText}>{discount}</Text>
             </Box>
-          )}
+          )} */}
           <Box style={styles.addCartIcon}>
             <Icon size={18} name="plus" color={theme.colors.primaryContrast} />
           </Box>
@@ -42,8 +36,8 @@ const Item = ({
         <Text style={styles.name}>{name}</Text>
         <Box style={styles.price}>
           <Text style={styles.currentPrice}>{price}</Text>
-          {previousPrice && (
-            <Text style={styles.previousPrice}>{previousPrice}</Text>
+          {originalPrice && (
+            <Text style={styles.previousPrice}>{originalPrice}</Text>
           )}
         </Box>
       </Box>

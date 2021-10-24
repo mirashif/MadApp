@@ -1,15 +1,26 @@
+import { observer } from "mobx-react";
 import React from "react";
 import { Image, ScrollView, TouchableWithoutFeedback } from "react-native";
 
 import type { Theme } from "../components";
 import { Box, Text, useTheme, SafeArea, makeStyles } from "../components";
 import type { RootStackProps } from "../components/AppNavigator";
+import { useAuth } from "../state/hooks/useAuth";
+import { useUser } from "../state/hooks/useUser";
 
 import Item from "./Item";
 
-const Menu = ({ navigation }: RootStackProps<"MenuStack">) => {
+const Menu = observer(({ navigation }: RootStackProps<"MenuStack">) => {
   const theme = useTheme();
   const styles = useStyles();
+
+  const { deauthenticate } = useAuth();
+  const { user } = useUser();
+
+  const handleLogout = () => {
+    deauthenticate();
+    navigation.navigate("BottomTabs", { screen: "Home" });
+  };
 
   return (
     <SafeArea>
@@ -34,7 +45,7 @@ const Menu = ({ navigation }: RootStackProps<"MenuStack">) => {
               marginTop: 18,
             }}
           >
-            Rabbi Mehedi
+            {user?.firstName} {user?.lastName}
           </Text>
         </Box>
 
@@ -61,7 +72,7 @@ const Menu = ({ navigation }: RootStackProps<"MenuStack">) => {
             }
           />
           <Item icon="🧭" label="Store Locator" />
-          <Item icon="🚶‍♂️" label="Logout" />
+          <Item icon="🚶‍♂️" label="Logout" onPress={handleLogout} />
         </Box>
 
         <Box style={{ marginHorizontal: 72, marginVertical: 12 }}>
@@ -76,7 +87,7 @@ const Menu = ({ navigation }: RootStackProps<"MenuStack">) => {
       </ScrollView>
     </SafeArea>
   );
-};
+});
 
 export default Menu;
 

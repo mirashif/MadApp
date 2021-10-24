@@ -1,28 +1,56 @@
 import React, { useState, useEffect } from "react";
 import OTPInputView from "@twotalltotems/react-native-otp-input";
-import { ScrollView } from "react-native";
+import { Alert, ScrollView } from "react-native";
+import { observer } from "mobx-react";
+import { StackActions, useNavigation } from "@react-navigation/native";
 
 import { Box, HeaderBar, makeStyles, SafeArea, Text } from "../components";
 import DissmissKeyboard from "../components/DissmissKeyboard";
 import Button from "../components/Button";
+import { useAuth } from "../state/hooks/useAuth";
+import { useUser } from "../state/hooks/useUser";
 
 import OTPVerify from "./assets/OTPVerify.svg";
 
-import { AuthStackProps } from ".";
+import type { AuthStackProps } from ".";
 
-const Verification = ({
-  route,
-  navigation,
-}: AuthStackProps<"Verification">) => {
+const Verification = observer(({ route }: AuthStackProps<"Verification">) => {
   const styles = useStyles();
+  const navigation = useNavigation();
 
   const { phoneNumber } = route.params;
 
+  const { authenticate, authenticated } = useAuth();
+  const { user } = useUser();
   const [otp, setOtp] = useState<null | string>(null);
 
+  const handleContinue = async () => {
+    if (otp) {
+      try {
+        await authenticate(phoneNumber, otp);
+      } catch (err) {
+        Alert.alert("Something went wrong!");
+      }
+    } else {
+      Alert.alert("Please enter OTP");
+    }
+  };
+
   useEffect(() => {
-    console.log("otp", otp);
-  }, [otp]);
+    if (authenticated) {
+      if (user) {
+        if (user.firstName && user.lastName) {
+          navigation.dispatch(
+            StackActions.replace("BottomTabs", { screen: "Home" })
+          );
+        } else {
+          navigation.dispatch(
+            StackActions.replace("AuthStack", { screen: "UserInfo" })
+          );
+        }
+      }
+    }
+  }, [authenticated, navigation, user]);
 
   return (
     <SafeArea>
@@ -50,9 +78,9 @@ const Verification = ({
 
               <Text style={{ color: "#BBBBBB" }}>{phoneNumber}</Text>
 
-              <Box width={250} height={50} style={{ marginTop: 14 }}>
+              <Box width={300} height={50} style={{ marginTop: 14 }}>
                 <OTPInputView
-                  pinCount={5}
+                  pinCount={6}
                   codeInputFieldStyle={styles.codeInputFieldStyle}
                   autoFocusOnLoad={true}
                   keyboardType="number-pad"
@@ -66,7 +94,7 @@ const Verification = ({
               px="screen"
               style={{ paddingTop: 16, paddingBottom: 40, marginTop: 14 }}
             >
-              <Button size="lg" onPress={() => navigation.navigate("UserInfo")}>
+              <Button size="lg" onPress={handleContinue}>
                 Continue
               </Button>
             </Box>
@@ -75,7 +103,7 @@ const Verification = ({
       </ScrollView>
     </SafeArea>
   );
-};
+});
 
 const useStyles = makeStyles(() => ({
   codeInputFieldStyle: {
