@@ -1,7 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { ScrollView, TouchableWithoutFeedback, View } from "react-native";
+import type Animated from "react-native-reanimated";
+import {
+  runOnJS,
+  useAnimatedReaction,
+  useDerivedValue,
+  useSharedValue,
+} from "react-native-reanimated";
 
-import type { Theme } from "../../components";
 import { makeStyles, Text } from "../../components";
 
 import { defaultTabs, HEADER_HEIGHT } from "./constants";
@@ -9,16 +15,23 @@ import { defaultTabs, HEADER_HEIGHT } from "./constants";
 interface TabHeaderProps {
   onMeasurement: (index: number, length: number) => void;
   onTabPress: (index: number) => void;
-  activeIndex: number;
+  y: Animated.SharedValue<number>;
 }
 
-const TabHeader = ({
-  onMeasurement,
-  onTabPress,
-  activeIndex,
-}: TabHeaderProps) => {
+const TabHeader = ({ onMeasurement, onTabPress, y }: TabHeaderProps) => {
   const styles = useStyles();
   const tabs = defaultTabs;
+
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const handleActiveIndex = (v) => {
+    if (v < 500) setActiveIndex(0);
+    else if (v > 550) setActiveIndex(1);
+  };
+
+  useDerivedValue(() => {
+    runOnJS(handleActiveIndex)(y.value);
+  });
 
   return (
     <View

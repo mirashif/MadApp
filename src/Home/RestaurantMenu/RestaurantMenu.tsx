@@ -16,12 +16,12 @@ import TabHeader from "./TabHeader";
 const RestaurantMenu = () => {
   const [anchorX, setAnchorX] = useState<number[]>([]);
   const [anchorY, setAnchorY] = useState<number[]>([]);
-  const scrollViewRef = useRef<Animated.ScrollView>(null);
+
   const y = useSharedValue(0);
+  const scrollViewRef = useRef<Animated.ScrollView>(null);
   const scrollHandler = useAnimatedScrollHandler((event) => {
     y.value = event.contentOffset.y;
   });
-  const [activeIndex, setActiveIndex] = useState<number>(0);
 
   return (
     <SafeArea>
@@ -30,7 +30,7 @@ const RestaurantMenu = () => {
         <Offer y={y} />
       </View>
       <TabHeader
-        activeIndex={activeIndex}
+        y={y}
         onTabPress={(index: number) => {
           scrollViewRef.current?.getNode().scrollTo({
             y: anchorY[index],
