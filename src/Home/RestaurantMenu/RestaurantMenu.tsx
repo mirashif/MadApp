@@ -40,6 +40,7 @@ const RestaurantMenu = () => {
     runOnJS(handleActiveIndex)(y.value);
   });
 
+  // Handles Tab scroll
   useEffect(() => {
     scrollViewRefX.current?.getNode().scrollTo({
       x: anchorX[activeIndex],

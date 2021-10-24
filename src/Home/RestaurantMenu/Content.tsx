@@ -1,4 +1,5 @@
 import React from "react";
+import type { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import { Dimensions, View } from "react-native";
 import Animated from "react-native-reanimated";
 
@@ -8,7 +9,12 @@ import { menu } from "./constants";
 import Item from "./Item";
 
 interface ContentProps {
-  onScroll: () => void;
+  onScroll:
+    | ((event: NativeSyntheticEvent<NativeScrollEvent>) => void)
+    | Animated.Node<
+        ((event: NativeSyntheticEvent<NativeScrollEvent>) => void) | undefined
+      >
+    | undefined;
   scrollViewRef: React.RefObject<Animated.ScrollView>;
   onMeasurement: (index: number, length: number) => void;
 }
