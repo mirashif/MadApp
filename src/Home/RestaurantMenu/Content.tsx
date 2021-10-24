@@ -8,10 +8,8 @@ import { menu } from "./constants";
 import Item from "./Item";
 
 interface ContentProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onScroll: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  scrollViewRef: any;
+  onScroll: () => void;
+  scrollViewRef: React.RefObject<Animated.ScrollView>;
   onMeasurement: (index: number, length: number) => void;
 }
 

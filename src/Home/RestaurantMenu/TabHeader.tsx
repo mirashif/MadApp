@@ -1,5 +1,6 @@
 import React from "react";
-import { ScrollView, TouchableWithoutFeedback, View } from "react-native";
+import { TouchableWithoutFeedback, View } from "react-native";
+import Animated from "react-native-reanimated";
 
 import { makeStyles, Text } from "../../components";
 
@@ -9,12 +10,14 @@ interface TabHeaderProps {
   onMeasurement: (index: number, length: number) => void;
   onTabPress: (index: number) => void;
   activeIndex: number;
+  scrollViewRefX: React.RefObject<Animated.ScrollView>;
 }
 
 const TabHeader = ({
   onMeasurement,
   onTabPress,
   activeIndex,
+  scrollViewRefX,
 }: TabHeaderProps) => {
   const styles = useStyles();
   const tabs = defaultTabs;
@@ -25,7 +28,8 @@ const TabHeader = ({
         height: HEADER_HEIGHT,
       }}
     >
-      <ScrollView
+      <Animated.ScrollView
+        ref={scrollViewRefX}
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
@@ -64,7 +68,7 @@ const TabHeader = ({
             </View>
           </TouchableWithoutFeedback>
         ))}
-      </ScrollView>
+      </Animated.ScrollView>
     </View>
   );
 };

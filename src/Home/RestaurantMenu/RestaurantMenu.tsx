@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import type Animated from "react-native-reanimated";
 import {
@@ -18,13 +18,12 @@ import TabHeader from "./TabHeader";
 const RestaurantMenu = () => {
   const [anchorX, setAnchorX] = useState<number[]>([]);
   const [anchorY, setAnchorY] = useState<number[]>([]);
-
+  const scrollViewRefX = useRef<Animated.ScrollView>(null);
   const y = useSharedValue(0);
   const scrollViewRef = useRef<Animated.ScrollView>(null);
   const scrollHandler = useAnimatedScrollHandler((event) => {
     y.value = event.contentOffset.y;
   });
-
   const [activeIndex, setActiveIndex] = useState(0);
 
   const handleActiveIndex = (v: number) => {
@@ -41,6 +40,13 @@ const RestaurantMenu = () => {
     runOnJS(handleActiveIndex)(y.value);
   });
 
+  useEffect(() => {
+    scrollViewRefX.current?.getNode().scrollTo({
+      x: anchorX[activeIndex],
+      animated: true,
+    });
+  }, [activeIndex, anchorX]);
+
   return (
     <SafeArea>
       <View>
@@ -48,6 +54,7 @@ const RestaurantMenu = () => {
         <Offer y={y} />
       </View>
       <TabHeader
+        scrollViewRefX={scrollViewRefX}
         activeIndex={activeIndex}
         onTabPress={(index: number) => {
           scrollViewRef.current?.getNode().scrollTo({
