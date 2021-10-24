@@ -2,7 +2,9 @@ import React, { useRef, useState } from "react";
 import { View } from "react-native";
 import type Animated from "react-native-reanimated";
 import {
+  runOnJS,
   useAnimatedScrollHandler,
+  useDerivedValue,
   useSharedValue,
 } from "react-native-reanimated";
 
@@ -23,6 +25,22 @@ const RestaurantMenu = () => {
     y.value = event.contentOffset.y;
   });
 
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const handleActiveIndex = (v: number) => {
+    anchorY.forEach((_, i) => {
+      if (v < Math.floor(anchorY[1])) setActiveIndex(0);
+      else if (v > Math.floor(anchorY[i]) && v < Math.floor(anchorY[i + 1]))
+        setActiveIndex(i);
+      else if (v >= Math.floor(anchorY[anchorY.length - 1]))
+        setActiveIndex(anchorY.length - 1);
+    });
+  };
+
+  useDerivedValue(() => {
+    runOnJS(handleActiveIndex)(y.value);
+  });
+
   return (
     <SafeArea>
       <View>
@@ -30,7 +48,7 @@ const RestaurantMenu = () => {
         <Offer y={y} />
       </View>
       <TabHeader
-        y={y}
+        activeIndex={activeIndex}
         onTabPress={(index: number) => {
           scrollViewRef.current?.getNode().scrollTo({
             y: anchorY[index],

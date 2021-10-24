@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { Dimensions, View } from "react-native";
 import Animated from "react-native-reanimated";
 
 import { Text, useTheme } from "../../components";
@@ -17,6 +17,7 @@ interface ContentProps {
 
 const Content = ({ onScroll, onMeasurement, scrollViewRef }: ContentProps) => {
   const theme = useTheme();
+  const { height: sHeight } = Dimensions.get("screen");
 
   return (
     <Animated.ScrollView
@@ -24,6 +25,9 @@ const Content = ({ onScroll, onMeasurement, scrollViewRef }: ContentProps) => {
       showsVerticalScrollIndicator={false}
       scrollEventThrottle={16}
       onScroll={onScroll}
+      contentContainerStyle={{
+        paddingBottom: sHeight,
+      }}
     >
       {menu.map(({ name, items }, index) => (
         // menu container
