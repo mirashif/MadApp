@@ -4,6 +4,9 @@ export function useRestaurants() {
     const restaurants = useAppState('restaurants');
 
     return {
-        restaurants: restaurants.all,
+        get restaurants() {
+            return restaurants.all;
+        },
+        get: restaurants.get,
     };
 }

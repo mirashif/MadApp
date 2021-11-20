@@ -4,15 +4,15 @@ import { ScrollView, Image, TouchableWithoutFeedback } from "react-native";
 
 import type { Theme } from "../components";
 import { Box, Icon, makeStyles, useTheme } from "../components";
-import type { ItemWithAvailabilityType } from "../state/store/ItemStore";
-import type { RestaurantWithAvailabilityType } from "../state/store/RestaurantStore";
+import type { Item as IItem } from "../state/store/ItemStore";
+import type { RestaurantType } from "../state/store/RestaurantStore";
 
 import Item from "./Item";
 
 interface HomeRestaurantProps {
-  restaurant: RestaurantWithAvailabilityType;
-  items: ItemWithAvailabilityType[];
-  onItemPress: (item: ItemWithAvailabilityType) => void;
+  restaurant: RestaurantType;
+  items: IItem[];
+  onItemPress: (item: IItem) => void;
 }
 
 const HomeRestaurant = ({
@@ -49,7 +49,7 @@ const HomeRestaurant = ({
 
       {items.map((item) => (
         <Box key={item.id} style={styles.restaurantItem}>
-          <Item {...{ ...item, onItemPress }} />
+          <Item item={item} onItemPress={onItemPress} />
         </Box>
       ))}
     </ScrollView>

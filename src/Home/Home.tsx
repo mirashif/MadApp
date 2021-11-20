@@ -1,3 +1,10 @@
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetScrollView,
+} from "@gorhom/bottom-sheet";
+import { useIsFocused } from "@react-navigation/native";
+import { observer } from "mobx-react";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Image,
@@ -6,40 +13,35 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import {
-  BottomSheetModal,
-  BottomSheetScrollView,
-  BottomSheetBackdrop,
-} from "@gorhom/bottom-sheet";
-import { useIsFocused } from "@react-navigation/native";
-import { observer } from "mobx-react";
-import isKhali from "khali";
 
 import type { Theme } from "../components";
 import {
-  Icon,
   Box,
   Button,
   CircularIcon,
+  Icon,
   makeStyles,
   SafeArea,
   Text,
   useTheme,
 } from "../components";
 import { useAuth } from "../state/hooks/useAuth";
-import { useStories } from "../state/hooks/useStories";
-import { useRestaurants } from "../state/hooks/useRestaurants";
-import { useRestaurantPopularItems } from "../state/hooks/useRestaurantPopularItems";
-import type { ItemWithAvailabilityType } from "../state/store/ItemStore";
 import { useCart } from "../state/hooks/useCart";
-import { useBanners } from "../state/hooks/useBanners";
+import { useAppState } from "../state/StateContext";
+import type { AddressStore } from "../state/store/AddressStore";
+import type { BannerStore } from "../state/store/BannerStore";
+import type {
+  Restaurant,
+  RestaurantStore,
+} from "../state/store/RestaurantStore";
+import type { StoryStore } from "../state/store/StoryStore";
 
-import LocationBar from "./LocationBar";
-import HomeRestaurant from "./HomeRestaurant";
-import VariationItem from "./VariationItem";
 import AddonsItem from "./AddonsItem";
-import FloatingCart from "./FloatingCart";
 import AuthSheet from "./AuthSheet";
+import FloatingCart from "./FloatingCart";
+import HomeRestaurant from "./HomeRestaurant";
+import LocationBar from "./LocationBar";
+import VariationItem from "./VariationItem";
 
 const FOOTER_SHEET_HEIGHT = 144;
 
@@ -75,17 +77,18 @@ const Home = observer(() => {
   const itemFooterSheetRef = useRef<BottomSheetModal>(null);
 
   const { authenticated } = useAuth();
-  const { stories } = useStories();
-  const { restaurants } = useRestaurants();
   const { length: cartItemCount } = useCart();
-  const { banners } = useBanners();
+
+  const stories: StoryStore = useAppState("stories");
+  const banners: BannerStore = useAppState("banners");
+  const restaurants: RestaurantStore = useAppState("restaurants");
+  const restaurantList: Restaurant[] = restaurants.all;
+
+  const addresses: AddressStore = useAppState("addresses");
 
   const [selectedVariationID, setSelectedVariationID] = useState<
     null | string | number
   >(null);
-  const [popularItems, setPopularItems] = useState<
-    ItemWithAvailabilityType[][]
-  >([]);
 
   const handleItemPress = () => {
     itemSheetRef.current?.present();
@@ -101,19 +104,8 @@ const Home = observer(() => {
   };
 
   useEffect(() => {
-    if (!isKhali(restaurants)) {
-      restaurants.forEach(({ id }, index) => {
-        const { items } = useRestaurantPopularItems(id);
-
-        const _popular = popularItems;
-
-        _popular[index] = isKhali(items) ? [] : items;
-
-        setPopularItems(_popular);
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [restaurants]);
+    addresses.setLocation(23.7937, 90.4066);
+  }, [addresses]);
 
   return (
     <SafeArea>
@@ -312,11 +304,11 @@ const Home = observer(() => {
           />
         </Box>
 
-        {banners.length > 0 && (
+        {banners.all.length > 0 && (
           <Box mb="l" mx="screen" style={styles.wideBanner}>
             <Image
               source={{
-                uri: banners[0].imageURI,
+                uri: banners.all[0].data.imageURI,
               }}
               style={styles.wideBannerImage}
             />
@@ -331,10 +323,10 @@ const Home = observer(() => {
             horizontal
             showsHorizontalScrollIndicator={false}
           >
-            {stories.map(({ id, thumbnailImageURI }) => (
-              <Box key={id} style={styles.verticalBanner}>
+            {stories.all.map(({ data }) => (
+              <Box key={data.id} style={styles.verticalBanner}>
                 <Image
-                  source={{ uri: thumbnailImageURI }}
+                  source={{ uri: data.imageURI }}
                   style={styles.verticalBannerImage}
                 />
               </Box>
@@ -346,11 +338,12 @@ const Home = observer(() => {
           🍴 Restaurants
         </Text>
 
-        {popularItems.map((item, index) => (
+        {restaurantList.map((restaurant) => (
           <HomeRestaurant
-            restaurant={restaurants[index]}
+            key={restaurant.id}
+            restaurant={restaurant.data}
             onItemPress={handleItemPress}
-            items={item}
+            items={restaurant.popularItems}
           />
         ))}
       </ScrollView>

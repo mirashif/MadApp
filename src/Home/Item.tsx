@@ -3,17 +3,19 @@ import { ImageBackground, TouchableWithoutFeedback } from "react-native";
 
 import type { Theme } from "../components";
 import { Box, Icon, makeStyles, Text, useTheme } from "../components";
-import type { ItemWithAvailabilityType } from "../state/store/ItemStore";
+import type { Item as IItem } from "../state/store/ItemStore";
 
-interface ItemProps extends ItemWithAvailabilityType {
-  onItemPress: (item: ItemWithAvailabilityType) => void;
+interface ItemProps {
+  item: IItem;
+  onItemPress: (item: IItem) => void;
 }
 
-const Item = (item: ItemProps) => {
+const Item = ({ item, onItemPress }: ItemProps) => {
   const styles = useStyles();
   const theme = useTheme();
 
-  const { name, originalPrice, price, thumbnailURI, onItemPress } = item;
+  const { name, price, thumbnailURI } = item.data;
+  const { originalPrice } = item;
 
   return (
     <TouchableWithoutFeedback onPress={() => onItemPress(item)}>
