@@ -2,9 +2,9 @@ import {makeAutoObservable, when} from 'mobx';
 import {Store} from './index';
 import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 import {toGenerator} from '../helpers/toGenerator';
-import {OrderableType} from './CartStore';
+// import {OrderableType} from './CartStore';
 
-export interface OrderType extends OrderableType {
+export interface OrderType {
     id: string;
     userID: string;
 
@@ -147,26 +147,26 @@ export class OrderStore {
         return this.orders[id] || null;
     }
 
-    *placeOrder(orderable: OrderableType) {
-        this.error = null;
-
-        const placeOrder = this.parent.firebase
-            .functions()
-            .httpsCallable('orders-placeOrder');
-
-        try {
-            const oldLength = this.activeOrders.length;
-            const result = (yield* toGenerator(placeOrder(orderable))).data;
-
-            yield* toGenerator(
-                when(() => this.activeOrders.length > oldLength),
-            );
-
-            return result;
-        } catch (error) {
-            this.error = error;
-        }
-    }
+    // *placeOrder(orderable: OrderableType) {
+    //     this.error = null;
+    //
+    //     const placeOrder = this.parent.firebase
+    //         .functions()
+    //         .httpsCallable('orders-placeOrder');
+    //
+    //     try {
+    //         const oldLength = this.activeOrders.length;
+    //         const result = (yield* toGenerator(placeOrder(orderable))).data;
+    //
+    //         yield* toGenerator(
+    //             when(() => this.activeOrders.length > oldLength),
+    //         );
+    //
+    //         return result;
+    //     } catch (error) {
+    //         this.error = error;
+    //     }
+    // }
 
     clearErrors() {
         this.error = null;

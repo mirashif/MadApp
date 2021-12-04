@@ -19,16 +19,19 @@ import {
 import type { RootStackProps } from "../components/AppNavigator";
 import Button from "../components/Button";
 import Input from "../components/Input";
-import { useUser } from "../state/hooks/useUser";
+import type { UserStore } from "../state/store/UserStore";
+import { useAppState } from "../state/StateContext";
+import type { UserBuilder } from "../state/store/UserBuilder";
 
-import Referral from "./assets/Referral.svg";
 import Success from "./assets/Success.svg";
+import Referral from "./assets/Referral.svg";
 
 const UserInfo = observer(({ navigation }: RootStackProps<"AuthStack">) => {
   const theme = useTheme();
 
-  const { user, updateUser } = useUser();
-
+  const user: UserStore = useAppState("user");
+  // eslint-disable-next-line prefer-destructuring
+  const builder: UserBuilder | null = user.builder;
   const [refCode, setRefCode] = useState<null | string>(null);
   const [tempRefCode, setTempRefCode] = useState<null | string>(null);
   const [wrongRefCode, setWrongRefCode] = useState(false);
@@ -76,8 +79,11 @@ const UserInfo = observer(({ navigation }: RootStackProps<"AuthStack">) => {
 
   const handleFinish = async () => {
     if (user) {
-      if (firstName && lastName) {
-        await updateUser({ firstName, lastName });
+      if (builder && firstName && lastName) {
+        builder.setFirstName(firstName);
+        builder.setLastName(lastName);
+        await user.updateUser(builder.userable);
+
         setSuccessModalVisible(true);
       }
     }

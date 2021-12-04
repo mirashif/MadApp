@@ -3,7 +3,7 @@ import {makeAutoObservable} from 'mobx';
 import {v4 as uuidv4} from 'uuid';
 
 import {Store} from './index';
-import {ItemType} from './ItemStore';
+import {Item} from './ItemStore';
 import {TIME_SYMBOL} from '../types/symbols/all';
 
 export interface CartableAddonType {
@@ -64,7 +64,7 @@ export class ItemBuilder {
 
         makeAutoObservable(this, {}, {autoBind: true});
 
-        this.variants = this.defaultVariants;
+        // this.variants = this.defaultVariants;
     }
 
     chooseVariant(variantGroupID: string, variantID: string): void {
@@ -107,131 +107,132 @@ export class ItemBuilder {
         this.addons = {};
     }
 
-    get defaultVariants() {
-        return Object.fromEntries(
-            this.parent.items
-                .itemVariantGroups(this.itemID)
-                .map((group) => {
-                    const defaultVariant = group.variants.find(
-                        (variant) => variant.price === 0,
-                    );
+    // get defaultVariants() {
+    //     return Object.fromEntries(
+    //         this.parent.items
+    //             .get(this.itemID)
+    //             .itemVariantGroups(this.itemID)
+    //             .map((group) => {
+    //                 const defaultVariant = group.variants.find(
+    //                     (variant) => variant.price === 0,
+    //                 );
+    //
+    //                 if (!defaultVariant) {
+    //                     return [null, null];
+    //                 }
+    //
+    //                 const variantGroupID = group.id;
+    //
+    //                 return [variantGroupID, defaultVariant.id];
+    //             })
+    //             .filter((variantPair) => variantPair[0] !== null),
+    //     );
+    // }
 
-                    if (!defaultVariant) {
-                        return [null, null];
-                    }
-
-                    const variantGroupID = group.id;
-
-                    return [variantGroupID, defaultVariant.id];
-                })
-                .filter((variantPair) => variantPair[0] !== null),
-        );
-    }
-
-    get item(): ItemType | null {
+    get item(): Item | null {
         return this.parent.items.get(this.itemID);
     }
 
-    get itemAddons() {
-        return Object.fromEntries(
-            this.parent.items
-                .itemAddons(this.itemID)
-                .map((addon) => [addon.id, addon]),
-        );
-    }
+    // get itemAddons() {
+    //     return Object.fromEntries(
+    //         this.parent.items
+    //             .itemAddons(this.itemID)
+    //             .map((addon) => [addon.id, addon]),
+    //     );
+    // }
 
-    private get itemVariantGroups() {
-        return Object.fromEntries(
-            this.parent.items
-                .itemVariantGroups(this.itemID)
-                .map((variantGroup) => [variantGroup.id, variantGroup]),
-        );
-    }
-
-    private get itemVariants() {
-        return Object.fromEntries(
-            Object.entries(this.itemVariantGroups)
-                .map(([_, group]) => group.variants)
-                .flat()
-                .map((variant) => [variant.id, variant]),
-        );
-    }
-
-    get total() {
-        const basePrice = this.item?.price || 0;
-
-        const addonsTotal = Object.entries(this.addons)
-            .map(([addonID, count]) => this.itemAddons[addonID].price * count)
-            .reduce((acc, cur) => acc + cur, 0);
-
-        const variantsTotal = Object.entries(this.variants)
-            .map(([, variantID]) => this.itemVariants[variantID].price || 0)
-            .reduce((acc, cur) => acc + cur, 0);
-
-        return basePrice + addonsTotal + variantsTotal;
-    }
-
-    get id() {
-        return this.cartableID;
-    }
-
-    regenerateCartableID() {
-        this.cartableID = uuidv4();
-        return this.cartableID;
-    }
-
-    cartable(): CartableType | null {
-        const item = this.item;
-
-        if (!item) {
-            return null;
-        }
-
-        const category = this.parent.categories.get(item.categoryID);
-
-        if (!category) {
-            return null;
-        }
-
-        const addons: CartableAddonType[] = Object.entries(this.addons).map(
-            ([addonID, addonCount]) => {
-                return {
-                    addonID,
-                    addonName: this.itemAddons[addonID].name,
-                    addonCount,
-                    addonPrice: this.itemAddons[addonID].price,
-                    addonHash: this.itemAddons[addonID].hash,
-                };
-            },
-        );
-
-        const variants: CartableVariantType[] = Object.entries(
-            this.variants,
-        ).map(([variantGroupID, variantID]) => {
-            return {
-                variantGroupID,
-                variantGroupName: this.itemVariantGroups[variantGroupID].name,
-                variantID,
-                variantName: this.itemVariants[variantID].name,
-                variantPrice: this.itemVariants[variantID].price || 0,
-                variantHash: this.itemVariants[variantID].hash,
-            };
-        });
-
-        return {
-            id: this.cartableID,
-            itemID: item.id,
-            itemName: item.name,
-            itemPrice: item.price,
-            itemHash: item.hash,
-            itemThumbnail: item.thumbnailURI,
-            itemPicture: item.pictureURI,
-            categoryID: category.id,
-            categoryName: category.name,
-            categoryHash: category.hash,
-            total: this.total,
-            addons: addons,
-            variants: variants,
-        };
-    }
+    // private get itemVariantGroups() {
+    //     return Object.fromEntries(
+    //         this.parent.items
+    //             .itemVariantGroups(this.itemID)
+    //             .map((variantGroup) => [variantGroup.id, variantGroup]),
+    //     );
+    // }
+    //
+    // private get itemVariants() {
+    //     return Object.fromEntries(
+    //         Object.entries(this.itemVariantGroups)
+    //             .map(([_, group]) => group.variants)
+    //             .flat()
+    //             .map((variant) => [variant.id, variant]),
+    //     );
+    // }
+    //
+    // get total() {
+    //     const basePrice = this.item?.price || 0;
+    //
+    //     const addonsTotal = Object.entries(this.addons)
+    //         .map(([addonID, count]) => this.itemAddons[addonID].price * count)
+    //         .reduce((acc, cur) => acc + cur, 0);
+    //
+    //     const variantsTotal = Object.entries(this.variants)
+    //         .map(([, variantID]) => this.itemVariants[variantID].price || 0)
+    //         .reduce((acc, cur) => acc + cur, 0);
+    //
+    //     return basePrice + addonsTotal + variantsTotal;
+    // }
+    //
+    // get id() {
+    //     return this.cartableID;
+    // }
+    //
+    // regenerateCartableID() {
+    //     this.cartableID = uuidv4();
+    //     return this.cartableID;
+    // }
+    //
+    // cartable(): CartableType | null {
+    //     const item = this.item;
+    //
+    //     if (!item) {
+    //         return null;
+    //     }
+    //
+    //     const category = this.parent.categories.get(item.categoryID);
+    //
+    //     if (!category) {
+    //         return null;
+    //     }
+    //
+    //     const addons: CartableAddonType[] = Object.entries(this.addons).map(
+    //         ([addonID, addonCount]) => {
+    //             return {
+    //                 addonID,
+    //                 addonName: this.itemAddons[addonID].name,
+    //                 addonCount,
+    //                 addonPrice: this.itemAddons[addonID].price,
+    //                 addonHash: this.itemAddons[addonID].hash,
+    //             };
+    //         },
+    //     );
+    //
+    //     const variants: CartableVariantType[] = Object.entries(
+    //         this.variants,
+    //     ).map(([variantGroupID, variantID]) => {
+    //         return {
+    //             variantGroupID,
+    //             variantGroupName: this.itemVariantGroups[variantGroupID].name,
+    //             variantID,
+    //             variantName: this.itemVariants[variantID].name,
+    //             variantPrice: this.itemVariants[variantID].price || 0,
+    //             variantHash: this.itemVariants[variantID].hash,
+    //         };
+    //     });
+    //
+    //     return {
+    //         id: this.cartableID,
+    //         itemID: item.id,
+    //         itemName: item.name,
+    //         itemPrice: item.price,
+    //         itemHash: item.hash,
+    //         itemThumbnail: item.thumbnailURI,
+    //         itemPicture: item.pictureURI,
+    //         categoryID: category.id,
+    //         categoryName: category.data.name,
+    //         categoryHash: category.data.hash,
+    //         total: this.total,
+    //         addons: addons,
+    //         variants: variants,
+    //     };
+    // }
 }

@@ -1,6 +1,7 @@
 import {makeAutoObservable} from 'mobx';
 import {Store} from './index';
 import {Category} from './CategoryStore';
+import {InterfaceAdditionType} from './DealStore';
 
 export interface AddonType {
     id: string;
@@ -241,6 +242,20 @@ export class Item {
 
     get deal() {
         return this.deals[0] || null;
+    }
+
+    get tags(): InterfaceAdditionType[] {
+        const itemTags: InterfaceAdditionType[] =
+            this.data?.tags?.map((tag) => ({
+                title: tag,
+            })) || [];
+
+        const dealTag = this.deal?.data?.interfaceAdditions?.find(
+            (addition) => addition.addTo === 'item-header',
+        );
+
+        const dealTags = dealTag ? [dealTag] : [];
+        return [...itemTags, ...dealTags];
     }
 }
 

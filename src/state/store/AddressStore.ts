@@ -1,4 +1,4 @@
-import {flow, makeAutoObservable} from 'mobx';
+import {makeAutoObservable} from 'mobx';
 
 // @ts-ignore
 import geodist from 'geodist';
@@ -6,10 +6,9 @@ import geodist from 'geodist';
 import {v4 as uuidv4} from 'uuid';
 import {Store} from './index';
 import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
+import {AddressBuilder} from './AddressBuilder';
 
-const DISTANCE_SYMBOL = Symbol('DISTANCE');
-
-export interface UnsavedAddress {
+export interface UnsavedAddressType {
     lon: number;
     lat: number;
     address: string;
@@ -20,13 +19,13 @@ export interface UnsavedAddress {
     lastUsed?: FirebaseFirestoreTypes.Timestamp;
 }
 
-export interface AddressType extends UnsavedAddress {
+export interface AddressType extends UnsavedAddressType {
     id: string;
 }
 
 export class Address {
     parent: AddressStore;
-    data: AddressType;
+    data: AddressType | UnsavedAddressType;
 
     constructor(parent: AddressStore, data: AddressType) {
         this.parent = parent;
@@ -47,6 +46,10 @@ export class Address {
                 exact: true,
             },
         ) as number;
+    }
+
+    get builder() {
+        return new AddressBuilder(this.parent.parent, this.data);
     }
 }
 
@@ -109,20 +112,8 @@ export class AddressStore {
                 return -1;
             }
 
-            return a?.data?.lastUsed.toMillis() - b?.data.lastUsed?.toMillis();
+            return a?.data?.lastUsed?.toMillis() - b?.data.lastUsed?.toMillis();
         });
-    }
-
-    get(id: string): Address | null {
-        if (id === 'location') {
-            if (this.location) {
-                return this.locationAddress;
-            } else {
-                return this.defaultAddress;
-            }
-        } else {
-            return this.addresses[id] || null;
-        }
     }
 
     setLocation(lon: number, lat: number) {
@@ -133,7 +124,51 @@ export class AddressStore {
         // TODO
     }
 
-    *addAddress(addressable: UnsavedAddress) {
+    get lastUsed(): Address | null {
+        return this.all[0];
+    }
+
+    get closestAddress(): Address | null {
+        if (!this.isLocationAddressAvailable) {
+            return null;
+        }
+
+        let min: Address | null = null;
+
+        this.all.forEach((address) => {
+            if (min === null || min?.distance > address.distance) {
+                min = address;
+            }
+        });
+
+        return min;
+    }
+
+    get locationAddress(): Address | null {
+        return this.isLocationAddressAvailable
+            ? new Address(this, {
+                  id: 'location',
+                  lon: this.location?.lon || 0,
+                  lat: this.location?.lat || 0,
+                  address: this._inferredAddress || '',
+                  directions: '',
+              })
+            : null;
+    }
+
+    get isLocationAddressAvailable() {
+        return !!this.location;
+    }
+
+    get(addressID: string): Address | null {
+        if (addressID === 'location') {
+            return this.locationAddress;
+        } else {
+            return this.addresses[addressID] || null;
+        }
+    }
+
+    *addAddress(addressable: UnsavedAddressType) {
         if (!this.parent.auth.user || this.parent.auth.user === true) {
             throw new Error(
                 "Can't save address if auth-user is not initialized.",
@@ -159,42 +194,7 @@ export class AddressStore {
         return id;
     }
 
-    get locationAddress(): Address | null {
-        // TODO
-        return this.location
-            ? new Address(this, {
-                  id: 'location',
-                  address: '',
-                  directions: '',
-                  lat: this.location.lat,
-                  lon: this.location.lon,
-              })
-            : null;
-    }
-
-    get nearbyAddresses() {
-        return this.all
-            .filter((address) => (address?.distance || 0) < 4000)
-            .sort((a, b) => (a?.distance || 0) - (b?.distance || 0));
-    }
-
-    get closestAddress() {
-        return this.nearbyAddresses[0] || null;
-    }
-
-    get defaultAddress() {
-        if (this.location) {
-            return this.closestAddress || this.locationAddress;
-        } else {
-            if (this.all.length) {
-                return this.all[0];
-            } else {
-                return null;
-            }
-        }
-    }
-
-    *updateAddress(id: string, addressable: AddressType) {
+    *updateAddress(id: string, addressable: Partial<UnsavedAddressType>) {
         if (!this.parent.auth.user || this.parent.auth.user === true) {
             throw new Error(
                 "Can't save address if auth-user is not initialized.",
@@ -232,5 +232,9 @@ export class AddressStore {
             .collection('addresses')
             .doc(id)
             .delete();
+    }
+
+    get builder() {
+        return new AddressBuilder(this.parent);
     }
 }

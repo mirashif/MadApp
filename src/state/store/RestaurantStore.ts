@@ -13,10 +13,9 @@ export interface RestaurantType {
     bannerTitle: string;
     bannerDescription: string;
     phone: string;
-}
 
-export interface RestaurantWithAvailabilityType extends RestaurantType {
     isAvailable: boolean;
+    isShown: boolean;
 }
 
 export class Restaurant {
@@ -43,7 +42,7 @@ export class Restaurant {
     }
 
     get isAvailable() {
-        return this.availableBranches.length > 0;
+        return this.data.isAvailable && this.availableBranches.length > 0;
     }
 
     get branches() {
@@ -89,6 +88,7 @@ export class RestaurantStore {
         this.listener = this.parent.firebase
             .firestore()
             .collection('restaurants')
+            .where('isShown', '==', true)
             .onSnapshot((snap) => {
                 snap.docChanges().forEach((change) => {
                     if (change.type === 'added' || change.type === 'modified') {

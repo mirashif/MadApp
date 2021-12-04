@@ -1,34 +1,6 @@
 import {makeAutoObservable} from 'mobx';
 import {Store} from './index';
-import {AddressType, UnsavedAddress} from './AddressStore';
-import axios from 'axios';
-import {config} from '../../config';
-import {toGenerator} from '../helpers/toGenerator';
-
-interface GeocoderResult {
-    results: {
-        types: string[];
-        formatted_address: string;
-        address_components: {
-            short_name: string;
-            long_name: string;
-            postcode_localities: string[];
-            types: string[];
-        }[];
-        partial_match: boolean;
-        place_id: string;
-        postcode_localities: string[];
-        geometry: {
-            location: {
-                lat: number;
-                lng: number;
-            };
-            location_type: string;
-            viewport: any;
-            bounds: any;
-        };
-    }[];
-}
+import {AddressType, UnsavedAddressType} from './AddressStore';
 
 export class AddressBuilder {
     parent: Store;
@@ -95,20 +67,7 @@ export class AddressBuilder {
         this.isLocationInferring = true;
 
         try {
-            const request = yield* toGenerator(
-                axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
-                    params: {
-                        key: config.geocodingAPIKey,
-                    },
-                }),
-            );
-
-            const result: GeocoderResult = request.data;
-
-            this.address = result.results
-                .map((result) => result.formatted_address)
-                .sort((a, b) => b.length - a.length)[0];
-
+            // TODO
             this.isLocationInferred = true;
         } catch {
             this.isLocationInferred = false;
@@ -121,21 +80,7 @@ export class AddressBuilder {
         this.isAddressInferring = true;
 
         try {
-            const request = yield* toGenerator(
-                axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
-                    params: {
-                        key: config.geocodingAPIKey,
-                    },
-                }),
-            );
-
-            const result: GeocoderResult = request.data;
-
-            this.location = result.results.map((result) => ({
-                lat: result.geometry.location.lat,
-                lon: result.geometry.location.lng,
-            }))[0];
-
+            // TODO
             this.isAddressInferred = true;
         } catch {
             this.isAddressInferred = false;
@@ -144,7 +89,7 @@ export class AddressBuilder {
         }
     }
 
-    get addressable(): UnsavedAddress {
+    get addressable(): UnsavedAddressType {
         return {
             address: this.address,
             directions: this.directions,

@@ -1,4 +1,4 @@
-import {flow, makeAutoObservable} from 'mobx';
+import {makeAutoObservable} from 'mobx';
 import {Store} from './index';
 import {composeFlow} from '../helpers/composeFlow';
 
@@ -11,7 +11,7 @@ export class ReferralValidator {
     isValidating: boolean = false;
 
     error: string | null = null;
-    errorCode: string | null = null;
+    errorCode: number | null = null;
 
     isValid: boolean | null = null;
 

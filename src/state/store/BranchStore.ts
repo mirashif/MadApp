@@ -2,9 +2,7 @@ import {makeAutoObservable} from 'mobx';
 
 // @ts-ignore
 import geodist from 'geodist';
-
 import {Store} from './index';
-import {RestaurantWithAvailabilityType} from './RestaurantStore';
 
 export interface BranchType {
     id: string;
@@ -25,9 +23,7 @@ export interface BranchType {
     unavailableCategories: {
         [id: string]: true;
     };
-}
 
-export interface BranchWithAvailabilityType extends BranchType {
     isAvailable: boolean;
 }
 
@@ -95,6 +91,7 @@ export class BranchStore {
         this.listener = this.parent.firebase
             .firestore()
             .collectionGroup('branches')
+            .where('isAvailable', '==', true)
             .onSnapshot((snap) => {
                 snap.docChanges().forEach((change) => {
                     if (change.type === 'added' || change.type === 'modified') {

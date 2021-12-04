@@ -1,6 +1,7 @@
 import {makeAutoObservable} from 'mobx';
 import {Store} from './index';
 import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
+import {UserBuilder} from './UserBuilder';
 
 export interface SettingsType {
     receivePush?: boolean;
@@ -22,11 +23,15 @@ export interface UserType {
     email?: string;
     phone: string;
 
+    referral?: string;
+
     createdAt: FirebaseFirestoreTypes.Timestamp;
     updatedAt: FirebaseFirestoreTypes.Timestamp;
 }
 
 export interface UserAttributesType {
+    id: string;
+
     points?: number;
     referralCode?: string;
     referralUsed?: string;
@@ -114,5 +119,13 @@ export class UserStore {
 
     get points(): number {
         return this.userAttributes?.points || 0;
+    }
+
+    get builder(): UserBuilder | null {
+        if (this.user) {
+            return new UserBuilder(this.parent, this.user);
+        } else {
+            return null;
+        }
     }
 }

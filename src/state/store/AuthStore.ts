@@ -28,13 +28,18 @@ export class AuthStore {
         return this.requests[number];
     }
 
+    secondsSinceRequest(number: string) {
+        number = `+88${number.substr(number.length - 11, 11)}`;
+        return (Date.now() - this.requests[number]) / 1000;
+    }
+
     *requestOTP(number: string) {
+        number = `+88${number.substr(number.length - 11, 11)}`;
+
         try {
             this.confirmations[number] = yield this.parent.firebase
                 .auth()
-                .signInWithPhoneNumber(
-                    `+88${number.substr(number.length - 11, 11)}`,
-                );
+                .signInWithPhoneNumber(number);
 
             this.requests[number] = Date.now();
         } catch (ex) {
@@ -43,6 +48,8 @@ export class AuthStore {
     }
 
     *authenticate(number: string, otp: string) {
+        number = `+88${number.substr(number.length - 11, 11)}`;
+
         console.log(`Authenticating: (${number}, ${otp})`);
 
         if (!(number in this.confirmations)) {

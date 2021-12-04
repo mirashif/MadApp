@@ -4,6 +4,23 @@ import {GlobalsType} from './AppStore';
 import {UserAttributesType, UserType} from './UserStore';
 import {SerializedCartable} from './Cartable';
 
+export interface InterfaceAdditionType {
+    addTo?:
+        | 'restaurant'
+        | 'category'
+        | 'item-header'
+        | 'item-builder'
+        | 'item-builder-engaged'
+        | 'cart';
+
+    title: string;
+    body?: string;
+    colors?: {
+        background: string;
+        foreground: string;
+    };
+}
+
 export interface DealType {
     id: string;
     type: 'general' | 'coupon';
@@ -32,22 +49,7 @@ export interface DealType {
               generic: string;
           };
 
-    interfaceAdditions?: {
-        addTo:
-            | 'restaurant'
-            | 'category'
-            | 'item-header'
-            | 'item-builder'
-            | 'item-builder-engaged'
-            | 'cart';
-
-        title: string;
-        body: string;
-        colors: {
-            background: string;
-            foreground: string;
-        };
-    }[];
+    interfaceAdditions?: InterfaceAdditionType[];
 }
 
 export class Deal {
@@ -63,6 +65,7 @@ export class Deal {
 
     get aplicationScript() {
         try {
+            // eslint-disable-next-line no-eval
             const doesApply: any = eval(
                 this.data.scripts.applicability + '; doesApply',
             );
@@ -96,6 +99,7 @@ export class Deal {
         }
 
         try {
+            // eslint-disable-next-line no-eval
             const genericDeal: any = eval(
                 this.data.scripts.generic + '; genericDeal',
             );
@@ -134,6 +138,7 @@ export class Deal {
         }
 
         try {
+            // eslint-disable-next-line no-eval
             const calcDeal: any = eval(this.data.scripts.calc + '; calcDeal');
 
             return (
