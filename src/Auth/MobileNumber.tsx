@@ -6,20 +6,21 @@ import { Box, HeaderBar, SafeArea, Text } from "../components";
 import DissmissKeyboard from "../components/DissmissKeyboard";
 import Button from "../components/Button";
 import type { RootStackProps } from "../components/AppNavigator";
-import { useAuth } from "../state/hooks/useAuth";
+import { useAppState } from "../state/StateContext";
+import type { AuthStore } from "../state/store/AuthStore";
 
 import Phone from "./assets/Phone.svg";
 import BDFlag from "./assets/BDFlag.svg";
 
 const MobileNumber = observer(({ navigation }: RootStackProps<"AuthStack">) => {
-  const { requestOTP } = useAuth();
+  const auth: AuthStore = useAppState("auth");
 
   const [phoneNumber, setPhoneNumber] = useState<null | string>(null);
 
   const handleContinue = async () => {
     if (phoneNumber) {
       try {
-        await requestOTP(phoneNumber);
+        await auth.requestOTP(phoneNumber);
         navigation.navigate("AuthStack", {
           screen: "Verification",
           params: { phoneNumber },

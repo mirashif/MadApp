@@ -7,8 +7,9 @@ import { StackActions, useNavigation } from "@react-navigation/native";
 import { Box, HeaderBar, makeStyles, SafeArea, Text } from "../components";
 import DissmissKeyboard from "../components/DissmissKeyboard";
 import Button from "../components/Button";
-import { useAuth } from "../state/hooks/useAuth";
-import { useUser } from "../state/hooks/useUser";
+import { useAppState } from "../state/StateContext";
+import type { AuthStore } from "../state/store/AuthStore";
+import type { UserStore } from "../state/store/UserStore";
 
 import OTPVerify from "./assets/OTPVerify.svg";
 
@@ -17,17 +18,17 @@ import type { AuthStackProps } from ".";
 const Verification = observer(({ route }: AuthStackProps<"Verification">) => {
   const styles = useStyles();
   const navigation = useNavigation();
-
   const { phoneNumber } = route.params;
 
-  const { authenticate, authenticated } = useAuth();
-  const { user } = useUser();
+  const userStore: UserStore = useAppState("user");
+  const auth: AuthStore = useAppState("auth");
   const [otp, setOtp] = useState<null | string>(null);
+  const { user } = userStore;
 
   const handleContinue = async () => {
     if (otp) {
       try {
-        await authenticate(phoneNumber, otp);
+        await auth.authenticate(phoneNumber, otp);
       } catch (err) {
         Alert.alert("Something went wrong!");
       }
@@ -37,7 +38,7 @@ const Verification = observer(({ route }: AuthStackProps<"Verification">) => {
   };
 
   useEffect(() => {
-    if (authenticated) {
+    if (auth.authenticated) {
       if (user) {
         if (user.firstName && user.lastName) {
           navigation.dispatch(
@@ -50,7 +51,7 @@ const Verification = observer(({ route }: AuthStackProps<"Verification">) => {
         }
       }
     }
-  }, [authenticated, navigation, user]);
+  }, [auth, navigation, user]);
 
   return (
     <SafeArea>
@@ -96,6 +97,16 @@ const Verification = observer(({ route }: AuthStackProps<"Verification">) => {
             >
               <Button size="lg" onPress={handleContinue}>
                 Continue
+              </Button>
+              <Button
+                style={{
+                  marginTop: 8,
+                }}
+                variant="text"
+                onPress={() => undefined}
+                disabled
+              >
+                Resend | Wait 30s
               </Button>
             </Box>
           </Box>
