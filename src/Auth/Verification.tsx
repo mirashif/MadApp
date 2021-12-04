@@ -24,6 +24,7 @@ const Verification = observer(({ route }: AuthStackProps<"Verification">) => {
   const auth: AuthStore = useAppState("auth");
   const [otp, setOtp] = useState<null | string>(null);
   const { user } = userStore;
+  const secondsSinceRequest: number = auth.secondsSinceRequest(phoneNumber);
 
   const handleContinue = async () => {
     if (otp) {
@@ -106,7 +107,7 @@ const Verification = observer(({ route }: AuthStackProps<"Verification">) => {
                 onPress={() => undefined}
                 disabled
               >
-                Resend | Wait 30s
+                Resend | Wait 30s {secondsSinceRequest}
               </Button>
             </Box>
           </Box>
