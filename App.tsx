@@ -29,16 +29,20 @@ const App = () => {
   const [ready, setReady] = useState(false);
   const store = useRef(null);
 
-  useEffect(() => {
-    (async () => {
+  const init = async () => {
+    try {
       const firebase = await augmentedFirebase();
       const storeInstance = new Store(firebase);
-
       store.current = storeInstance;
       initializeReactions(storeInstance);
-
       setReady(true);
-    })();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    init();
   }, [setReady]);
 
   return ready ? (

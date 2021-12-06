@@ -16,12 +16,13 @@ export async function augmentedFirebase(): Promise<AugmentedFirebaseType> {
       const host = process.env.FIRE_EMULATOR_HOST || "localhost";
 
       const firestorePort =
-        parseInt(`${process.env.FIRE_FIRESTORE_PORT}`) || 8080;
+        parseInt(`${process.env.FIRE_FIRESTORE_PORT}`, 10) || 8080;
 
       const functionsPort =
-        parseInt(`${process.env.FIRE_FIRESTORE_PORT}`) || 5001;
+        parseInt(`${process.env.FIRE_FIRESTORE_PORT}`, 10) || 5001;
 
-      const authPort = parseInt(`${process.env.FIRE_FIRESTORE_PORT}`) || 9099;
+      const authPort =
+        parseInt(`${process.env.FIRE_FIRESTORE_PORT}`, 10) || 9099;
 
       console.log("FIREBASE: FAKED", host);
 
