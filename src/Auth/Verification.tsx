@@ -15,6 +15,8 @@ import OTPVerify from "./assets/OTPVerify.svg";
 
 import type { AuthStackProps } from ".";
 
+const TIMER = 60;
+
 const Verification = observer(({ route }: AuthStackProps<"Verification">) => {
   const styles = useStyles();
   const navigation = useNavigation();
@@ -22,9 +24,10 @@ const Verification = observer(({ route }: AuthStackProps<"Verification">) => {
 
   const userStore: UserStore = useAppState("user");
   const auth: AuthStore = useAppState("auth");
-  const [otp, setOtp] = useState<null | string>(null);
   const { user } = userStore;
-  const secondsSinceRequest: number = auth.secondsSinceRequest(phoneNumber);
+
+  const [otp, setOtp] = useState<null | string>(null);
+  const [count, setCount] = useState(TIMER - 1);
 
   const handleContinue = async () => {
     if (otp) {
@@ -53,6 +56,34 @@ const Verification = observer(({ route }: AuthStackProps<"Verification">) => {
       }
     }
   }, [auth, navigation, user]);
+
+  let interval: any = null;
+  const startTimer = () => {
+    interval = setInterval(() => {
+      const secondsSinceRequest: number = auth.secondsSinceRequest(phoneNumber);
+      if (secondsSinceRequest >= TIMER) {
+        clearInterval(interval);
+        return;
+      }
+      setCount((c) => c - 1);
+    }, 1000);
+  };
+
+  useEffect(() => {
+    startTimer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleResend = async () => {
+    try {
+      await auth.requestOTP(phoneNumber);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setCount(TIMER - 1);
+      startTimer();
+    }
+  };
 
   return (
     <SafeArea>
@@ -104,10 +135,11 @@ const Verification = observer(({ route }: AuthStackProps<"Verification">) => {
                   marginTop: 8,
                 }}
                 variant="text"
-                onPress={() => undefined}
-                disabled
+                onPress={handleResend}
+                disabled={count > 0}
               >
-                Resend | Wait 30s {secondsSinceRequest}
+                Resend
+                {count > 0 && ` | Wait ${count}s`}
               </Button>
             </Box>
           </Box>
