@@ -17,7 +17,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "bd.com.madchef.integrationpilot"
+      "bundleIdentifier": "bd.com.madchef.app.ios"
     },
     "android": {
       "adaptiveIcon": {

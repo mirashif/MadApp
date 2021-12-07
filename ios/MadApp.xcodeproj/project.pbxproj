@@ -336,8 +336,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = bd.com.madchef.integrationpilot;
-				PRODUCT_NAME = integrationpilot;
+				PRODUCT_BUNDLE_IDENTIFIER = "bd.com.madchef.app.ios";
+				PRODUCT_NAME = ios;
 				SWIFT_OBJC_BRIDGING_HEADER = "MadApp/MadApp-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -362,8 +362,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = bd.com.madchef.integrationpilot;
-				PRODUCT_NAME = integrationpilot;
+				PRODUCT_BUNDLE_IDENTIFIER = "bd.com.madchef.app.ios";
+				PRODUCT_NAME = ios;
 				SWIFT_OBJC_BRIDGING_HEADER = "MadApp/MadApp-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
