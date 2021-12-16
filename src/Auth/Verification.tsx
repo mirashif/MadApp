@@ -1,28 +1,89 @@
 import React, { useState, useEffect } from "react";
 import OTPInputView from "@twotalltotems/react-native-otp-input";
-import { ScrollView } from "react-native";
+import { Alert, ScrollView } from "react-native";
+import { observer } from "mobx-react";
+import { StackActions, useNavigation } from "@react-navigation/native";
 
 import { Box, HeaderBar, makeStyles, SafeArea, Text } from "../components";
 import DissmissKeyboard from "../components/DissmissKeyboard";
 import Button from "../components/Button";
+import { useAppState } from "../state/StateContext";
+import type { AuthStore } from "../state/store/AuthStore";
+import type { UserStore } from "../state/store/UserStore";
 
 import OTPVerify from "./assets/OTPVerify.svg";
 
-import { AuthStackProps } from ".";
+import type { AuthStackProps } from ".";
 
-const Verification = ({
-  route,
-  navigation,
-}: AuthStackProps<"Verification">) => {
+const TIMER = 60;
+
+const Verification = observer(({ route }: AuthStackProps<"Verification">) => {
   const styles = useStyles();
-
+  const navigation = useNavigation();
   const { phoneNumber } = route.params;
 
+  const userStore: UserStore = useAppState("user");
+  const auth: AuthStore = useAppState("auth");
+  const { user } = userStore;
+
   const [otp, setOtp] = useState<null | string>(null);
+  const [count, setCount] = useState(TIMER - 1);
+
+  const handleContinue = async () => {
+    if (otp) {
+      try {
+        await auth.authenticate(phoneNumber, otp);
+      } catch (err) {
+        Alert.alert("Something went wrong!");
+      }
+    } else {
+      Alert.alert("Please enter OTP");
+    }
+  };
 
   useEffect(() => {
-    console.log("otp", otp);
-  }, [otp]);
+    if (auth.authenticated) {
+      if (user) {
+        if (user.firstName && user.lastName) {
+          navigation.dispatch(
+            StackActions.replace("BottomTabs", { screen: "Home" })
+          );
+        } else {
+          navigation.dispatch(
+            StackActions.replace("AuthStack", { screen: "UserInfo" })
+          );
+        }
+      }
+    }
+  }, [auth, navigation, user]);
+
+  let interval: any = null;
+  const startTimer = () => {
+    interval = setInterval(() => {
+      const secondsSinceRequest: number = auth.secondsSinceRequest(phoneNumber);
+      if (secondsSinceRequest >= TIMER) {
+        clearInterval(interval);
+        return;
+      }
+      setCount((c) => c - 1);
+    }, 1000);
+  };
+
+  useEffect(() => {
+    startTimer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleResend = async () => {
+    try {
+      await auth.requestOTP(phoneNumber);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setCount(TIMER - 1);
+      startTimer();
+    }
+  };
 
   return (
     <SafeArea>
@@ -50,9 +111,9 @@ const Verification = ({
 
               <Text style={{ color: "#BBBBBB" }}>{phoneNumber}</Text>
 
-              <Box width={250} height={50} style={{ marginTop: 14 }}>
+              <Box width={300} height={50} style={{ marginTop: 14 }}>
                 <OTPInputView
-                  pinCount={5}
+                  pinCount={6}
                   codeInputFieldStyle={styles.codeInputFieldStyle}
                   autoFocusOnLoad={true}
                   keyboardType="number-pad"
@@ -66,8 +127,19 @@ const Verification = ({
               px="screen"
               style={{ paddingTop: 16, paddingBottom: 40, marginTop: 14 }}
             >
-              <Button size="lg" onPress={() => navigation.navigate("UserInfo")}>
+              <Button size="lg" onPress={handleContinue}>
                 Continue
+              </Button>
+              <Button
+                style={{
+                  marginTop: 8,
+                }}
+                variant="text"
+                onPress={handleResend}
+                disabled={count > 0}
+              >
+                Resend
+                {count > 0 && ` | Wait ${count}s`}
               </Button>
             </Box>
           </Box>
@@ -75,7 +147,7 @@ const Verification = ({
       </ScrollView>
     </SafeArea>
   );
-};
+});
 
 const useStyles = makeStyles(() => ({
   codeInputFieldStyle: {

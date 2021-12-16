@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>556263731651-l1boouf943ne4q1ogvfqfn5km4frh3gf.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.556263731651-l1boouf943ne4q1ogvfqfn5km4frh3gf</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>556263731651-umjr1nq93b2hjoohrtqc319gcnsje23k.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCs14ziTLHX7J5m1EjaL_nBBiJ7LkEn1aM</string>
+	<key>GCM_SENDER_ID</key>
+	<string>556263731651</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>bd.com.madchef.app.ios</string>
+	<key>PROJECT_ID</key>
+	<string>mad-bits</string>
+	<key>STORAGE_BUCKET</key>
+	<string>mad-bits.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:556263731651:ios:ca05b12ae023a760490d76</string>
+	<key>DATABASE_URL</key>
+	<string>https://mad-bits-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>

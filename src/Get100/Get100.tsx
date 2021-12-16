@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 import React from "react";
 import { ScrollView, Image } from "react-native";
 
@@ -12,6 +13,8 @@ import {
   Button,
   Icon,
 } from "../components";
+import { useInvites } from "../state/hooks/useInvites";
+import { useUser } from "../state/hooks/useUser";
 
 import InviteItem from "./InviteItem";
 
@@ -23,9 +26,12 @@ const madAppLogo = {
 
 export const assets = [madAppLogo.src];
 
-const Get100 = () => {
+const Get100 = observer(() => {
   const theme = useTheme();
   const styles = useStyles();
+
+  const { invites } = useInvites();
+  const { attributes } = useUser();
 
   return (
     <SafeArea>
@@ -99,9 +105,10 @@ const Get100 = () => {
           <Box style={styles.couponShare}>
             <Box style={styles.coupon}>
               <Text numberOfLines={1} style={styles.couponText}>
-                RABBILITV
+                {attributes?.referralCode}
               </Text>
             </Box>
+            {/* TODO: Implement share */}
             <Button
               onPress={() => console.log("My coupon share")}
               size="lg"
@@ -138,31 +145,39 @@ const Get100 = () => {
                     fontFamily: "Normal",
                   }}
                 >
-                  2
+                  {invites.length}
                 </Text>
               </Box>
             </Box>
 
             {/* Empty state */}
-            <Text
-              style={{
-                fontSize: 14,
-                fontFamily: "Normal",
-                color: theme.colors.gray,
-              }}
-            >
-              None of your friends signed up yet! They will show up here once
-              they do.
-            </Text>
+            {invites.length === 0 && (
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontFamily: "Normal",
+                  color: theme.colors.gray,
+                }}
+              >
+                None of your friends signed up yet! They will show up here once
+                they do.
+              </Text>
+            )}
 
             {/* Not Empty state */}
-            <InviteItem name="Omran Jamal" id="+88 017#####123" />
+            {invites.map((invite) => (
+              <InviteItem
+                key={invite.data.id}
+                name={invite.data.name}
+                id={invite.data.number}
+              />
+            ))}
           </Box>
         </Box>
       </ScrollView>
     </SafeArea>
   );
-};
+});
 
 export default Get100;
 

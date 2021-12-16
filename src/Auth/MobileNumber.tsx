@@ -1,23 +1,33 @@
 import React, { useState } from "react";
 import { TextInput, Alert, ScrollView } from "react-native";
+import { observer } from "mobx-react";
 
 import { Box, HeaderBar, SafeArea, Text } from "../components";
 import DissmissKeyboard from "../components/DissmissKeyboard";
 import Button from "../components/Button";
 import type { RootStackProps } from "../components/AppNavigator";
+import { useAppState } from "../state/StateContext";
+import type { AuthStore } from "../state/store/AuthStore";
 
 import Phone from "./assets/Phone.svg";
 import BDFlag from "./assets/BDFlag.svg";
 
-const MobileNumber = ({ navigation }: RootStackProps<"AuthStack">) => {
+const MobileNumber = observer(({ navigation }: RootStackProps<"AuthStack">) => {
+  const auth: AuthStore = useAppState("auth");
+
   const [phoneNumber, setPhoneNumber] = useState<null | string>(null);
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (phoneNumber) {
-      navigation.navigate("AuthStack", {
-        screen: "Verification",
-        params: { phoneNumber },
-      });
+      try {
+        await auth.requestOTP(phoneNumber);
+        navigation.navigate("AuthStack", {
+          screen: "Verification",
+          params: { phoneNumber },
+        });
+      } catch (err) {
+        Alert.alert("Something went wrong");
+      }
     } else {
       Alert.alert("Please enter a phone number");
     }
@@ -31,7 +41,9 @@ const MobileNumber = ({ navigation }: RootStackProps<"AuthStack">) => {
       >
         <HeaderBar
           title="Your Details"
-          onBackPress={() => navigation.navigate("BottomTabs")}
+          onBackPress={() =>
+            navigation.navigate("BottomTabs", { screen: "Home" })
+          }
         />
 
         <DissmissKeyboard>
@@ -95,6 +107,6 @@ const MobileNumber = ({ navigation }: RootStackProps<"AuthStack">) => {
       </ScrollView>
     </SafeArea>
   );
-};
+});
 
 export default MobileNumber;

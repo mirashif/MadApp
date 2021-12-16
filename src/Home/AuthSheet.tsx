@@ -44,7 +44,7 @@ const AuthSheet = () => {
           size="xl"
           onPress={() => {
             authSheetRef.current?.close();
-            navigation.navigate("AuthStack");
+            navigation.navigate("AuthStack", { screen: "MobileNumber" });
           }}
         >
           Continue with phone

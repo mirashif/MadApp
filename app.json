@@ -17,14 +17,15 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "bd.com.madchef.madapp"
+      "bundleIdentifier": "bd.com.madchef.app.ios"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "bd.com.madchef.madapp",
+      "package": "bd.com.madchef.integrationpilot",
+      "googleServicesFile": "./google-services.json",
       "versionCode": 1
     },
     "web": {

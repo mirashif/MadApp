@@ -2,20 +2,22 @@ import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { ScrollView, Image, TouchableWithoutFeedback } from "react-native";
 
-import { Box, Icon, makeStyles, Theme, useTheme } from "../components";
+import type { Theme } from "../components";
+import { Box, Icon, makeStyles, useTheme } from "../components";
+import type { Item as IItem } from "../state/store/ItemStore";
+import type { RestaurantType } from "../state/store/RestaurantStore";
 
-import { IItem } from "./Home";
 import Item from "./Item";
 
 interface HomeRestaurantProps {
-  logoUri: string;
+  restaurant: RestaurantType;
   items: IItem[];
-  onItemPress: (id: number | string) => void;
+  onItemPress: (item: IItem) => void;
 }
 
 const HomeRestaurant = ({
   items,
-  logoUri,
+  restaurant,
   onItemPress,
 }: HomeRestaurantProps) => {
   const styles = useStyles();
@@ -32,17 +34,22 @@ const HomeRestaurant = ({
       showsHorizontalScrollIndicator={false}
     >
       <TouchableWithoutFeedback
-        onPress={() => navigation.navigate("HomeStack", { screen: "Menu" })}
+        onPress={() =>
+          navigation.navigate("HomeStack", { screen: "RestaurantMenu" })
+        }
       >
         <Box style={styles.logo}>
-          <Image style={styles.logoStyle} source={{ uri: logoUri }} />
+          <Image
+            style={styles.logoStyle}
+            source={{ uri: restaurant.logoImageURI }}
+          />
           <Icon name="arrow-right" size={24} color="#000000" />
         </Box>
       </TouchableWithoutFeedback>
 
       {items.map((item) => (
         <Box key={item.id} style={styles.restaurantItem}>
-          <Item {...{ ...item, onItemPress }} />
+          <Item item={item} onItemPress={onItemPress} />
         </Box>
       ))}
     </ScrollView>

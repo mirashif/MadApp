@@ -1,4 +1,11 @@
-import React, { useRef, useState } from "react";
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetScrollView,
+} from "@gorhom/bottom-sheet";
+import { useIsFocused } from "@react-navigation/native";
+import { observer } from "mobx-react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Image,
   ImageBackground,
@@ -6,38 +13,37 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import {
-  BottomSheetModal,
-  BottomSheetScrollView,
-  BottomSheetBackdrop,
-} from "@gorhom/bottom-sheet";
-import { useIsFocused } from "@react-navigation/native";
 
 import type { Theme } from "../components";
 import {
-  Icon,
   Box,
   Button,
   CircularIcon,
+  Icon,
   makeStyles,
   SafeArea,
   Text,
   useTheme,
 } from "../components";
-import type { RootStackProps } from "../components/AppNavigator";
+import { useAuth } from "../state/hooks/useAuth";
+import { useCart } from "../state/hooks/useCart";
+import { useAppState } from "../state/StateContext";
+import type { AddressStore } from "../state/store/AddressStore";
+import type { BannerStore } from "../state/store/BannerStore";
+import type {
+  Restaurant,
+  RestaurantStore,
+} from "../state/store/RestaurantStore";
+import type { StoryStore } from "../state/store/StoryStore";
 
-import LocationBar from "./LocationBar";
-import HomeRestaurant from "./HomeRestaurant";
-import VariationItem from "./VariationItem";
 import AddonsItem from "./AddonsItem";
-import FloatingCart from "./FloatingCart";
 import AuthSheet from "./AuthSheet";
+import FloatingCart from "./FloatingCart";
+import HomeRestaurant from "./HomeRestaurant";
+import LocationBar from "./LocationBar";
+import VariationItem from "./VariationItem";
 
 const FOOTER_SHEET_HEIGHT = 144;
-
-const verticalBanners = [...Array(6)].map((_, id) => {
-  return { id, imageUri: "https://picsum.photos/200/300" };
-});
 
 export interface IItem {
   id: number | string;
@@ -47,17 +53,6 @@ export interface IItem {
   price: string;
   imageUri: string;
 }
-
-const restaurantItems = [...Array(6)].map((_, id) => {
-  return {
-    id,
-    imageUri: "https://source.unsplash.com/a66sGfOnnqQ/200x200",
-    discount: "20% OFF",
-    name: "Madame Lucy",
-    price: "৳ 369.00",
-    previousPrice: "৳ 468.00",
-  };
-});
 
 const variations = [
   {
@@ -72,7 +67,7 @@ const variations = [
   },
 ];
 
-const Home = ({ navigation }: RootStackProps<"HomeStack">) => {
+const Home = observer(() => {
   const styles = useStyles();
   const theme = useTheme();
 
@@ -80,6 +75,16 @@ const Home = ({ navigation }: RootStackProps<"HomeStack">) => {
 
   const itemSheetRef = useRef<BottomSheetModal>(null);
   const itemFooterSheetRef = useRef<BottomSheetModal>(null);
+
+  const { authenticated } = useAuth();
+  const { length: cartItemCount } = useCart();
+
+  const stories: StoryStore = useAppState("stories");
+  const banners: BannerStore = useAppState("banners");
+  const restaurants: RestaurantStore = useAppState("restaurants");
+  const restaurantList: Restaurant[] = restaurants.all;
+
+  const addresses: AddressStore = useAppState("addresses");
 
   const [selectedVariationID, setSelectedVariationID] = useState<
     null | string | number
@@ -98,11 +103,15 @@ const Home = ({ navigation }: RootStackProps<"HomeStack">) => {
     itemFooterSheetRef.current?.close();
   };
 
+  useEffect(() => {
+    addresses.setLocation(23.7937, 90.4066);
+  }, [addresses]);
+
   return (
     <SafeArea>
-      <FloatingCart />
+      {cartItemCount > 0 && <FloatingCart />}
 
-      {isFocused && false && <AuthSheet />}
+      {isFocused && !authenticated && <AuthSheet />}
 
       {/* ItemSheet */}
       <BottomSheetModal
@@ -292,19 +301,19 @@ const Home = ({ navigation }: RootStackProps<"HomeStack">) => {
           <LocationBar
             address="5 Rd No. 2/3, Dhaka 1213"
             label="Scratchboard"
-            editMode
-            onEditPress={() => navigation.navigate("EditLocation")}
           />
         </Box>
 
-        <Box mb="l" mx="screen" style={styles.wideBanner}>
-          <Image
-            source={{
-              uri: "https://picsum.photos/600/300",
-            }}
-            style={styles.wideBannerImage}
-          />
-        </Box>
+        {banners.all.length > 0 && (
+          <Box mb="l" mx="screen" style={styles.wideBanner}>
+            <Image
+              source={{
+                uri: banners.all[0].data.imageURI,
+              }}
+              style={styles.wideBannerImage}
+            />
+          </Box>
+        )}
 
         <Box mb="xl">
           <ScrollView
@@ -314,10 +323,10 @@ const Home = ({ navigation }: RootStackProps<"HomeStack">) => {
             horizontal
             showsHorizontalScrollIndicator={false}
           >
-            {verticalBanners.map(({ id, imageUri }) => (
-              <Box key={id} style={styles.verticalBanner}>
+            {stories.all.map(({ data }) => (
+              <Box key={data.id} style={styles.verticalBanner}>
                 <Image
-                  source={{ uri: imageUri }}
+                  source={{ uri: data.imageURI }}
                   style={styles.verticalBannerImage}
                 />
               </Box>
@@ -328,25 +337,21 @@ const Home = ({ navigation }: RootStackProps<"HomeStack">) => {
         <Text mb="l" mx="screen" variant="sectionTitle">
           🍴 Restaurants
         </Text>
-        <HomeRestaurant
-          onItemPress={handleItemPress}
-          items={restaurantItems}
-          logoUri="https://picsum.photos/40/65"
-        />
-        <HomeRestaurant
-          onItemPress={handleItemPress}
-          items={restaurantItems}
-          logoUri="https://picsum.photos/40/65"
-        />
-        <HomeRestaurant
-          onItemPress={handleItemPress}
-          items={restaurantItems}
-          logoUri="https://picsum.photos/40/65"
-        />
+
+        {restaurantList.map((restaurant) => (
+          <HomeRestaurant
+            key={restaurant.id}
+            restaurant={restaurant.data}
+            onItemPress={handleItemPress}
+            items={restaurant.popularItems}
+          />
+        ))}
       </ScrollView>
     </SafeArea>
   );
-};
+});
+
+export default Home;
 
 const useStyles = makeStyles((theme: Theme) => ({
   wideBanner: {
@@ -393,5 +398,3 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: "#8A8A8A",
   },
 }));
-
-export default Home;
