@@ -22,6 +22,7 @@ import Input from "../components/Input";
 import type { UserStore } from "../state/store/UserStore";
 import { useAppState } from "../state/StateContext";
 import type { UserBuilder } from "../state/store/UserBuilder";
+import type { ReferralValidator } from "../state/store/ReferralValidator";
 
 import Success from "./assets/Success.svg";
 import Referral from "./assets/Referral.svg";
@@ -39,6 +40,8 @@ const UserInfo = observer(({ navigation }: RootStackProps<"AuthStack">) => {
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+
+  const referralValidator: ReferralValidator = useAppState("referralValidator");
 
   /**
    * When user presses back button it takes to the mobile number screen
@@ -58,14 +61,24 @@ const UserInfo = observer(({ navigation }: RootStackProps<"AuthStack">) => {
   );
 
   const handleRefModalCTAPress = () => {
+    if (tempRefCode) {
+      referralValidator.setReferral(tempRefCode);
+    }
+
+    // handle try again button
     if (wrongRefCode) {
       setWrongRefCode(false);
       return;
     }
 
-    if (tempRefCode === "madapp") {
-      setRefCode(tempRefCode);
-      setRefModalVisible(!refModalVisible);
+    if (referralValidator.isValidating) {
+      handleRefModalCTAPress();
+      return;
+    }
+
+    if (referralValidator.isValid) {
+      setRefCode(referralValidator.referral);
+      setRefModalVisible(false);
       return;
     }
 
@@ -83,6 +96,12 @@ const UserInfo = observer(({ navigation }: RootStackProps<"AuthStack">) => {
         builder.setFirstName(firstName);
         builder.setLastName(lastName);
         await user.updateUser(builder.userable);
+
+        if (referralValidator.referral && referralValidator.isValid) {
+          await user.updateUser({
+            referral: referralValidator.referral,
+          });
+        }
 
         setSuccessModalVisible(true);
       }
@@ -108,7 +127,7 @@ const UserInfo = observer(({ navigation }: RootStackProps<"AuthStack">) => {
               mt="l"
               style={{ color: "#323232" }}
             >
-              You’re almost done!
+              You're almost done!
             </Text>
           </Box>
 
@@ -155,7 +174,12 @@ const UserInfo = observer(({ navigation }: RootStackProps<"AuthStack">) => {
 
             <Box>
               {refCode && (
-                <TouchableWithoutFeedback onPress={() => setRefCode(null)}>
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    setRefCode(null);
+                    referralValidator.setReferral("");
+                  }}
+                >
                   <Box
                     height={25}
                     width={25}
@@ -257,7 +281,10 @@ const UserInfo = observer(({ navigation }: RootStackProps<"AuthStack">) => {
 
             <Box my="m">
               <Input
-                onChangeText={(value) => setTempRefCode(value)}
+                onChangeText={(value) => {
+                  setTempRefCode(value);
+                  referralValidator.setReferral(value);
+                }}
                 placeholder="Enter your referral code"
               />
             </Box>
@@ -268,7 +295,7 @@ const UserInfo = observer(({ navigation }: RootStackProps<"AuthStack">) => {
       <CustomModal
         visible={successModalVisible}
         onRequestClose={() => setSuccessModalVisible(false)}
-        buttonTitle="Let’s go"
+        buttonTitle="Let's go"
         onButtonPress={() => {
           setSuccessModalVisible(false);
           navigation.navigate("BottomTabs", { screen: "Home" });
@@ -281,7 +308,7 @@ const UserInfo = observer(({ navigation }: RootStackProps<"AuthStack">) => {
         >
           <Success />
           <Text fontSize={18} style={{ color: "#323232" }}>
-            Wohoo! you’re done
+            Wohoo! you're done
           </Text>
         </Box>
       </CustomModal>

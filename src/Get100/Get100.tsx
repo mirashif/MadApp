@@ -167,9 +167,9 @@ const Get100 = observer(() => {
             {/* Not Empty state */}
             {invites.map((invite) => (
               <InviteItem
-                key={invite.id}
-                name={invite.name}
-                id={invite.number}
+                key={invite.data.id}
+                name={invite.data.name}
+                id={invite.data.number}
               />
             ))}
           </Box>
