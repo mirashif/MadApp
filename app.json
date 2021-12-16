@@ -17,7 +17,13 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "bd.com.madchef.app.ios"
+      "bundleIdentifier": "bd.com.madchef.app.ios",
+      "infoPlist": {
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app uses the location info to delivery food.",
+        "NSLocationWhenInUseUsageDescription": "This app uses the location info to delivery food.",
+        "NSLocationAlwaysUsageDescription": "This app uses the location info to delivery food.",
+        "NSLocationUsageDescription": "This app uses the location info to delivery food."
+      }
     },
     "android": {
       "adaptiveIcon": {

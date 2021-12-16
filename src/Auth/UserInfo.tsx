@@ -215,32 +215,40 @@ const UserInfo = observer(({ navigation }: RootStackProps<"AuthStack">) => {
             </Box>
           </Box>
 
-          <Box
-            style={{
-              marginTop: 26,
-              paddingHorizontal: 25,
-              paddingVertical: 23,
-            }}
-            borderColor="lightGray"
-            borderWidth={1}
-            borderRadius="l"
-            flexDirection="row"
-            justifyContent="space-between"
+          <TouchableWithoutFeedback
+            onPress={() => navigation.navigate("EditLocation")}
           >
-            <Box flexDirection="row">
-              <Icon name="navigation" size={14} color={theme.colors.primary} />
-              <Text
-                style={{ marginLeft: 12 }}
-                fontFamily="Bold"
-                fontSize={15}
-                color="primary"
-              >
-                Set Your Address
-              </Text>
-            </Box>
+            <Box
+              style={{
+                marginTop: 26,
+                paddingHorizontal: 25,
+                paddingVertical: 23,
+              }}
+              borderColor="lightGray"
+              borderWidth={1}
+              borderRadius="l"
+              flexDirection="row"
+              justifyContent="space-between"
+            >
+              <Box flexDirection="row">
+                <Icon
+                  name="navigation"
+                  size={14}
+                  color={theme.colors.primary}
+                />
+                <Text
+                  style={{ marginLeft: 12 }}
+                  fontFamily="Bold"
+                  fontSize={15}
+                  color="primary"
+                >
+                  Set Your Address
+                </Text>
+              </Box>
 
-            <Icon name="edit-2" size={14} color={theme.colors.primary} />
-          </Box>
+              <Icon name="edit-2" size={14} color={theme.colors.primary} />
+            </Box>
+          </TouchableWithoutFeedback>
 
           <Box style={{ paddingTop: 16, paddingBottom: 40, marginTop: 14 }}>
             <Button onPress={handleFinish} size="lg">
