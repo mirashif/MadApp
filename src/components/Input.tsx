@@ -1,5 +1,5 @@
 import React from "react";
-import type { StyleProp, TextStyle } from "react-native";
+import type { StyleProp, TextInputProps, TextStyle } from "react-native";
 import { TextInput } from "react-native";
 
 import { Box, Text } from "./theme";
@@ -10,6 +10,7 @@ interface InputProps {
   placeholder?: string;
   value?: string;
   onChangeText: (vale: string) => void;
+  inputProps?: TextInputProps;
 }
 
 const Input = ({
@@ -18,6 +19,7 @@ const Input = ({
   label,
   style,
   value,
+  inputProps,
 }: InputProps) => {
   return (
     <Box>
@@ -41,6 +43,7 @@ const Input = ({
           },
           style,
         ]}
+        {...inputProps}
       />
     </Box>
   );
