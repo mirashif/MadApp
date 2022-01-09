@@ -78,13 +78,13 @@ const EditLocation = () => {
 
   const saveLocation = async () => {
     const { builder } = addresses;
-    const { addressable } = builder;
 
     if (region) {
       builder.setLocation(region.longitude, region.latitude);
       builder.setAddress(formattedAddress);
       // TODO: Add label fn
       builder.setLabel("HOME");
+      const { addressable } = builder;
       await addresses.addAddress(addressable);
     }
 

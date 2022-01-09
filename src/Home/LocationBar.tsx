@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Pressable, View } from "react-native";
 
 import type { Theme } from "../components";
 import { Icon, makeStyles, Text, useTheme } from "../components";
+import { useAppState } from "../state/StateContext";
+import type { Address, AddressStore } from "../state/store/AddressStore";
 
 interface LocationBarProps {
   address: string;
@@ -22,9 +24,17 @@ export default function LocationBar({
   const styles = useStyles();
   const theme = useTheme();
 
+  const addresses: AddressStore = useAppState("addresses");
+  const addressList: Address[] = addresses.all;
+
+  useEffect(() => {
+    console.log(addressList);
+  }, [addressList]);
+
   return (
     <View style={styles.container}>
       <View>
+        {/* <Text>{addressList[0].data.label}</Text> */}
         <Text numberOfLines={1} style={styles.address}>
           {address}
         </Text>
