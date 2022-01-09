@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Pressable, View } from "react-native";
 
 import type { Theme } from "../components";
@@ -7,16 +7,12 @@ import { useAppState } from "../state/StateContext";
 import type { Address, AddressStore } from "../state/store/AddressStore";
 
 interface LocationBarProps {
-  address: string;
-  label: string;
   showIcon?: boolean;
   editMode?: boolean;
   onEditPress?: () => void;
 }
 
 export default function LocationBar({
-  address,
-  label,
   editMode = false,
   onEditPress,
   showIcon = true,
@@ -26,15 +22,15 @@ export default function LocationBar({
 
   const addresses: AddressStore = useAppState("addresses");
   const addressList: Address[] = addresses.all;
-
-  useEffect(() => {
-    console.log(addressList);
-  }, [addressList]);
+  // TODO: Add currently locked address here
+  // const address: Address | null = lockedAddress.lockedAddress;
+  // const addressLine: string | null = address.data.address || null;
+  // const addressLabel: string | null = address.data.label || null;
+  const { address, label } = addressList[0].data;
 
   return (
     <View style={styles.container}>
       <View>
-        {/* <Text>{addressList[0].data.label}</Text> */}
         <Text numberOfLines={1} style={styles.address}>
           {address}
         </Text>

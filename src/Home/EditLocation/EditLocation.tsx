@@ -78,7 +78,6 @@ const EditLocation = () => {
 
   const saveLocation = async () => {
     const { builder } = addresses;
-
     if (region) {
       builder.setLocation(region.longitude, region.latitude);
       builder.setAddress(formattedAddress);
@@ -87,7 +86,6 @@ const EditLocation = () => {
       const { addressable } = builder;
       await addresses.addAddress(addressable);
     }
-
     navigation.goBack();
   };
 

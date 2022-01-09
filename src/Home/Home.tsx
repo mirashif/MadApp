@@ -30,7 +30,7 @@ import { useAuth } from "../state/hooks/useAuth";
 import { useCart } from "../state/hooks/useCart";
 import { useAppState } from "../state/StateContext";
 import type { AddressStore } from "../state/store/AddressStore";
-import type { BannerStore } from "../state/store/BannerStore";
+import type { Banner, BannerStore } from "../state/store/BannerStore";
 import type {
   Restaurant,
   RestaurantStore,
@@ -86,6 +86,8 @@ const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
   const restaurantList: Restaurant[] = restaurants.all;
 
   const addresses: AddressStore = useAppState("addresses");
+
+  const bannerList: Banner[] = banners.all;
 
   const [selectedVariationID, setSelectedVariationID] = useState<
     null | string | number
@@ -302,16 +304,14 @@ const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
           <LocationBar
             editMode={true}
             onEditPress={() => navigation.navigate("EditLocation")}
-            address="5 Rd No. 2/3, Dhaka 1213"
-            label="Scratchboard"
           />
         </Box>
 
-        {banners.all.length > 0 && (
+        {bannerList.length > 0 && (
           <Box mb="l" mx="screen" style={styles.wideBanner}>
             <Image
               source={{
-                uri: banners.all[0].data.imageURI,
+                uri: bannerList[0].data.imageURI,
               }}
               style={styles.wideBannerImage}
             />
@@ -338,7 +338,7 @@ const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
         </Box>
 
         <Text mb="l" mx="screen" variant="sectionTitle">
-          🍴 Restaurants
+          🍴 Restaurants {bannerList.length}
         </Text>
 
         {restaurantList.map((restaurant) => (
