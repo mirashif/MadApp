@@ -3,10 +3,13 @@ import { Dimensions, ScrollView } from "react-native";
 import type { Region } from "react-native-maps";
 import MapView from "react-native-maps";
 import * as Location from "expo-location";
+import { useNavigation } from "@react-navigation/native";
 
-import { SafeArea, Box, makeStyles, Text } from "../../components";
+import { SafeArea, Box, makeStyles, Text, Button } from "../../components";
 import Input from "../../components/Input";
 import DissmissKeyboard from "../../components/DissmissKeyboard";
+import { useAppState } from "../../state/StateContext";
+import type { AddressStore } from "../../state/store/AddressStore";
 
 import MarkerIcon from "./assets/marker.svg";
 
@@ -15,6 +18,9 @@ const windowWidth = Dimensions.get("window").width;
 
 const EditLocation = () => {
   const styles = useStyles();
+  const navigation = useNavigation();
+
+  const addresses: AddressStore = useAppState("addresses");
 
   const [formattedAddress, setFormattedAddress] = useState("");
   const [address, setAddress] =
@@ -35,19 +41,19 @@ const EditLocation = () => {
       return;
     }
 
-    const _location = await Location.getCurrentPositionAsync({});
+    const {
+      coords: { latitude, longitude },
+    } = await Location.getCurrentPositionAsync({});
 
     setRegion({
-      latitude: _location.coords.latitude,
-      longitude: _location.coords.longitude,
+      latitude,
+      longitude,
       latitudeDelta: 0.0017,
       longitudeDelta: 0.0017,
     });
 
-    await getAndSetAddress(
-      _location.coords.latitude,
-      _location.coords.longitude
-    );
+    addresses.setLocation(longitude, latitude);
+    await getAndSetAddress(latitude, longitude);
   };
 
   const getAndSetAddress = async (latitude: number, longitude: number) => {
@@ -68,6 +74,21 @@ const EditLocation = () => {
     } catch (err) {
       setAddress(null);
     }
+  };
+
+  const saveLocation = async () => {
+    const { builder } = addresses;
+    const { addressable } = builder;
+
+    if (region) {
+      builder.setLocation(region.longitude, region.latitude);
+      builder.setAddress(formattedAddress);
+      // TODO: Add label fn
+      builder.setLabel("HOME");
+      await addresses.addAddress(addressable);
+    }
+
+    navigation.goBack();
   };
 
   useEffect(() => {
@@ -146,6 +167,12 @@ const EditLocation = () => {
                 textAlignVertical: "top",
               }}
             />
+
+            <Box style={{ marginBottom: 12 }} />
+
+            <Button onPress={saveLocation} size="lg">
+              Save
+            </Button>
           </Box>
         </ScrollView>
       </DissmissKeyboard>
