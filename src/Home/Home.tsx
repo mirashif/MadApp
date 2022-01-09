@@ -25,6 +25,7 @@ import {
   Text,
   useTheme,
 } from "../components";
+import type { RootStackProps } from "../components/AppNavigator";
 import { useAuth } from "../state/hooks/useAuth";
 import { useCart } from "../state/hooks/useCart";
 import { useAppState } from "../state/StateContext";
@@ -67,7 +68,7 @@ const variations = [
   },
 ];
 
-const Home = observer(() => {
+const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
   const styles = useStyles();
   const theme = useTheme();
 
@@ -299,6 +300,8 @@ const Home = observer(() => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <Box mb="l" mx="screen">
           <LocationBar
+            editMode={true}
+            onEditPress={() => navigation.navigate("EditLocation")}
             address="5 Rd No. 2/3, Dhaka 1213"
             label="Scratchboard"
           />

@@ -110,7 +110,6 @@ const EditLocation = () => {
             {region && (
               <MapView
                 style={styles.map}
-                provider="google"
                 region={region}
                 onRegionChangeComplete={handleRegionChange}
                 showsMyLocationButton
