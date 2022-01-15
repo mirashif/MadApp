@@ -8,7 +8,7 @@
 
 ./adb-all reverse tcp:9000 tcp:9000
 
-./adb-all reverse tcp:5000 tcp:5000
+./adb-all reverse tcp:5002 tcp:5002
 
 ./adb-all reverse tcp:8085 tcp:8085
 
