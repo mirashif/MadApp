@@ -1,6 +1,7 @@
 import originalAuth from "@react-native-firebase/auth";
 import originalFirestore from "@react-native-firebase/firestore";
 import originalFunctions from "@react-native-firebase/functions";
+import { Platform } from "react-native";
 
 let initialized = false;
 
@@ -13,7 +14,7 @@ export interface AugmentedFirebaseType {
 export async function augmentedFirebase(): Promise<AugmentedFirebaseType> {
   if (!initialized) {
     if (__DEV__) {
-      const host = process.env.FIRE_EMULATOR_HOST || "0.0.0.0";
+      const host = process.env.FIRE_EMULATOR_HOST || (Platform.OS === "ios" ? "localhost" : "0.0.0.0");
 
       const firestorePort =
         parseInt(`${process.env.FIRE_FIRESTORE_PORT}`, 10) || 8080;
