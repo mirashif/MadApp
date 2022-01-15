@@ -3,14 +3,16 @@ import { TouchableWithoutFeedback, View } from "react-native";
 import Animated from "react-native-reanimated";
 
 import { makeStyles, Text } from "../../components";
+import type { Category } from "../../state/store/CategoryStore";
 
-import { defaultTabs, HEADER_HEIGHT } from "./constants";
+import { HEADER_HEIGHT } from "./constants";
 
 interface TabHeaderProps {
   onMeasurement: (index: number, length: number) => void;
   onTabPress: (index: number) => void;
   activeIndex: number;
   scrollViewRefX: React.RefObject<Animated.ScrollView>;
+  categories: Category[];
 }
 
 const TabHeader = ({
@@ -18,9 +20,9 @@ const TabHeader = ({
   onTabPress,
   activeIndex,
   scrollViewRefX,
+  categories,
 }: TabHeaderProps) => {
   const styles = useStyles();
-  const tabs = defaultTabs;
 
   return (
     <View
@@ -36,7 +38,7 @@ const TabHeader = ({
           paddingHorizontal: 8,
         }}
       >
-        {tabs.map(({ name }, index) => (
+        {categories.map(({ data }, index) => (
           <TouchableWithoutFeedback
             onPress={() => onTabPress(index)}
             key={index}
@@ -63,7 +65,7 @@ const TabHeader = ({
                   { color: activeIndex === index ? "#FFB81B" : "black" },
                 ]}
               >
-                {name}
+                {data.name}
               </Text>
             </View>
           </TouchableWithoutFeedback>

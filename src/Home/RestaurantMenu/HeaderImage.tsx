@@ -13,9 +13,10 @@ import { HEADER_HEIGHT, HEADER_IMAGE_HEIGHT } from "./constants";
 
 interface HeaderImageProps {
   y: Animated.SharedValue<number>;
+  restaurantName: string;
 }
 
-const HeaderImage = ({ y }: HeaderImageProps) => {
+const HeaderImage = ({ y, restaurantName }: HeaderImageProps) => {
   const navigation = useNavigation();
 
   const animatedStyles = useAnimatedStyle(() => {
@@ -74,7 +75,7 @@ const HeaderImage = ({ y }: HeaderImageProps) => {
               marginLeft: 15,
             }}
           >
-            Cheez
+            {restaurantName}
           </Text>
         </View>
       </ImageBackground>

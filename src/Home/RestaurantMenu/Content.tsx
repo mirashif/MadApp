@@ -4,8 +4,8 @@ import { Dimensions, View } from "react-native";
 import Animated from "react-native-reanimated";
 
 import { Text, useTheme } from "../../components";
+import type { Category } from "../../state/store/CategoryStore";
 
-import { menu } from "./constants";
 import Item from "./Item";
 
 interface ContentProps {
@@ -17,9 +17,15 @@ interface ContentProps {
     | undefined;
   scrollViewRef: React.RefObject<Animated.ScrollView>;
   onMeasurement: (index: number, length: number) => void;
+  categories: Category[];
 }
 
-const Content = ({ onScroll, onMeasurement, scrollViewRef }: ContentProps) => {
+const Content = ({
+  onScroll,
+  onMeasurement,
+  scrollViewRef,
+  categories,
+}: ContentProps) => {
   const theme = useTheme();
   const { height: sHeight } = Dimensions.get("screen");
 
@@ -33,7 +39,7 @@ const Content = ({ onScroll, onMeasurement, scrollViewRef }: ContentProps) => {
         paddingBottom: sHeight,
       }}
     >
-      {menu.map(({ name, items }, index) => (
+      {categories.map(({ data, items }, index) => (
         // menu container
         <View
           key={index}
@@ -56,7 +62,7 @@ const Content = ({ onScroll, onMeasurement, scrollViewRef }: ContentProps) => {
               marginHorizontal: 8,
             }}
           >
-            {name}
+            {data.name}
           </Text>
 
           {/* items container */}
@@ -68,7 +74,7 @@ const Content = ({ onScroll, onMeasurement, scrollViewRef }: ContentProps) => {
             }}
           >
             {items.map((item, j) => (
-              <Item key={j} {...item} />
+              <Item key={j} item={item} />
             ))}
           </View>
         </View>
