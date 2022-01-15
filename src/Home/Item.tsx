@@ -58,6 +58,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   imageStyle: {
     borderRadius: theme.borderRadii.l,
+    backgroundColor: theme.colors.gray,
   },
   discount: {
     position: "absolute",
