@@ -13,7 +13,7 @@ export interface AugmentedFirebaseType {
 export async function augmentedFirebase(): Promise<AugmentedFirebaseType> {
   if (!initialized) {
     if (__DEV__) {
-      const host = process.env.FIRE_EMULATOR_HOST || "localhost";
+      const host = process.env.FIRE_EMULATOR_HOST || "0.0.0.0";
 
       const firestorePort =
         parseInt(`${process.env.FIRE_FIRESTORE_PORT}`, 10) || 8080;

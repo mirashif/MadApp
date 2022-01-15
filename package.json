@@ -9,7 +9,9 @@
     "eject": "expo eject",
     "lint": "eslint --ext .ts,.tsx . --max-warning 0",
     "tsc": "tsc",
-    "ci": "yarn lint && yarn tsc"
+    "ci": "yarn lint && yarn tsc",
+    "android-tunnel":  "./tunnel.sh",
+    "android-watch-tunnel": "./watch-tunnel.py"
   },
   "dependencies": {
     "@expo/vector-icons": "^12.0.5",

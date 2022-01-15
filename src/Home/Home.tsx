@@ -301,10 +301,10 @@ const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <Box mb="l" mx="screen">
-          <LocationBar
-            editMode={true}
-            onEditPress={() => navigation.navigate("EditLocation")}
-          />
+          {/*<LocationBar*/}
+          {/*  editMode={true}*/}
+          {/*  onEditPress={() => navigation.navigate("EditLocation")}*/}
+          {/*/>*/}
         </Box>
 
         {bannerList.length > 0 && (
