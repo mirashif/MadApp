@@ -301,7 +301,7 @@ export class ItemStore {
         }
 
         this.itemsByCategory[data.categoryID][id] = true;
-        this.itemsByCategory[data.restaurantID][id] = true;
+        this.itemsByRestaurant[data.restaurantID][id] = true;
     }
 
     remove(id: string): void {

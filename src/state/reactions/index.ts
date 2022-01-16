@@ -13,6 +13,7 @@ import {categoryReactions} from './categories';
 
 import {Store} from '../store';
 import {orderReactions} from './orders';
+import { itemsReaction } from "./items";
 
 export function initializeReactions(store: Store) {
     appReactions(store);
@@ -31,6 +32,7 @@ export function initializeReactions(store: Store) {
     restaurantReactions(store);
     branchReactions(store);
     categoryReactions(store);
+    itemsReaction(store);
 
     orderReactions(store);
 }
