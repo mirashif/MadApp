@@ -1,55 +1,30 @@
 import React, { useState } from "react";
-import { Dimensions } from "react-native";
+import { Dimensions, Image } from "react-native";
 import Carousel, { Pagination } from "react-native-snap-carousel";
 
 import type { Theme } from "../components";
-import { Text, Box, makeStyles } from "../components";
-
-interface ICarouselItem {
-  title: string;
-  text: string;
-}
+import { Box, makeStyles } from "../components";
+import { useAppState } from "../state/StateContext";
+import type { Banner, BannerStore } from "../state/store/BannerStore";
 
 const BannerCarousel = () => {
   const styles = useStyles();
   const { width: windowWidth } = Dimensions.get("window");
 
+  const banners: BannerStore = useAppState("banners");
+  const bannersList: Banner[] = banners.all;
+
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const carouselItems = [
-    {
-      title: "Item 1",
-      text: "Text 1",
-    },
-    {
-      title: "Item 2",
-      text: "Text 2",
-    },
-    {
-      title: "Item 3",
-      text: "Text 3",
-    },
-    {
-      title: "Item 4",
-      text: "Text 4",
-    },
-    {
-      title: "Item 5",
-      text: "Text 5",
-    },
-  ];
-
-  const _renderItem = ({
-    item,
-    index,
-  }: {
-    item: ICarouselItem;
-    index: number;
-  }) => {
+  const _renderItem = ({ item, index }: { item: Banner; index: number }) => {
     return (
       <Box style={styles.wideBanner}>
-        <Text style={{ fontSize: 30 }}>{item.title}</Text>
-        <Text>{item.text}</Text>
+        <Image
+          source={{
+            uri: item.data.imageURI,
+          }}
+          style={styles.wideBannerImage}
+        />
       </Box>
     );
   };
@@ -58,7 +33,7 @@ const BannerCarousel = () => {
     <Box style={{ flex: 1, flexDirection: "row", justifyContent: "center" }}>
       <Carousel
         layout={"default"}
-        data={carouselItems}
+        data={bannersList}
         sliderWidth={windowWidth}
         itemWidth={windowWidth}
         renderItem={_renderItem}
@@ -66,7 +41,7 @@ const BannerCarousel = () => {
       />
       <Pagination
         activeDotIndex={activeIndex}
-        dotsLength={carouselItems.length}
+        dotsLength={bannersList.length}
         dotColor="white"
         inactiveDotColor="transparent"
         inactiveDotScale={1}

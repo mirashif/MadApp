@@ -308,18 +308,6 @@ const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
           {/*/>*/}
         </Box>
 
-        {bannerList.length > 0 && (
-          <Box mb="l" mx="screen" style={styles.wideBanner}>
-            <Image
-              source={{
-                uri: bannerList[0].data.imageURI,
-              }}
-              style={styles.wideBannerImage}
-            />
-          </Box>
-        )}
-
-        {/* TODO: Add new banner carousel */}
         <BannerCarousel />
 
         <Box mb="xl">
