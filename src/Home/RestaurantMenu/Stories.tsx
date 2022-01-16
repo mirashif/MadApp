@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 import React from "react";
 import { ScrollView, Image } from "react-native";
 
@@ -6,7 +7,7 @@ import { Box, makeStyles, useTheme } from "../../components";
 import { useAppState } from "../../state/StateContext";
 import type { Story, StoryStore } from "../../state/store/StoryStore";
 
-const Stories = () => {
+const Stories = observer(() => {
   const styles = useStyles();
   const theme = useTheme();
 
@@ -30,7 +31,7 @@ const Stories = () => {
       </ScrollView>
     </Box>
   );
-};
+});
 
 export default Stories;
 

@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 import React, { useState } from "react";
 import { Dimensions, Image } from "react-native";
 import Carousel, { Pagination } from "react-native-snap-carousel";
@@ -7,7 +8,7 @@ import { Box, makeStyles } from "../components";
 import { useAppState } from "../state/StateContext";
 import type { Banner, BannerStore } from "../state/store/BannerStore";
 
-const BannerCarousel = () => {
+const BannerCarousel = observer(() => {
   const styles = useStyles();
   const { width: windowWidth } = Dimensions.get("window");
 
@@ -56,7 +57,7 @@ const BannerCarousel = () => {
       />
     </Box>
   );
-};
+});
 
 export default BannerCarousel;
 
