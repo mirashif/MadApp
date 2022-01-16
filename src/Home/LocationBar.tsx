@@ -26,7 +26,9 @@ export default function LocationBar({
   // const address: Address | null = lockedAddress.lockedAddress;
   // const addressLine: string | null = address.data.address || null;
   // const addressLabel: string | null = address.data.label || null;
-  const { address, label } = addressList[0].data;
+  // const { address, label } = addressList[0].data;
+  const address = "Banani";
+  const label = "Home";
 
   return (
     <View style={styles.container}>

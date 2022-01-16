@@ -16,12 +16,18 @@ const BannerCarousel = () => {
 
   const [activeIndex, setActiveIndex] = useState(0);
 
+  // @ts-ignore
+  // index is required by carousel library
   const _renderItem = ({ item, index }: { item: Banner; index: number }) => {
+    const {
+      data: { imageURI },
+    } = item;
+
     return (
       <Box style={styles.wideBanner}>
         <Image
           source={{
-            uri: item.data.imageURI,
+            uri: imageURI,
           }}
           style={[styles.wideBannerImage, { height: windowWidth / 2.5 }]}
         />
