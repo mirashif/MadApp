@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   story: {
     height: 158,
     width: 84,
-    marginRight: theme.spacing.m,
+    marginRight: theme.spacing.l,
     borderRadius: theme.borderRadii.l,
     overflow: "hidden",
   },
@@ -47,5 +47,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     flex: 1,
     resizeMode: "cover",
     justifyContent: "center",
+    backgroundColor: theme.colors.gray,
   },
 }));

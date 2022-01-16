@@ -302,6 +302,8 @@ const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
 
         <BannerCarousel />
 
+        <Box mb="l" />
+
         <Stories />
 
         <Text mb="l" mx="screen" variant="sectionTitle">
