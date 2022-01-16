@@ -39,6 +39,7 @@ import type { StoryStore } from "../state/store/StoryStore";
 
 import AddonsItem from "./AddonsItem";
 import AuthSheet from "./AuthSheet";
+import BannerCarousel from "./BannerCarousel";
 import FloatingCart from "./FloatingCart";
 import HomeRestaurant from "./HomeRestaurant";
 import LocationBar from "./LocationBar";
@@ -317,6 +318,9 @@ const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
             />
           </Box>
         )}
+
+        {/* TODO: Add new banner carousel */}
+        <BannerCarousel />
 
         <Box mb="xl">
           <ScrollView
