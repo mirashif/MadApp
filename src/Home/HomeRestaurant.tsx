@@ -35,7 +35,10 @@ const HomeRestaurant = ({
     >
       <TouchableWithoutFeedback
         onPress={() =>
-          navigation.navigate("HomeStack", { screen: "RestaurantMenu" })
+          navigation.navigate("HomeStack", {
+            screen: "RestaurantMenu",
+            params: { restaurantId: restaurant.id },
+          })
         }
       >
         <Box style={styles.logo}>

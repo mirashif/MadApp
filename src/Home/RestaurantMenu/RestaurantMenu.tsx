@@ -8,14 +8,20 @@ import {
   useSharedValue,
 } from "react-native-reanimated";
 
-import { SafeArea } from "../../components";
+import type { HomeStackProps } from "..";
+import { SafeArea, Text } from "../../components";
+import { useAppState } from "../../state/StateContext";
+import type {
+  Restaurant,
+  RestaurantStore,
+} from "../../state/store/RestaurantStore";
 
 import Content from "./Content";
 import HeaderImage from "./HeaderImage";
 import Offer from "./Offer";
 import TabHeader from "./TabHeader";
 
-const RestaurantMenu = () => {
+const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
   const [anchorX, setAnchorX] = useState<number[]>([]);
   const [anchorY, setAnchorY] = useState<number[]>([]);
   const scrollViewRefX = useRef<Animated.ScrollView>(null);
@@ -25,6 +31,11 @@ const RestaurantMenu = () => {
     y.value = event.contentOffset.y;
   });
   const [activeIndex, setActiveIndex] = useState(0);
+
+  const { restaurantId } = route.params;
+  const restaurants: RestaurantStore = useAppState("restaurants");
+
+  const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
 
   const handleActiveIndex = (v: number) => {
     anchorY.forEach((_, i) => {
@@ -48,10 +59,15 @@ const RestaurantMenu = () => {
     });
   }, [activeIndex, anchorX]);
 
+  useEffect(() => {
+    const _restaurant = restaurants.get(restaurantId);
+    setRestaurant(_restaurant);
+  }, [restaurantId, restaurants]);
+
   return (
     <SafeArea>
       <View>
-        <HeaderImage y={y} />
+        <HeaderImage y={y} restaurantName={restaurant?.data.name || ""} />
         <Offer y={y} />
       </View>
       <TabHeader
@@ -68,7 +84,11 @@ const RestaurantMenu = () => {
           _anchorX[index] = length;
           setAnchorX(_anchorX);
         }}
+        categories={restaurant?.categories || []}
       />
+      {restaurant?.categories.map((c) => (
+        <Text key={c.id}>{c.items}</Text>
+      ))}
       <Content
         scrollViewRef={scrollViewRef}
         onMeasurement={(index, length) => {
@@ -77,6 +97,7 @@ const RestaurantMenu = () => {
           setAnchorY(_anchorY);
         }}
         onScroll={scrollHandler}
+        categories={restaurant?.categories || []}
       />
     </SafeArea>
   );
