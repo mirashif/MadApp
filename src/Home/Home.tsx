@@ -28,7 +28,6 @@ import { useAuth } from "../state/hooks/useAuth";
 import { useCart } from "../state/hooks/useCart";
 import { useAppState } from "../state/StateContext";
 import type { AddressStore } from "../state/store/AddressStore";
-import type { Banner, BannerStore } from "../state/store/BannerStore";
 import type {
   Restaurant,
   RestaurantStore,
@@ -78,13 +77,10 @@ const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
   const { authenticated } = useAuth();
   const { length: cartItemCount } = useCart();
 
-  const banners: BannerStore = useAppState("banners");
   const restaurants: RestaurantStore = useAppState("restaurants");
   const restaurantList: Restaurant[] = restaurants.all;
 
   const addresses: AddressStore = useAppState("addresses");
-
-  const bannerList: Banner[] = banners.all;
 
   const [selectedVariationID, setSelectedVariationID] = useState<
     null | string | number
@@ -309,7 +305,7 @@ const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
         <Stories />
 
         <Text mb="l" mx="screen" variant="sectionTitle">
-          🍴 Restaurants {bannerList.length}
+          🍴 Restaurants
         </Text>
 
         {restaurantList.map((restaurant) => (
