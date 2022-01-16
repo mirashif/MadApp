@@ -56,6 +56,7 @@ export default BannerCarousel;
 
 const useStyles = makeStyles((theme: Theme) => ({
   wideBanner: {
+    minHeight: 130,
     backgroundColor: "purple",
     borderRadius: theme.borderRadii.l,
     overflow: "hidden",
