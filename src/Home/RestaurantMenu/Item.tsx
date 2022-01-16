@@ -2,15 +2,16 @@ import React from "react";
 import { View, Image } from "react-native";
 
 import { useTheme, Text } from "../../components";
+import type { Item as TItem } from "../../state/store/ItemStore";
 
 interface ItemProps {
-  image: string;
-  name: string;
-  price: string;
+  item: TItem;
 }
 
-const Item = ({ image, name, price }: ItemProps) => {
+const Item = ({ item }: ItemProps) => {
   const theme = useTheme();
+
+  const { thumbnailURI, name, price } = item.data;
 
   return (
     <View
@@ -25,7 +26,7 @@ const Item = ({ image, name, price }: ItemProps) => {
           borderRadius: 12,
           marginBottom: 7,
         }}
-        source={{ uri: image }}
+        source={{ uri: thumbnailURI }}
       />
       <Text
         numberOfLines={1}

@@ -7,7 +7,6 @@ import { useIsFocused } from "@react-navigation/native";
 import { observer } from "mobx-react";
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Image,
   ImageBackground,
   ScrollView,
   TouchableWithoutFeedback,
@@ -23,25 +22,24 @@ import {
   makeStyles,
   SafeArea,
   Text,
-  useTheme,
 } from "../components";
 import type { RootStackProps } from "../components/AppNavigator";
 import { useAuth } from "../state/hooks/useAuth";
 import { useCart } from "../state/hooks/useCart";
 import { useAppState } from "../state/StateContext";
 import type { AddressStore } from "../state/store/AddressStore";
-import type { Banner, BannerStore } from "../state/store/BannerStore";
 import type {
   Restaurant,
   RestaurantStore,
 } from "../state/store/RestaurantStore";
-import type { StoryStore } from "../state/store/StoryStore";
 
 import AddonsItem from "./AddonsItem";
 import AuthSheet from "./AuthSheet";
+import BannerCarousel from "./BannerCarousel";
 import FloatingCart from "./FloatingCart";
 import HomeRestaurant from "./HomeRestaurant";
 import LocationBar from "./LocationBar";
+import Stories from "./RestaurantMenu/Stories";
 import VariationItem from "./VariationItem";
 
 const FOOTER_SHEET_HEIGHT = 144;
@@ -70,7 +68,6 @@ const variations = [
 
 const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
   const styles = useStyles();
-  const theme = useTheme();
 
   const isFocused = useIsFocused();
 
@@ -80,14 +77,10 @@ const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
   const { authenticated } = useAuth();
   const { length: cartItemCount } = useCart();
 
-  const stories: StoryStore = useAppState("stories");
-  const banners: BannerStore = useAppState("banners");
   const restaurants: RestaurantStore = useAppState("restaurants");
   const restaurantList: Restaurant[] = restaurants.all;
 
   const addresses: AddressStore = useAppState("addresses");
-
-  const bannerList: Banner[] = banners.all;
 
   const [selectedVariationID, setSelectedVariationID] = useState<
     null | string | number
@@ -301,44 +294,18 @@ const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <Box mb="l" mx="screen">
-          {/*<LocationBar*/}
-          {/*  editMode={true}*/}
-          {/*  onEditPress={() => navigation.navigate("EditLocation")}*/}
-          {/*/>*/}
+          <LocationBar
+            editMode={true}
+            onEditPress={() => navigation.navigate("EditLocation")}
+          />
         </Box>
 
-        {bannerList.length > 0 && (
-          <Box mb="l" mx="screen" style={styles.wideBanner}>
-            <Image
-              source={{
-                uri: bannerList[0].data.imageURI,
-              }}
-              style={styles.wideBannerImage}
-            />
-          </Box>
-        )}
+        <BannerCarousel />
 
-        <Box mb="xl">
-          <ScrollView
-            contentContainerStyle={{
-              paddingHorizontal: theme.spacing.screen,
-            }}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          >
-            {stories.all.map(({ data }) => (
-              <Box key={data.id} style={styles.verticalBanner}>
-                <Image
-                  source={{ uri: data.imageURI }}
-                  style={styles.verticalBannerImage}
-                />
-              </Box>
-            ))}
-          </ScrollView>
-        </Box>
+        <Stories />
 
         <Text mb="l" mx="screen" variant="sectionTitle">
-          🍴 Restaurants {bannerList.length}
+          🍴 Restaurants
         </Text>
 
         {restaurantList.map((restaurant) => (
@@ -357,16 +324,6 @@ const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
 export default Home;
 
 const useStyles = makeStyles((theme: Theme) => ({
-  wideBanner: {
-    height: 130,
-    borderRadius: theme.borderRadii.l,
-    overflow: "hidden",
-  },
-  wideBannerImage: {
-    flex: 1,
-    resizeMode: "cover",
-    justifyContent: "center",
-  },
   verticalBanner: {
     height: 158,
     width: 84,

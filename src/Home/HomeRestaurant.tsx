@@ -3,7 +3,7 @@ import React from "react";
 import { ScrollView, Image, TouchableWithoutFeedback } from "react-native";
 
 import type { Theme } from "../components";
-import { Box, Icon, makeStyles, useTheme } from "../components";
+import { Box, Icon, makeStyles, useTheme, Text } from "../components";
 import type { Item as IItem } from "../state/store/ItemStore";
 import type { RestaurantType } from "../state/store/RestaurantStore";
 
@@ -35,7 +35,10 @@ const HomeRestaurant = ({
     >
       <TouchableWithoutFeedback
         onPress={() =>
-          navigation.navigate("HomeStack", { screen: "RestaurantMenu" })
+          navigation.navigate("HomeStack", {
+            screen: "RestaurantMenu",
+            params: { restaurantId: restaurant.id },
+          })
         }
       >
         <Box style={styles.logo}>
@@ -47,6 +50,7 @@ const HomeRestaurant = ({
         </Box>
       </TouchableWithoutFeedback>
 
+      <Text>{items.length}</Text>
       {items.map((item) => (
         <Box key={item.id} style={styles.restaurantItem}>
           <Item item={item} onItemPress={onItemPress} />
@@ -72,5 +76,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: 65,
     resizeMode: "contain",
     marginBottom: theme.spacing.s,
+    backgroundColor: theme.colors.gray,
   },
 }));
