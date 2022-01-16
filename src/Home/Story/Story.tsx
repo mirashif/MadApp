@@ -1,6 +1,7 @@
 import type { NavigationProp, RouteProp } from "@react-navigation/native";
 import React from "react";
 import { Image, ImageBackground, TouchableWithoutFeedback } from "react-native";
+import GestureRecognizer from "react-native-swipe-gestures";
 
 import type { HomeStackParamList } from "..";
 import type { Theme } from "../../components";
@@ -9,7 +10,7 @@ import type { StoryType } from "../../state/store/StoryStore";
 
 interface IStory {
   route: RouteProp<{ params: { story: StoryType } }, "params">;
-  navigation: NavigationProp<HomeStackParamList, "Story">;
+  navigation: NavigationProp<HomeStackParamList>;
 }
 
 const Story = ({ route, navigation }: IStory) => {
@@ -17,9 +18,20 @@ const Story = ({ route, navigation }: IStory) => {
 
   const { story } = route.params;
 
+  // TODO: Add swipe navigation to restaurant?
   return (
     <SafeArea>
-      <Box style={styles.container}>
+      <GestureRecognizer
+        onSwipeUp={
+          () => navigation.goBack()
+          // navigation.navigate("RestaurantMenu", {
+          //   restaurantId: "44f9bb5d-b5c5-4d55-9a1a-a91912d45f2f",
+          // })
+        }
+        style={{
+          flex: 1,
+        }}
+      >
         <ImageBackground
           source={{ uri: story.imageURI }}
           resizeMode="cover"
@@ -93,7 +105,7 @@ const Story = ({ route, navigation }: IStory) => {
             </Box>
           </Box>
         </ImageBackground>
-      </Box>
+      </GestureRecognizer>
     </SafeArea>
   );
 };
@@ -101,9 +113,6 @@ const Story = ({ route, navigation }: IStory) => {
 export default Story;
 
 const useStyles = makeStyles((theme: Theme) => ({
-  container: {
-    flex: 1,
-  },
   image: {
     flex: 1,
     justifyContent: "center",
