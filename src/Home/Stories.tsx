@@ -2,10 +2,10 @@ import { observer } from "mobx-react";
 import React from "react";
 import { ScrollView, Image } from "react-native";
 
-import type { Theme } from "../../components";
-import { Box, makeStyles, useTheme } from "../../components";
-import { useAppState } from "../../state/StateContext";
-import type { Story, StoryStore } from "../../state/store/StoryStore";
+import type { Theme } from "../components";
+import { Box, makeStyles, useTheme } from "../components";
+import { useAppState } from "../state/StateContext";
+import type { Story, StoryStore } from "../state/store/StoryStore";
 
 const Stories = observer(() => {
   const styles = useStyles();
