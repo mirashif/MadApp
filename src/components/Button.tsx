@@ -89,7 +89,7 @@ const Button = (props: ButtonProps) => {
 
   return (
     <View style={borderStyles}>
-      <TouchableWithoutFeedback {...{ disabled: disabled, onPress }}>
+      <TouchableWithoutFeedback {...{ disabled, onPress }}>
         <View style={[styles.button, buttonStyle, style]}>
           <Text
             selectable={false}

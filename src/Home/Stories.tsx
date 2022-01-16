@@ -1,6 +1,7 @@
+import { useNavigation } from "@react-navigation/native";
 import { observer } from "mobx-react";
 import React from "react";
-import { ScrollView, Image } from "react-native";
+import { ScrollView, Image, TouchableWithoutFeedback } from "react-native";
 
 import type { Theme } from "../components";
 import { Box, makeStyles, useTheme } from "../components";
@@ -10,6 +11,7 @@ import type { Story, StoryStore } from "../state/store/StoryStore";
 const Stories = observer(() => {
   const styles = useStyles();
   const theme = useTheme();
+  const navigation = useNavigation();
 
   const stories: StoryStore = useAppState("stories");
   const storyList: Story[] = stories.all;
@@ -23,10 +25,23 @@ const Stories = observer(() => {
         horizontal
         showsHorizontalScrollIndicator={false}
       >
-        {storyList.map(({ data: { id, imageURI } }) => (
-          <Box key={id} style={styles.story}>
-            <Image source={{ uri: imageURI }} style={styles.storyImage} />
-          </Box>
+        {storyList.map(({ data: story }) => (
+          <TouchableWithoutFeedback
+            key={story.id}
+            onPress={() =>
+              navigation.navigate("HomeStack", {
+                screen: "Story",
+                params: { story },
+              })
+            }
+          >
+            <Box style={styles.story}>
+              <Image
+                source={{ uri: story.imageURI }}
+                style={styles.storyImage}
+              />
+            </Box>
+          </TouchableWithoutFeedback>
         ))}
       </ScrollView>
     </Box>
