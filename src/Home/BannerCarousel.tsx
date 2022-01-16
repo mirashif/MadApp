@@ -23,7 +23,7 @@ const BannerCarousel = () => {
           source={{
             uri: item.data.imageURI,
           }}
-          style={styles.wideBannerImage}
+          style={[styles.wideBannerImage, { height: windowWidth / 2.5 }]}
         />
       </Box>
     );
@@ -57,7 +57,6 @@ export default BannerCarousel;
 const useStyles = makeStyles((theme: Theme) => ({
   wideBanner: {
     backgroundColor: "purple",
-    height: 130,
     borderRadius: theme.borderRadii.l,
     overflow: "hidden",
     marginHorizontal: theme.spacing.screen,
