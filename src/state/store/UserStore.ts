@@ -128,4 +128,8 @@ export class UserStore {
             return null;
         }
     }
+
+    get fullname() {
+        return `${this.user?.firstName || ''} ${this.user?.lastName || ''}`.trim();
+    }
 }
