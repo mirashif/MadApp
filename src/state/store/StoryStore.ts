@@ -4,6 +4,13 @@ import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 
 export interface StoryType {
     id: string;
+    restaurantID: string;
+
+    target: null | {
+        type: 'category' | 'item' | 'item-builder' | 'restaurant',
+        categoryID?: string;
+        itemID?: string;
+    };
 
     thumbnailImageURI: string;
     imageURI: string;
