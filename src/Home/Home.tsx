@@ -39,7 +39,7 @@ import BannerCarousel from "./BannerCarousel";
 import FloatingCart from "./FloatingCart";
 import HomeRestaurant from "./HomeRestaurant";
 import LocationBar from "./LocationBar";
-import Stories from "./RestaurantMenu/Stories";
+import Stories from "./Stories";
 import VariationItem from "./VariationItem";
 
 const FOOTER_SHEET_HEIGHT = 144;
@@ -301,6 +301,8 @@ const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
         </Box>
 
         <BannerCarousel />
+
+        <Box mb="l" />
 
         <Stories />
 
