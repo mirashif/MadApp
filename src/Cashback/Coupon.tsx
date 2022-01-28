@@ -29,7 +29,7 @@ const Coupon = ({
             color: theme.colors.primary,
           }}
         >
-          Get ৳{name} Off
+          {name}
         </Text>
         <Text
           style={{
