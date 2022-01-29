@@ -78,7 +78,7 @@ const Label = () => {
               <Text
                 style={[
                   styles.label,
-                  { color: isSelected ? "#a3a3a3" : "#3d3d3d" },
+                  { color: isSelected ? "#3d3d3d" : "#a3a3a3" },
                 ]}
               >
                 {name}
@@ -101,6 +101,7 @@ const useStyles = makeStyles(() => ({
     alignItems: "center",
     fontSize: 14,
     fontFamily: "Normal",
+    marginRight: 25,
   },
   label: {
     marginTop: 6,
