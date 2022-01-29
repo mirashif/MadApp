@@ -12,9 +12,10 @@ import { useAppState } from "../../state/StateContext";
 import type { AddressStore } from "../../state/store/AddressStore";
 
 import MarkerIcon from "./assets/marker.svg";
+import Label from "./Label";
 
-const height = 450;
-const width = Dimensions.get("window").width;
+const { height: windowHeight, width } = Dimensions.get("window");
+const height = windowHeight * 0.4;
 
 const EditLocation = () => {
   const styles = useStyles();
@@ -129,20 +130,20 @@ const EditLocation = () => {
   return (
     <SafeArea>
       <DissmissKeyboard>
-        <ScrollView>
-          <Box style={styles.mapContainer}>
-            <MapView
-              style={styles.map}
-              region={region}
-              onRegionChangeComplete={handleRegionChange}
-              provider={PROVIDER_GOOGLE}
-            />
-            <Box style={styles.marker}>
-              <MarkerIcon />
-            </Box>
+        <Box style={styles.mapContainer}>
+          <MapView
+            style={styles.map}
+            region={region}
+            onRegionChangeComplete={handleRegionChange}
+            provider={PROVIDER_GOOGLE}
+          />
+          <Box style={styles.marker}>
+            <MarkerIcon />
           </Box>
+        </Box>
 
-          <Box style={{ paddingHorizontal: 25, paddingVertical: 30 }}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Box padding="screen">
             <Text fontFamily="Normal" fontSize={24} mb="xl">
               Edit Address
             </Text>
@@ -172,7 +173,11 @@ const EditLocation = () => {
               }}
             />
 
-            <Box style={{ marginBottom: 12 }} />
+            <Box style={{ marginBottom: 16 }} />
+
+            <Label />
+
+            <Box style={{ marginBottom: 36 }} />
 
             <Button onPress={saveLocation} size="lg">
               Save
