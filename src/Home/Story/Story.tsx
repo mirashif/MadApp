@@ -1,6 +1,7 @@
 import type { NavigationProp, RouteProp } from "@react-navigation/native";
 import React from "react";
 import { Image, ImageBackground, TouchableWithoutFeedback } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import GestureRecognizer from "react-native-swipe-gestures";
 
 import type { HomeStackParamList } from "..";
@@ -15,6 +16,7 @@ interface IStory {
 
 const Story = ({ route, navigation }: IStory) => {
   const styles = useStyles();
+  const insets = useSafeAreaInsets();
 
   const { story } = route.params;
 
@@ -73,6 +75,9 @@ const Story = ({ route, navigation }: IStory) => {
             flexDirection="column"
             justifyContent="flex-end"
             alignItems="center"
+            style={{
+              marginBottom: insets.bottom,
+            }}
           >
             <Text
               style={{
