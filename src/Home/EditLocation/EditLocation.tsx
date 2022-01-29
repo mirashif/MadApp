@@ -13,8 +13,8 @@ import type { AddressStore } from "../../state/store/AddressStore";
 
 import MarkerIcon from "./assets/marker.svg";
 
-const MAP_HEIGHT = 450;
-const windowWidth = Dimensions.get("window").width;
+const height = 450;
+const width = Dimensions.get("window").width;
 
 const EditLocation = () => {
   const styles = useStyles();
@@ -26,7 +26,12 @@ const EditLocation = () => {
   const [address, setAddress] =
     useState<Location.LocationGeocodedAddress | null>(null);
 
-  const [region, setRegion] = useState<Region | null>(null);
+  const [region, setRegion] = useState<Region>({
+    latitude: 23,
+    longitude: 90,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
 
   const handleRegionChange = async (_region: Region) => {
     setRegion(_region);
@@ -126,20 +131,15 @@ const EditLocation = () => {
       <DissmissKeyboard>
         <ScrollView>
           <Box style={styles.mapContainer}>
-            {region && (
-              <>
-                <MapView
-                  style={styles.map}
-                  region={region}
-                  onRegionChangeComplete={handleRegionChange}
-                  showsMyLocationButton
-                  provider={PROVIDER_GOOGLE}
-                />
-                <Box style={styles.marker}>
-                  <MarkerIcon />
-                </Box>
-              </>
-            )}
+            <MapView
+              style={styles.map}
+              region={region}
+              onRegionChangeComplete={handleRegionChange}
+              provider={PROVIDER_GOOGLE}
+            />
+            <Box style={styles.marker}>
+              <MarkerIcon />
+            </Box>
           </Box>
 
           <Box style={{ paddingHorizontal: 25, paddingVertical: 30 }}>
@@ -149,7 +149,6 @@ const EditLocation = () => {
 
             <Input
               onChangeText={() => null}
-              style={{ padding: 15 }}
               label="Address"
               placeholder="26, Block B, Lalmatia"
               value={formattedAddress}
@@ -159,7 +158,12 @@ const EditLocation = () => {
 
             <Input
               onChangeText={() => null}
-              style={{ padding: 13 }}
+              style={{
+                // Fix: ios multi-line broken
+                height: 32 * 3,
+                paddingTop: 16,
+                paddingBottom: 16,
+              }}
               placeholder="Note to rider - e.g landmark / building"
               inputProps={{
                 multiline: true,
@@ -182,22 +186,18 @@ const EditLocation = () => {
 
 const useStyles = makeStyles(() => ({
   mapContainer: {
-    position: "relative",
-    width: windowWidth,
-    height: MAP_HEIGHT,
+    width,
+    height,
   },
   map: {
-    width: windowWidth,
-    height: MAP_HEIGHT,
+    width,
+    height,
   },
   marker: {
     position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
+    top: "50%",
+    left: "50%",
+    marginLeft: -50,
     marginTop: -50,
     pointerEvents: "none",
   },
