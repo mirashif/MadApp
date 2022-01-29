@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Dimensions, ScrollView } from "react-native";
 import type { Region } from "react-native-maps";
-import MapView from "react-native-maps";
+import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
 
@@ -132,6 +132,7 @@ const EditLocation = () => {
                 region={region}
                 onRegionChangeComplete={handleRegionChange}
                 showsMyLocationButton
+                provider={PROVIDER_GOOGLE}
               />
             )}
 
