@@ -127,18 +127,19 @@ const EditLocation = () => {
         <ScrollView>
           <Box style={styles.mapContainer}>
             {region && (
-              <MapView
-                style={styles.map}
-                region={region}
-                onRegionChangeComplete={handleRegionChange}
-                showsMyLocationButton
-                provider={PROVIDER_GOOGLE}
-              />
+              <>
+                <MapView
+                  style={styles.map}
+                  region={region}
+                  onRegionChangeComplete={handleRegionChange}
+                  showsMyLocationButton
+                  provider={PROVIDER_GOOGLE}
+                />
+                <Box style={styles.marker}>
+                  <MarkerIcon />
+                </Box>
+              </>
             )}
-
-            <Box style={styles.marker}>
-              <MarkerIcon />
-            </Box>
           </Box>
 
           <Box style={{ paddingHorizontal: 25, paddingVertical: 30 }}>
@@ -198,6 +199,7 @@ const useStyles = makeStyles(() => ({
     justifyContent: "center",
     alignItems: "center",
     marginTop: -50,
+    pointerEvents: "none",
   },
 }));
 
