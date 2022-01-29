@@ -1,5 +1,7 @@
 import type { Feather } from "@expo/vector-icons";
 import React from "react";
+import { TouchableWithoutFeedback } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 
 import {
   Box,
@@ -16,10 +18,12 @@ enum LabelEnum {
   OTHER = "Other",
 }
 
-const LABELS: {
+interface LabelType {
   name: LabelEnum;
   icon: React.ComponentProps<typeof Feather>["name"];
-}[] = [
+}
+
+const defaultLabels: LabelType[] = [
   {
     name: LabelEnum.HOME,
     icon: "home",
@@ -42,7 +46,12 @@ const Label = () => {
   const styles = useStyles();
   const theme = useTheme();
 
+  const [labels, setLabels] = React.useState(defaultLabels);
   const [selected, setSelected] = React.useState<LabelEnum>(LabelEnum.HOME);
+
+  const _handleLabel = (name: LabelEnum) => {
+    setSelected(name);
+  };
 
   return (
     <Box>
@@ -57,35 +66,39 @@ const Label = () => {
       </Text>
 
       <Box style={styles.labels}>
-        {LABELS.map(({ name, icon }, idx) => {
-          const isSelected = selected === name;
-          return (
-            <Box key={idx} style={styles.labelItem}>
-              <CircularIcon
-                name={icon}
-                size={50}
-                backgroundColor={
-                  isSelected
-                    ? theme.colors.primary
-                    : theme.colors.primaryContrast
-                }
-                color={
-                  isSelected
-                    ? theme.colors.primaryContrast
-                    : theme.colors.primary
-                }
-              />
-              <Text
-                style={[
-                  styles.label,
-                  { color: isSelected ? "#3d3d3d" : "#a3a3a3" },
-                ]}
-              >
-                {name}
-              </Text>
-            </Box>
-          );
-        })}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {labels.map(({ name, icon }, idx) => {
+            const isSelected = selected === name;
+            return (
+              <Box key={idx} style={styles.labelItem}>
+                <TouchableWithoutFeedback onPress={() => _handleLabel(name)}>
+                  <CircularIcon
+                    name={icon}
+                    size={50}
+                    backgroundColor={
+                      isSelected
+                        ? theme.colors.primary
+                        : theme.colors.primaryContrast
+                    }
+                    color={
+                      isSelected
+                        ? theme.colors.primaryContrast
+                        : theme.colors.primary
+                    }
+                  />
+                </TouchableWithoutFeedback>
+                <Text
+                  style={[
+                    styles.label,
+                    { color: isSelected ? "#3d3d3d" : "#a3a3a3" },
+                  ]}
+                >
+                  {name}
+                </Text>
+              </Box>
+            );
+          })}
+        </ScrollView>
       </Box>
     </Box>
   );
