@@ -37,7 +37,7 @@ const Stories = observer(() => {
           >
             <Box style={styles.story}>
               <Image
-                source={{ uri: story.imageURI }}
+                source={{ uri: story.thumbnailImageURI }}
                 style={styles.storyImage}
               />
             </Box>

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Dimensions, ScrollView } from "react-native";
 import type { Region } from "react-native-maps";
-import MapView from "react-native-maps";
+import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { SafeArea, Box, makeStyles, Text, Button } from "../../components";
 import Input from "../../components/Input";
@@ -12,25 +13,27 @@ import { useAppState } from "../../state/StateContext";
 import type { AddressStore } from "../../state/store/AddressStore";
 
 import MarkerIcon from "./assets/marker.svg";
+import Label, { LabelEnum } from "./Label";
 
-const MAP_HEIGHT = 450;
-const windowWidth = Dimensions.get("window").width;
+const { height: windowHeight, width } = Dimensions.get("window");
+const height = windowHeight * 0.4;
 
 const EditLocation = () => {
   const styles = useStyles();
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   const addresses: AddressStore = useAppState("addresses");
 
+  const [label, setLabel] = useState<LabelEnum | string>(LabelEnum.HOME);
   const [formattedAddress, setFormattedAddress] = useState("");
   const [address, setAddress] =
     useState<Location.LocationGeocodedAddress | null>(null);
 
-  const [region, setRegion] = useState<Region | null>(null);
+  const [region, setRegion] = useState<Region>();
 
   const handleRegionChange = async (_region: Region) => {
     setRegion(_region);
-
     await getAndSetAddress(_region.latitude, _region.longitude);
   };
 
@@ -81,8 +84,7 @@ const EditLocation = () => {
     if (region) {
       builder.setLocation(region.longitude, region.latitude);
       builder.setAddress(formattedAddress);
-      // TODO: Add label fn
-      builder.setLabel("HOME");
+      builder.setLabel(label);
       const { addressable } = builder;
       await addresses.addAddress(addressable);
     }
@@ -124,30 +126,26 @@ const EditLocation = () => {
   return (
     <SafeArea>
       <DissmissKeyboard>
-        <ScrollView>
-          <Box style={styles.mapContainer}>
-            {region && (
-              <MapView
-                style={styles.map}
-                region={region}
-                onRegionChangeComplete={handleRegionChange}
-                showsMyLocationButton
-              />
-            )}
-
-            <Box style={styles.marker}>
-              <MarkerIcon />
-            </Box>
+        <Box style={styles.mapContainer}>
+          <MapView
+            style={styles.map}
+            region={region}
+            onRegionChangeComplete={handleRegionChange}
+            provider={PROVIDER_GOOGLE}
+          />
+          <Box style={styles.marker}>
+            <MarkerIcon />
           </Box>
+        </Box>
 
-          <Box style={{ paddingHorizontal: 25, paddingVertical: 30 }}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Box padding="screen">
             <Text fontFamily="Normal" fontSize={24} mb="xl">
               Edit Address
             </Text>
 
             <Input
               onChangeText={() => null}
-              style={{ padding: 15 }}
               label="Address"
               placeholder="26, Block B, Lalmatia"
               value={formattedAddress}
@@ -157,7 +155,12 @@ const EditLocation = () => {
 
             <Input
               onChangeText={() => null}
-              style={{ padding: 13 }}
+              style={{
+                // Fix: ios multi-line broken
+                height: 32 * 3,
+                paddingTop: 16,
+                paddingBottom: 16,
+              }}
               placeholder="Note to rider - e.g landmark / building"
               inputProps={{
                 multiline: true,
@@ -166,11 +169,17 @@ const EditLocation = () => {
               }}
             />
 
-            <Box style={{ marginBottom: 12 }} />
+            <Box style={{ marginBottom: 16 }} />
+
+            <Label onLabelChange={setLabel} />
+
+            <Box style={{ marginBottom: 36 }} />
 
             <Button onPress={saveLocation} size="lg">
               Save
             </Button>
+
+            <Box style={{ marginBottom: insets.bottom }} />
           </Box>
         </ScrollView>
       </DissmissKeyboard>
@@ -180,23 +189,20 @@ const EditLocation = () => {
 
 const useStyles = makeStyles(() => ({
   mapContainer: {
-    position: "relative",
-    width: windowWidth,
-    height: MAP_HEIGHT,
+    width,
+    height,
   },
   map: {
-    width: windowWidth,
-    height: MAP_HEIGHT,
+    width,
+    height,
   },
   marker: {
     position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
+    top: "50%",
+    left: "50%",
+    marginLeft: -50,
     marginTop: -50,
+    pointerEvents: "none",
   },
 }));
 

@@ -6,6 +6,7 @@
     "react-native/no-unused-styles": 0,
     "no-nested-ternary": 0,
     "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/ban-ts-comment": "off"
+    "@typescript-eslint/ban-ts-comment": "off",
+    "prefer-destructuring": "off"
   }
 }

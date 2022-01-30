@@ -4,9 +4,9 @@ import * as Clipboard from "expo-clipboard";
 import { observer } from "mobx-react";
 
 import { Box, CustomModal, SafeArea, Text } from "../components";
-import { useCashbacks } from "../state/hooks/useCashbacks";
-import type { CashbackWithAvailabilityType } from "../state/store/CashbackStore";
-import { useUser } from "../state/hooks/useUser";
+import type { CashbackType, CashbackStore } from "../state/store/CashbackStore";
+import { useAppState } from "../state/StateContext";
+import type { UserStore } from "../state/store/UserStore";
 
 import Card, { assets as CardAssets } from "./Card";
 import Coupon from "./Coupon";
@@ -14,12 +14,16 @@ import Coupon from "./Coupon";
 export const assets = [...CardAssets];
 
 const Cashback = observer(() => {
-  const { cashbacks } = useCashbacks();
-  const { user, attributes } = useUser();
+  const user: UserStore = useAppState("user");
+  const cashbackStore: CashbackStore = useAppState("cashbacks");
+  const cashbacks = cashbackStore.all;
+  const points = user.userAttributes?.points;
+  const name = user.fullname;
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedCashback, setSelectedCashback] =
-    useState<null | CashbackWithAvailabilityType>(null);
+  const [selectedCashback, setSelectedCashback] = useState<CashbackType | null>(
+    null
+  );
 
   const handleCopyPress = () => {
     if (selectedCashback) {
@@ -33,10 +37,7 @@ const Cashback = observer(() => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <Box paddingHorizontal="screen">
           <Box my="xl">
-            <Card
-              points={attributes?.points || 0}
-              name={`${user?.firstName} ${user?.lastName}`}
-            />
+            <Card points={points || 0} name={name} />
           </Box>
 
           <Box mb="xl">
@@ -60,10 +61,10 @@ const Cashback = observer(() => {
               🏆 Discount Coupons
             </Text>
 
-            {cashbacks.map((cashback) => (
+            {cashbacks.map(({ data: cashback }) => (
               <Box my="xl" key={cashback.id}>
                 <Coupon
-                  disabled={!cashback.isAvailable}
+                  // disabled={!cashback.isAvailable}
                   onPress={() => {
                     setSelectedCashback(cashback);
                     setModalVisible(true);

@@ -30,38 +30,34 @@ const Verification = observer(({ route }: AuthStackProps<"Verification">) => {
   const [count, setCount] = useState(TIMER - 1);
 
   const handleContinue = async () => {
-    if (otp) {
-      try {
-        await auth.authenticate(phoneNumber, otp);
-      } catch (err) {
-        Alert.alert("Something went wrong!");
-      }
-    } else {
-      Alert.alert("Please enter OTP");
+    if (!otp) return Alert.alert("Please enter OTP");
+
+    try {
+      await auth.authenticate(phoneNumber, otp);
+    } catch (err) {
+      Alert.alert("Something went wrong!");
     }
   };
 
   useEffect(() => {
-    if (auth.authenticated) {
-      if (user) {
-        if (user.firstName && user.lastName) {
-          navigation.dispatch(
-            StackActions.replace("BottomTabs", { screen: "Home" })
-          );
-        } else {
-          navigation.dispatch(
-            StackActions.replace("AuthStack", { screen: "UserInfo" })
-          );
-        }
-      }
-    }
+    const isLoggedIn = auth.authenticated;
+    if (!isLoggedIn || !user) return;
+
+    if (user.firstName && user.lastName)
+      navigation.dispatch(
+        StackActions.replace("BottomTabs", { screen: "Home" })
+      );
+    else
+      navigation.dispatch(
+        StackActions.replace("AuthStack", { screen: "UserInfo" })
+      );
   }, [auth, navigation, user]);
 
   let interval: any = null;
   const startTimer = () => {
     interval = setInterval(() => {
       const secondsSinceRequest: number = auth.secondsSinceRequest(phoneNumber);
-      if (secondsSinceRequest >= TIMER) {
+      if (secondsSinceRequest > TIMER) {
         clearInterval(interval);
         return;
       }
