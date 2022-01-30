@@ -31,7 +31,6 @@ const UserInfo = observer(({ navigation }: RootStackProps<"AuthStack">) => {
   const theme = useTheme();
 
   const user: UserStore = useAppState("user");
-  // eslint-disable-next-line prefer-destructuring
   const builder: UserBuilder | null = user.builder;
   const [refCode, setRefCode] = useState<null | string>(null);
   const [tempRefCode, setTempRefCode] = useState<null | string>(null);
