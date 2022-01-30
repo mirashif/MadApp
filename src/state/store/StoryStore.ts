@@ -7,13 +7,19 @@ export interface StoryType {
     restaurantID: string;
 
     target: null | {
-        type: 'category' | 'item' | 'item-builder' | 'restaurant',
-        categoryID?: string;
-        itemID?: string;
+        type: 'category',
+        categoryID: string;
+    } | {
+        type: 'item' | 'item-builder';
+        itemID: string;
+    } | {
+        type: 'restaurant'
     };
 
     thumbnailImageURI: string;
     imageURI: string;
+    caption: string;
+
     postedAt: FirebaseFirestoreTypes.Timestamp;
 }
 
