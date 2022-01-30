@@ -13,7 +13,7 @@ import { useAppState } from "../../state/StateContext";
 import type { AddressStore } from "../../state/store/AddressStore";
 
 import MarkerIcon from "./assets/marker.svg";
-import Label from "./Label";
+import Label, { LabelEnum } from "./Label";
 
 const { height: windowHeight, width } = Dimensions.get("window");
 const height = windowHeight * 0.4;
@@ -25,20 +25,15 @@ const EditLocation = () => {
 
   const addresses: AddressStore = useAppState("addresses");
 
+  const [label, setLabel] = useState<LabelEnum | string>(LabelEnum.HOME);
   const [formattedAddress, setFormattedAddress] = useState("");
   const [address, setAddress] =
     useState<Location.LocationGeocodedAddress | null>(null);
 
-  const [region, setRegion] = useState<Region>({
-    latitude: 23,
-    longitude: 90,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
+  const [region, setRegion] = useState<Region>();
 
   const handleRegionChange = async (_region: Region) => {
     setRegion(_region);
-
     await getAndSetAddress(_region.latitude, _region.longitude);
   };
 
@@ -89,8 +84,7 @@ const EditLocation = () => {
     if (region) {
       builder.setLocation(region.longitude, region.latitude);
       builder.setAddress(formattedAddress);
-      // TODO: Add label fn
-      builder.setLabel("HOME");
+      builder.setLabel(label);
       const { addressable } = builder;
       await addresses.addAddress(addressable);
     }
@@ -177,7 +171,7 @@ const EditLocation = () => {
 
             <Box style={{ marginBottom: 16 }} />
 
-            <Label />
+            <Label onLabelChange={setLabel} />
 
             <Box style={{ marginBottom: 36 }} />
 

@@ -14,7 +14,7 @@ import {
   useTheme,
 } from "../../components";
 
-enum LabelEnum {
+export enum LabelEnum {
   HOME = "Home",
   WORK = "Work",
   PARTNER = "Partner",
@@ -46,7 +46,11 @@ const otherLabel: LabelType = {
   icon: "plus",
 };
 
-const Label = () => {
+interface LabelProps {
+  onLabelChange: (label: LabelEnum | string) => void;
+}
+
+const Label = ({ onLabelChange }: LabelProps) => {
   const styles = useStyles();
   const theme = useTheme();
   const navigation = useNavigation();
@@ -60,6 +64,7 @@ const Label = () => {
 
   const _handleLabelChange = (name: LabelEnum | string) => {
     setSelected(name);
+    onLabelChange(name);
   };
 
   const _handleLabelAdd = () => {
