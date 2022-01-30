@@ -4,6 +4,7 @@ import type { Region } from "react-native-maps";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { SafeArea, Box, makeStyles, Text, Button } from "../../components";
 import Input from "../../components/Input";
@@ -12,13 +13,15 @@ import { useAppState } from "../../state/StateContext";
 import type { AddressStore } from "../../state/store/AddressStore";
 
 import MarkerIcon from "./assets/marker.svg";
+import Label from "./Label";
 
-const height = 450;
-const width = Dimensions.get("window").width;
+const { height: windowHeight, width } = Dimensions.get("window");
+const height = windowHeight * 0.4;
 
 const EditLocation = () => {
   const styles = useStyles();
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   const addresses: AddressStore = useAppState("addresses");
 
@@ -129,20 +132,20 @@ const EditLocation = () => {
   return (
     <SafeArea>
       <DissmissKeyboard>
-        <ScrollView>
-          <Box style={styles.mapContainer}>
-            <MapView
-              style={styles.map}
-              region={region}
-              onRegionChangeComplete={handleRegionChange}
-              provider={PROVIDER_GOOGLE}
-            />
-            <Box style={styles.marker}>
-              <MarkerIcon />
-            </Box>
+        <Box style={styles.mapContainer}>
+          <MapView
+            style={styles.map}
+            region={region}
+            onRegionChangeComplete={handleRegionChange}
+            provider={PROVIDER_GOOGLE}
+          />
+          <Box style={styles.marker}>
+            <MarkerIcon />
           </Box>
+        </Box>
 
-          <Box style={{ paddingHorizontal: 25, paddingVertical: 30 }}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Box padding="screen">
             <Text fontFamily="Normal" fontSize={24} mb="xl">
               Edit Address
             </Text>
@@ -172,11 +175,17 @@ const EditLocation = () => {
               }}
             />
 
-            <Box style={{ marginBottom: 12 }} />
+            <Box style={{ marginBottom: 16 }} />
+
+            <Label />
+
+            <Box style={{ marginBottom: 36 }} />
 
             <Button onPress={saveLocation} size="lg">
               Save
             </Button>
+
+            <Box style={{ marginBottom: insets.bottom }} />
           </Box>
         </ScrollView>
       </DissmissKeyboard>
