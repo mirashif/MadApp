@@ -24,10 +24,10 @@ import {
   Text,
 } from "../components";
 import type { RootStackProps } from "../components/AppNavigator";
-import { useAuth } from "../state/hooks/useAuth";
 import { useCart } from "../state/hooks/useCart";
 import { useAppState } from "../state/StateContext";
 import type { AddressStore } from "../state/store/AddressStore";
+import type { AuthStore } from "../state/store/AuthStore";
 import type {
   Restaurant,
   RestaurantStore,
@@ -68,19 +68,18 @@ const variations = [
 
 const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
   const styles = useStyles();
-
   const isFocused = useIsFocused();
+
+  const auth: AuthStore = useAppState("auth");
+  const restaurants: RestaurantStore = useAppState("restaurants");
+  const addresses: AddressStore = useAppState("addresses");
+
+  const isLoggedIn = auth.authenticated;
+  const restaurantList: Restaurant[] = restaurants.all;
+  const { length: cartItemCount } = useCart();
 
   const itemSheetRef = useRef<BottomSheetModal>(null);
   const itemFooterSheetRef = useRef<BottomSheetModal>(null);
-
-  const { authenticated } = useAuth();
-  const { length: cartItemCount } = useCart();
-
-  const restaurants: RestaurantStore = useAppState("restaurants");
-  const restaurantList: Restaurant[] = restaurants.all;
-
-  const addresses: AddressStore = useAppState("addresses");
 
   const [selectedVariationID, setSelectedVariationID] = useState<
     null | string | number
@@ -107,7 +106,7 @@ const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
     <SafeArea>
       {cartItemCount > 0 && <FloatingCart />}
 
-      {isFocused && !authenticated && <AuthSheet />}
+      {isFocused && !isLoggedIn && <AuthSheet />}
 
       {/* ItemSheet */}
       <BottomSheetModal

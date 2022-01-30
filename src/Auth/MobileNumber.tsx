@@ -15,16 +15,16 @@ import BDFlag from "./assets/BDFlag.svg";
 const MobileNumber = observer(({ navigation }: RootStackProps<"AuthStack">) => {
   const auth: AuthStore = useAppState("auth");
 
-  const [mobileNumber, setMobileNumber] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
 
   const handleContinue = async () => {
-    const isValid = /^01[3-9]\d{8}$/.test(mobileNumber);
+    const isValid = /^01[3-9]\d{8}$/.test(phoneNumber);
     if (!isValid) return Alert.alert("Please enter a valid mobile number");
     try {
-      await auth.requestOTP(mobileNumber);
+      await auth.requestOTP(phoneNumber);
       navigation.navigate("AuthStack", {
         screen: "Verification",
-        params: { phoneNumber: mobileNumber },
+        params: { phoneNumber },
       });
     } catch (err) {
       Alert.alert("Something went wrong");
@@ -82,7 +82,7 @@ const MobileNumber = observer(({ navigation }: RootStackProps<"AuthStack">) => {
               <Box ml="m">
                 <TextInput
                   keyboardType="number-pad"
-                  onChangeText={(value) => setMobileNumber(value)}
+                  onChangeText={(value) => setPhoneNumber(value)}
                   style={{
                     borderColor: "#DDDDDD",
                     borderWidth: 1,
