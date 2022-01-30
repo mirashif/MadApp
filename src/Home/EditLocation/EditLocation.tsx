@@ -4,6 +4,7 @@ import type { Region } from "react-native-maps";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { SafeArea, Box, makeStyles, Text, Button } from "../../components";
 import Input from "../../components/Input";
@@ -20,6 +21,7 @@ const height = windowHeight * 0.4;
 const EditLocation = () => {
   const styles = useStyles();
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   const addresses: AddressStore = useAppState("addresses");
 
@@ -182,6 +184,8 @@ const EditLocation = () => {
             <Button onPress={saveLocation} size="lg">
               Save
             </Button>
+
+            <Box style={{ marginBottom: insets.bottom }} />
           </Box>
         </ScrollView>
       </DissmissKeyboard>
