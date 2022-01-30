@@ -51,27 +51,35 @@ const Label = () => {
   const theme = useTheme();
   const navigation = useNavigation();
 
-  const [labels, setLabels] = React.useState(defaultLabels);
+  const [labels, setLabels] = React.useState<LabelType[]>(defaultLabels);
   const [selected, setSelected] = React.useState<LabelEnum | string>(
     LabelEnum.HOME
   );
   const [newLabelName, setNewLabelName] = React.useState("");
+  const [isAddModalOpen, setIsAddModalOpen] = React.useState(false);
 
   const _handleLabelChange = (name: LabelEnum | string) => {
     setSelected(name);
   };
 
   const _handleLabelAdd = () => {
-    const _newLabel = {
+    const _newLabel: LabelType = {
       name: newLabelName,
       icon: "x",
     };
+    setLabels((_labels) => [..._labels, _newLabel]);
+    setIsAddModalOpen(false);
+  };
+
+  const _handleLabelOther = () => {
+    setIsAddModalOpen(true);
   };
 
   return (
     <Box>
+      {/* Add label modal */}
       <CustomModal
-        visible={true}
+        visible={isAddModalOpen}
         title="Add Label"
         buttonTitle="Add"
         onRequestClose={function (): void {
@@ -81,7 +89,8 @@ const Label = () => {
         onButtonPress={_handleLabelAdd}
       >
         <Input
-          onChangeText={(v) => setNewLabelName(v)}
+          onChangeText={setNewLabelName}
+          value={newLabelName}
           style={{
             marginVertical: 16,
           }}
@@ -133,6 +142,23 @@ const Label = () => {
               </Box>
             );
           })}
+
+          {labels.length <= 3 && (
+            // otherLabel
+            <Box style={styles.labelItem}>
+              <TouchableWithoutFeedback onPress={_handleLabelOther}>
+                <CircularIcon
+                  name={otherLabel.icon}
+                  size={50}
+                  backgroundColor={theme.colors.primaryContrast}
+                  color={theme.colors.primary}
+                />
+              </TouchableWithoutFeedback>
+              <Text style={[styles.label, { color: "#a3a3a3" }]}>
+                {otherLabel.name}
+              </Text>
+            </Box>
+          )}
         </ScrollView>
       </Box>
     </Box>
@@ -140,32 +166,6 @@ const Label = () => {
 };
 
 export default Label;
-
-const OtherLabel = () => {
-  const styles = useStyles();
-
-  return (
-    <Box style={styles.labelItem}>
-      <TouchableWithoutFeedback onPress={() => _handleLabelChange(name)}>
-        <CircularIcon
-          name={icon}
-          size={50}
-          backgroundColor={
-            isSelected ? theme.colors.primary : theme.colors.primaryContrast
-          }
-          color={
-            isSelected ? theme.colors.primaryContrast : theme.colors.primary
-          }
-        />
-      </TouchableWithoutFeedback>
-      <Text
-        style={[styles.label, { color: isSelected ? "#3d3d3d" : "#a3a3a3" }]}
-      >
-        {name}
-      </Text>
-    </Box>
-  );
-};
 
 const useStyles = makeStyles(() => ({
   labels: {
