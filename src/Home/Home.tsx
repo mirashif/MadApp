@@ -292,31 +292,27 @@ const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
       </BottomSheetModal>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Box mb="l" mx="screen">
-          <LocationBar
-            editMode={true}
-            onEditPress={() => navigation.navigate("EditLocation")}
-          />
-        </Box>
-
+        <LocationBar
+          editMode={true}
+          onEditPress={() => navigation.navigate("EditLocation")}
+        />
         <BannerCarousel />
-
-        <Box mb="l" />
-
         <Stories />
-
-        <Text mb="l" mx="screen" variant="sectionTitle">
-          🍴 Restaurants
-        </Text>
-
-        {restaurantList.map((restaurant) => (
-          <HomeRestaurant
-            key={restaurant.id}
-            restaurant={restaurant.data}
-            onItemPress={handleItemPress}
-            items={restaurant.popularItems}
-          />
-        ))}
+        {restaurantList && (
+          <>
+            <Text mb="l" mx="screen" variant="sectionTitle">
+              🍴 Restaurants
+            </Text>
+            {restaurantList.map((restaurant) => (
+              <HomeRestaurant
+                key={restaurant.id}
+                restaurant={restaurant.data}
+                onItemPress={handleItemPress}
+                items={restaurant.popularItems}
+              />
+            ))}
+          </>
+        )}
       </ScrollView>
     </SafeArea>
   );

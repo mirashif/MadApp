@@ -63,10 +63,11 @@ export default BannerCarousel;
 
 const useStyles = makeStyles((theme: Theme) => ({
   wideBanner: {
+    marginHorizontal: theme.spacing.screen,
+    marginBottom: theme.spacing.l,
     minHeight: 130,
     borderRadius: theme.borderRadii.l,
     overflow: "hidden",
-    marginHorizontal: theme.spacing.screen,
   },
   wideBannerImage: {
     flex: 1,

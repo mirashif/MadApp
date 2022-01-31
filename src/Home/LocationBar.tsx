@@ -4,7 +4,8 @@ import { Pressable, View } from "react-native";
 import type { Theme } from "../components";
 import { Icon, makeStyles, Text, useTheme } from "../components";
 import { useAppState } from "../state/StateContext";
-import type { Address, AddressStore } from "../state/store/AddressStore";
+import type { Address } from "../state/store/AddressStore";
+import type { LockedAddressStore } from "../state/store/LockedAddressStore";
 
 interface LocationBarProps {
   showIcon?: boolean;
@@ -20,26 +21,23 @@ export default function LocationBar({
   const styles = useStyles();
   const theme = useTheme();
 
-  const addresses: AddressStore = useAppState("addresses");
-  const addressList: Address[] = addresses.all;
-  // TODO: Add currently locked address here
-  // const address: Address | null = lockedAddress.lockedAddress;
-  // const addressLine: string | null = address.data.address || null;
-  // const addressLabel: string | null = address.data.label || null;
-  // const { address, label } = addressList[0].data;
-  const address = "Banani";
-  const label = "Home";
+  const lockedAddress: LockedAddressStore = useAppState("lockedAddress");
+  const address: Address | null = lockedAddress.lockedAddress;
+  const addressLine: string | null = address?.data.address || null;
+  const addressLabel: string | null = address?.data.label || null;
+
+  if (!address) return null;
 
   return (
     <View style={styles.container}>
       <View>
         <Text numberOfLines={1} style={styles.address}>
-          {address}
+          {addressLine}
         </Text>
         <View style={styles.label}>
           <Icon color={theme.colors.darkGray} name="book-open" size={12} />
           <Text numberOfLines={1} style={styles.labelText}>
-            {label}
+            {addressLabel}
           </Text>
         </View>
       </View>
@@ -61,6 +59,8 @@ export default function LocationBar({
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
+    marginHorizontal: theme.spacing.screen,
+    marginBottom: theme.spacing.l,
     paddingVertical: 14,
     paddingHorizontal: 30,
     borderRadius: theme.borderRadii.l,
