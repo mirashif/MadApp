@@ -1,9 +1,10 @@
 import React from "react";
 import { KeyboardAvoidingView, Modal, Platform, Pressable } from "react-native";
 import Animated, {
+  Easing,
   useAnimatedStyle,
   useSharedValue,
-  withSpring,
+  withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -21,7 +22,14 @@ const AddressListModal = () => {
   const offset = useSharedValue(0);
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [{ translateY: offset.value }],
+      transform: [
+        {
+          translateY: withTiming(offset.value, {
+            duration: 500,
+            easing: Easing.out(Easing.exp),
+          }),
+        },
+      ],
     };
   });
 
@@ -40,7 +48,7 @@ const AddressListModal = () => {
             ]}
           >
             <Box style={styles.header}>
-              <Pressable onPress={() => withSpring((offset.value = 100))}>
+              <Pressable onPress={() => (offset.value = Math.random() * 500)}>
                 <Icon name="arrow-left" size={24} />
               </Pressable>
               <Text ml="m" fontSize={24}>
