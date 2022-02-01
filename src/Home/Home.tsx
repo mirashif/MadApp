@@ -1,6 +1,6 @@
 import {
-  BottomSheetBackdrop,
   BottomSheetModal,
+  BottomSheetBackdrop,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import { useIsFocused } from "@react-navigation/native";
@@ -34,6 +34,7 @@ import type {
 } from "../state/store/RestaurantStore";
 
 import AddonsItem from "./AddonsItem";
+import AddressListModal from "./AddressListModal";
 import AuthSheet from "./AuthSheet";
 import BannerCarousel from "./BannerCarousel";
 import FloatingCart from "./FloatingCart";
@@ -104,9 +105,35 @@ const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
 
   return (
     <SafeArea>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <LocationBar
+          editMode={true}
+          onEditPress={() => navigation.navigate("EditLocation")}
+        />
+        <BannerCarousel />
+        <Stories />
+        {restaurantList && (
+          <>
+            <Text mb="l" mx="screen" variant="sectionTitle">
+              🍴 Restaurants
+            </Text>
+            {restaurantList.map((restaurant) => (
+              <HomeRestaurant
+                key={restaurant.id}
+                restaurant={restaurant.data}
+                onItemPress={handleItemPress}
+                items={restaurant.popularItems}
+              />
+            ))}
+          </>
+        )}
+      </ScrollView>
+
       {cartItemCount > 0 && <FloatingCart />}
 
       {isFocused && !isLoggedIn && <AuthSheet />}
+
+      <AddressListModal />
 
       {/* ItemSheet */}
       <BottomSheetModal
@@ -221,7 +248,7 @@ const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
         </BottomSheetScrollView>
       </BottomSheetModal>
 
-      {/* Footer */}
+      {/* ItemFooter */}
       <BottomSheetModal
         ref={itemFooterSheetRef}
         snapPoints={[FOOTER_SHEET_HEIGHT]}
@@ -290,30 +317,6 @@ const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
           </View>
         </View>
       </BottomSheetModal>
-
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <LocationBar
-          editMode={true}
-          onEditPress={() => navigation.navigate("EditLocation")}
-        />
-        <BannerCarousel />
-        <Stories />
-        {restaurantList && (
-          <>
-            <Text mb="l" mx="screen" variant="sectionTitle">
-              🍴 Restaurants
-            </Text>
-            {restaurantList.map((restaurant) => (
-              <HomeRestaurant
-                key={restaurant.id}
-                restaurant={restaurant.data}
-                onItemPress={handleItemPress}
-                items={restaurant.popularItems}
-              />
-            ))}
-          </>
-        )}
-      </ScrollView>
     </SafeArea>
   );
 });

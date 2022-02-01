@@ -5,6 +5,7 @@ import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import type { LocationGeocodedAddress } from "expo-location";
 
 import { SafeArea, Box, makeStyles, Text, Button } from "../../components";
 import Input from "../../components/Input";
@@ -15,8 +16,6 @@ import type { AddressStore } from "../../state/store/AddressStore";
 
 import MarkerIcon from "./assets/marker.svg";
 import Label, { LabelEnum } from "./Label";
-
-import { getFormattedAddress } from ".";
 
 const { height: windowHeight, width } = Dimensions.get("window");
 const height = windowHeight * 0.4;
@@ -162,6 +161,21 @@ const EditLocation = () => {
   );
 };
 
+export default EditLocation;
+
+const getFormattedAddress = (
+  address: LocationGeocodedAddress | null
+): string => {
+  if (!address) return "";
+  const { name, street, city } = address;
+  if (name && !name.includes("+"))
+    if (street) return `${name}, ${street}`;
+    else return name;
+  else if (street) return street;
+  else if (city) return city;
+  else return "";
+};
+
 const useStyles = makeStyles(() => ({
   mapContainer: {
     width,
@@ -180,5 +194,3 @@ const useStyles = makeStyles(() => ({
     pointerEvents: "none",
   },
 }));
-
-export default EditLocation;
