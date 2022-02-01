@@ -34,7 +34,7 @@ const AddressListModal = () => {
   });
 
   return (
-    <Modal transparent>
+    <Modal transparent visible={false}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}

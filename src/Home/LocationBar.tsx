@@ -60,6 +60,7 @@ export default function LocationBar({
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
     marginHorizontal: theme.spacing.screen,
+    marginTop: theme.spacing.m,
     marginBottom: theme.spacing.l,
     paddingVertical: 14,
     paddingHorizontal: 30,
