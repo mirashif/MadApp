@@ -110,47 +110,49 @@ const EditLocation = () => {
         </Box>
 
         <ScrollView showsVerticalScrollIndicator={false}>
-          <Box padding="screen">
+          <Box
+            padding="screen"
+            // Fix: stops the touch event propagation
+            onStartShouldSetResponder={() => true}
+          >
             <Text fontFamily="Normal" fontSize={24} mb="xl">
               Edit Address
             </Text>
-
             <Input
               onChangeText={() => null}
               label="Address"
               placeholder="26, Block B, Lalmatia"
               value={formattedAddress}
+              style={{
+                marginBottom: 12,
+              }}
             />
-
-            <Box style={{ marginBottom: 12 }} />
-
             <Input
               onChangeText={() => null}
-              style={{
-                // Fix: ios multi-line broken
-                height: 32 * 3,
-                paddingTop: 16,
-                paddingBottom: 16,
-              }}
               placeholder="Note to rider - e.g landmark / building"
               inputProps={{
                 multiline: true,
                 numberOfLines: 3,
                 textAlignVertical: "top",
               }}
+              style={{
+                // Fix: ios multi-line
+                height: 32 * 3,
+                paddingTop: 16,
+                paddingBottom: 16,
+                marginBottom: 16,
+              }}
             />
-
-            <Box style={{ marginBottom: 16 }} />
-
             <Label onLabelChange={setLabel} />
-
-            <Box style={{ marginBottom: 36 }} />
-
-            <Button onPress={saveLocation} size="lg">
+            <Button
+              onPress={saveLocation}
+              size="lg"
+              style={{
+                marginBottom: insets.bottom,
+              }}
+            >
               Save
             </Button>
-
-            <Box style={{ marginBottom: insets.bottom }} />
           </Box>
         </ScrollView>
       </DissmissKeyboard>

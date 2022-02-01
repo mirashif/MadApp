@@ -81,7 +81,11 @@ const Label = ({ onLabelChange }: LabelProps) => {
   };
 
   return (
-    <Box>
+    <Box
+      style={{
+        marginBottom: 36,
+      }}
+    >
       {/* Add label modal */}
       <CustomModal
         visible={isAddModalOpen}
