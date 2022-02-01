@@ -15,6 +15,8 @@ import type { AddressStore } from "../../state/store/AddressStore";
 import MarkerIcon from "./assets/marker.svg";
 import Label, { LabelEnum } from "./Label";
 
+import { getFormattedAddress } from ".";
+
 const { height: windowHeight, width } = Dimensions.get("window");
 const height = windowHeight * 0.4;
 
@@ -39,22 +41,16 @@ const EditLocation = () => {
 
   const setCurrentLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
-
-    if (status !== "granted") {
-      return;
-    }
-
+    if (status !== "granted") return;
     const {
       coords: { latitude, longitude },
     } = await Location.getCurrentPositionAsync({});
-
     setRegion({
       latitude,
       longitude,
       latitudeDelta: 0.0017,
       longitudeDelta: 0.0017,
     });
-
     addresses.setLocation(longitude, latitude);
     await getAndSetAddress(latitude, longitude);
   };
@@ -62,17 +58,11 @@ const EditLocation = () => {
   const getAndSetAddress = async (latitude: number, longitude: number) => {
     try {
       await Location.setGoogleApiKey("AIzaSyBeg-gj3svjGRcJplqxdmIqHx0hX-dbaj4");
-
-      const addr = await Location.reverseGeocodeAsync({
+      const _address = await Location.reverseGeocodeAsync({
         latitude,
         longitude,
       });
-
-      if (addr.length > 0) {
-        setAddress(addr[0]);
-        return;
-      }
-
+      if (_address.length > 0) return setAddress(_address[0]);
       setAddress(null);
     } catch (err) {
       setAddress(null);
@@ -92,30 +82,8 @@ const EditLocation = () => {
   };
 
   useEffect(() => {
-    if (address) {
-      const { name, street, city } = address;
-      if (name && !name.includes("+")) {
-        if (street) {
-          setFormattedAddress(`${name}, ${street}`);
-        } else {
-          setFormattedAddress(name);
-        }
-
-        return;
-      }
-
-      if (street) {
-        setFormattedAddress(street);
-        return;
-      }
-
-      if (city) {
-        setFormattedAddress(city);
-        return;
-      }
-
-      setFormattedAddress("");
-    }
+    const _address = getFormattedAddress(address);
+    setFormattedAddress(_address);
   }, [address]);
 
   useEffect(() => {
