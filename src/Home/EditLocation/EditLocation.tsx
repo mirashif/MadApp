@@ -9,6 +9,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SafeArea, Box, makeStyles, Text, Button } from "../../components";
 import Input from "../../components/Input";
 import DissmissKeyboard from "../../components/DissmissKeyboard";
+import type { AddressBuilder } from "../../state/store/AddressBuilder";
 import { useAppState } from "../../state/StateContext";
 import type { AddressStore } from "../../state/store/AddressStore";
 
@@ -25,7 +26,8 @@ const EditLocation = () => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
 
-  const addresses: AddressStore = useAppState("addresses");
+  const addressStore: AddressStore = useAppState("addresses");
+  const builder: AddressBuilder = addressStore.builder;
 
   const [label, setLabel] = useState<LabelEnum | string>(LabelEnum.HOME);
   const [formattedAddress, setFormattedAddress] = useState("");
@@ -51,7 +53,7 @@ const EditLocation = () => {
       latitudeDelta: 0.0017,
       longitudeDelta: 0.0017,
     });
-    addresses.setLocation(longitude, latitude);
+    addressStore.setLocation(longitude, latitude);
     await getAndSetAddress(latitude, longitude);
   };
 
@@ -70,14 +72,14 @@ const EditLocation = () => {
   };
 
   const saveLocation = async () => {
-    const { builder } = addresses;
-    if (region) {
-      builder.setLocation(region.longitude, region.latitude);
-      builder.setAddress(formattedAddress);
-      builder.setLabel(label);
-      const { addressable } = builder;
-      await addresses.addAddress(addressable);
-    }
+    if (!region) return;
+
+    const { addressable } = builder;
+    builder.setLocation(region.longitude, region.latitude);
+    builder.setAddress(formattedAddress);
+    builder.setLabel(label);
+    await addressStore.addAddress(addressable);
+
     navigation.goBack();
   };
 
