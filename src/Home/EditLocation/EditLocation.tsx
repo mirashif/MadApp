@@ -132,6 +132,10 @@ const EditLocation = () => {
             region={region}
             onRegionChangeComplete={handleRegionChange}
             provider={PROVIDER_GOOGLE}
+            showsUserLocation={true}
+            showsMyLocationButton={true}
+            showsCompass={true}
+            mapPadding={{ top: 20, right: 20, bottom: 550, left: 20 }}
           />
           <Box style={styles.marker}>
             <MarkerIcon />

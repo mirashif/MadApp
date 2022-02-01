@@ -26,25 +26,25 @@ export default function LocationBar({
   const addressLine: string | null = address?.data.address || null;
   const addressLabel: string | null = address?.data.label || null;
 
-  if (!address) return null;
-
   return (
     <View style={styles.container}>
       <View>
         <Text numberOfLines={1} style={styles.address}>
-          {addressLine}
+          {addressLine && address ? addressLine : "Set your delivery location"}
         </Text>
-        <View style={styles.label}>
-          <Icon color={theme.colors.darkGray} name="book-open" size={12} />
-          <Text numberOfLines={1} style={styles.labelText}>
-            {addressLabel}
-          </Text>
-        </View>
+        {addressLabel && (
+          <View style={styles.label}>
+            <Icon color={theme.colors.darkGray} name="book-open" size={12} />
+            <Text numberOfLines={1} style={styles.labelText}>
+              {addressLabel}
+            </Text>
+          </View>
+        )}
       </View>
 
       {showIcon && (
         <View>
-          {editMode ? (
+          {!address || editMode ? (
             <Pressable onPress={onEditPress}>
               <Icon name="edit-2" size={15} color={theme.colors.primary} />
             </Pressable>
