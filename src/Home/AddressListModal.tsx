@@ -34,7 +34,7 @@ const AddressListModal = () => {
   });
 
   return (
-    <Modal transparent visible={false}>
+    <Modal transparent visible={true}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -169,7 +169,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginBottom: 30,
   },
   radioContainer: {
-    marginTop: 3,
+    paddingTop: 5,
   },
   radio: {
     width: 18,
