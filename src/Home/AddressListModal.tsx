@@ -42,7 +42,7 @@ const AddressListModal = ({ visible, onClose }: Props) => {
   }, [visible]);
 
   return (
-    <Modal transparent visible={offset.value === 0}>
+    <Modal transparent visible={visible && offset.value === 0}>
       <Box style={styles.backdrop}>
         <Animated.View
           onLayout={(e) => {
