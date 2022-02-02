@@ -40,15 +40,22 @@ export default function LocationBar({
         )}
       </View>
 
-      <View>
-        <Pressable onPress={onEditPress}>
+      <Pressable onPress={onEditPress}>
+        <View
+          style={{
+            width: 20,
+            height: 20,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           {!address || editMode ? (
             <Icon name="edit-2" size={15} color={theme.colors.primary} />
           ) : (
             <Icon name="chevron-down" size={15} color={theme.colors.gray} />
           )}
-        </Pressable>
-      </View>
+        </View>
+      </Pressable>
     </View>
   );
 }

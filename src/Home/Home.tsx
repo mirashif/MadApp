@@ -5,7 +5,7 @@ import {
 } from "@gorhom/bottom-sheet";
 import { useIsFocused } from "@react-navigation/native";
 import { observer } from "mobx-react";
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import {
   ImageBackground,
   ScrollView,
@@ -97,13 +97,24 @@ const Home = observer(() => {
     itemFooterSheetRef.current?.close();
   };
 
+  const renderBackdrop = useCallback(
+    (props) => (
+      <BottomSheetBackdrop
+        {...props}
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+      />
+    ),
+    []
+  );
+
   return (
     <SafeArea>
       <ScrollView showsVerticalScrollIndicator={false}>
         <LocationBar
-          onEditPress={() =>
-            setAddressListModalVisible(!addressListModalVisible)
-          }
+          onEditPress={() => {
+            setAddressListModalVisible(true);
+          }}
         />
         <BannerCarousel />
         <Stories />
@@ -128,10 +139,9 @@ const Home = observer(() => {
 
       {isFocused && !isLoggedIn && <AuthSheet />}
 
-      <AddressListModal
-        visible={addressListModalVisible}
-        onClose={() => setAddressListModalVisible(!addressListModalVisible)}
-      />
+      {addressListModalVisible && (
+        <AddressListModal onClose={() => setAddressListModalVisible(false)} />
+      )}
 
       {/* ItemSheet */}
       <BottomSheetModal
@@ -140,7 +150,7 @@ const Home = observer(() => {
         handleComponent={null}
         onDismiss={handleDismiss}
         onChange={handleItemSheetChange}
-        backdropComponent={BottomSheetBackdrop}
+        backdropComponent={renderBackdrop}
       >
         <BottomSheetScrollView
           showsVerticalScrollIndicator={false}
