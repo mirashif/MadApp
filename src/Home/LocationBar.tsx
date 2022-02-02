@@ -8,7 +8,6 @@ import type { Address } from "../state/store/AddressStore";
 import type { LockedAddressStore } from "../state/store/LockedAddressStore";
 
 interface LocationBarProps {
-  showIcon?: boolean;
   editMode?: boolean;
   onEditPress?: () => void;
 }
@@ -16,7 +15,6 @@ interface LocationBarProps {
 export default function LocationBar({
   editMode = false,
   onEditPress,
-  showIcon = true,
 }: LocationBarProps) {
   const styles = useStyles();
   const theme = useTheme();
@@ -42,17 +40,15 @@ export default function LocationBar({
         )}
       </View>
 
-      {showIcon && (
-        <View>
+      <View>
+        <Pressable onPress={onEditPress}>
           {!address || editMode ? (
-            <Pressable onPress={onEditPress}>
-              <Icon name="edit-2" size={15} color={theme.colors.primary} />
-            </Pressable>
+            <Icon name="edit-2" size={15} color={theme.colors.primary} />
           ) : (
             <Icon name="chevron-down" size={15} color={theme.colors.gray} />
           )}
-        </View>
-      )}
+        </Pressable>
+      </View>
     </View>
   );
 }

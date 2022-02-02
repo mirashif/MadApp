@@ -5,7 +5,7 @@ import {
 } from "@gorhom/bottom-sheet";
 import { useIsFocused } from "@react-navigation/native";
 import { observer } from "mobx-react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   ImageBackground,
   ScrollView,
@@ -23,10 +23,8 @@ import {
   SafeArea,
   Text,
 } from "../components";
-import type { RootStackProps } from "../components/AppNavigator";
 import { useCart } from "../state/hooks/useCart";
 import { useAppState } from "../state/StateContext";
-import type { AddressStore } from "../state/store/AddressStore";
 import type { AuthStore } from "../state/store/AuthStore";
 import type {
   Restaurant,
@@ -67,13 +65,12 @@ const variations = [
   },
 ];
 
-const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
+const Home = observer(() => {
   const styles = useStyles();
   const isFocused = useIsFocused();
 
   const auth: AuthStore = useAppState("auth");
   const restaurants: RestaurantStore = useAppState("restaurants");
-  const addresses: AddressStore = useAppState("addresses");
 
   const isLoggedIn = auth.authenticated;
   const restaurantList: Restaurant[] = restaurants.all;
@@ -82,6 +79,7 @@ const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
   const itemSheetRef = useRef<BottomSheetModal>(null);
   const itemFooterSheetRef = useRef<BottomSheetModal>(null);
 
+  const [addressListModalVisible, setAddressListModalVisible] = useState(false);
   const [selectedVariationID, setSelectedVariationID] = useState<
     null | string | number
   >(null);
@@ -99,16 +97,13 @@ const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
     itemFooterSheetRef.current?.close();
   };
 
-  useEffect(() => {
-    addresses.setLocation(23.7937, 90.4066);
-  }, [addresses]);
-
   return (
     <SafeArea>
       <ScrollView showsVerticalScrollIndicator={false}>
         <LocationBar
-          editMode={true}
-          onEditPress={() => navigation.navigate("EditLocation")}
+          onEditPress={() =>
+            setAddressListModalVisible(!addressListModalVisible)
+          }
         />
         <BannerCarousel />
         <Stories />
@@ -133,7 +128,10 @@ const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
 
       {isFocused && !isLoggedIn && <AuthSheet />}
 
-      <AddressListModal />
+      <AddressListModal
+        visible={addressListModalVisible}
+        onClose={() => setAddressListModalVisible(!addressListModalVisible)}
+      />
 
       {/* ItemSheet */}
       <BottomSheetModal

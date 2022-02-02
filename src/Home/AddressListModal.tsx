@@ -14,11 +14,11 @@ import { Box, Icon, makeStyles, Text, useTheme } from "../components";
 const addresses = ["Home", "Work"];
 
 interface Props {
-  modalVisible: boolean;
-  setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  visible: boolean;
+  onClose: () => void;
 }
 
-const AddressListModal = ({ modalVisible, setModalVisible }: Props) => {
+const AddressListModal = ({ visible, onClose }: Props) => {
   const styles = useStyles();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
@@ -28,33 +28,21 @@ const AddressListModal = ({ modalVisible, setModalVisible }: Props) => {
   const offset = useSharedValue(0);
 
   const animatedStyle = useAnimatedStyle(() => {
+    offset.value = visible ? 0 : -containerHeight.value;
     return {
       transform: [
         {
-          translateY: withTiming(
-            modalVisible ? offset.value : -containerHeight.value,
-            {
-              duration: 500,
-              easing: Easing.out(Easing.exp),
-            }
-          ),
+          translateY: withTiming(offset.value, {
+            duration: 500,
+            easing: Easing.out(Easing.exp),
+          }),
         },
       ],
-      opacity: withTiming(modalVisible ? 1 : 0, {
-        duration: 500,
-        easing: Easing.out(Easing.exp),
-      }),
     };
-  });
-
-  if (!modalVisible) return null;
+  }, [visible]);
 
   return (
-    <Modal
-      transparent
-      visible={modalVisible}
-      onRequestClose={() => setModalVisible(false)}
-    >
+    <Modal transparent visible={offset.value === 0}>
       <Box style={styles.backdrop}>
         <Animated.View
           onLayout={(e) => {
@@ -63,7 +51,7 @@ const AddressListModal = ({ modalVisible, setModalVisible }: Props) => {
           style={[styles.container, animatedStyle, { paddingTop: insets.top }]}
         >
           <Box style={styles.header}>
-            <Pressable onPress={() => setModalVisible(false)}>
+            <Pressable onPress={onClose}>
               <Icon name="arrow-left" size={24} />
             </Pressable>
             <Text ml="m" fontSize={24}>
