@@ -47,6 +47,8 @@ const AddressListModal = ({ modalVisible, setModalVisible }: Props) => {
     };
   });
 
+  if (!modalVisible) return null;
+
   return (
     <Modal
       transparent
