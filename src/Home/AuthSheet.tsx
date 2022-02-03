@@ -18,7 +18,6 @@ const AuthSheet = () => {
     <BottomSheetModal
       ref={authSheetRef}
       snapPoints={[210]}
-      enableDismissOnClose={false}
       enableContentPanningGesture={false}
       enableHandlePanningGesture={false}
       enableOverDrag={false}
