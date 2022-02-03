@@ -1,7 +1,7 @@
 import React from "react";
-import { Modal, Pressable, StyleSheet } from "react-native";
+import { Pressable, StyleSheet } from "react-native";
 import Animated, {
-  SlideInDown,
+  FadingTransition,
   SlideInUp,
   SlideOutUp,
 } from "react-native-reanimated";
@@ -24,12 +24,12 @@ const AddressListModal = ({ onClose }: Props) => {
   const [selected, setSelected] = React.useState(0);
 
   return (
-    <Animated.View
-      entering={SlideInUp}
-      exiting={SlideOutUp}
-      style={styles.backdrop}
-    >
-      <Box style={styles.container}>
+    <Animated.View layout={FadingTransition} style={styles.backdrop}>
+      <Animated.View
+        entering={SlideInUp}
+        exiting={SlideOutUp}
+        style={styles.container}
+      >
         <Box style={[styles.header, { paddingTop: insets.top }]}>
           <Pressable onPress={onClose}>
             <Icon name="arrow-left" size={24} />
@@ -105,7 +105,7 @@ const AddressListModal = ({ onClose }: Props) => {
             Add a New Address
           </Text>
         </Pressable>
-      </Box>
+      </Animated.View>
     </Animated.View>
   );
 };
@@ -115,7 +115,7 @@ export default AddressListModal;
 const useStyles = makeStyles((theme: Theme) => ({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.17)",
+    backgroundColor: "rgba(0, 0, 0, 0.15)",
   },
   container: {
     backgroundColor: "white",
