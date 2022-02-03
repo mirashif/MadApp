@@ -24,7 +24,7 @@ interface Props {
   onClose: () => void;
 }
 
-const AddressListModal = ({ visible, onClose }: Props) => {
+const AddressListModal = observer(({ visible, onClose }: Props) => {
   const styles = useStyles();
   const theme = useTheme();
   const navigation = useNavigation();
@@ -34,7 +34,7 @@ const AddressListModal = ({ visible, onClose }: Props) => {
   const lockedAddress: LockedAddressStore = useAppState("lockedAddress");
 
   const addressList: Address[] = addresses.all;
-  const currentlySelectedAddress: Address | null = lockedAddress.lockedAddress;
+  const currentlySelectedAddress = lockedAddress.lockedAddress?.data;
 
   const handleEditLocation = (address: AddressType) => {
     navigation.navigate("EditLocation", { params: address });
@@ -64,18 +64,15 @@ const AddressListModal = ({ visible, onClose }: Props) => {
         {/* Saved locations */}
         {addressList.length &&
           addressList.map((_address) => {
-            const { id, label, address } = _address.data as AddressType;
-            const { id: currentlySelectedId } =
-              currentlySelectedAddress?.data as AddressType;
-            const isSelected = id === currentlySelectedId;
+            const address = _address.data;
+            const currentlySelectedId = currentlySelectedAddress?.id ?? "";
+            const isSelected = address.id === currentlySelectedId;
 
             return (
-              <Box key={id} style={styles.item}>
+              <Box key={address.id} style={styles.item}>
                 <Pressable
                   // TODO: set selected address
-                  onPress={() =>
-                    handleLockAddress(_address.data as AddressType)
-                  }
+                  onPress={() => handleLockAddress(address)}
                   style={styles.radioContainer}
                 >
                   <Box
@@ -87,20 +84,18 @@ const AddressListModal = ({ visible, onClose }: Props) => {
                 </Pressable>
 
                 <Box style={styles.address}>
-                  <Text style={styles.label}>{label}</Text>
+                  <Text style={styles.label}>{address.label || ""}</Text>
                   <Text
                     style={styles.street}
                     numberOfLines={1}
                     ellipsizeMode="tail"
                   >
-                    {address}
+                    {address.address}
                   </Text>
                 </Box>
 
                 <Pressable
-                  onPress={() =>
-                    handleEditLocation(_address.data as AddressType)
-                  }
+                  onPress={() => handleEditLocation(address)}
                   style={styles.editIcon}
                 >
                   <Icon name="edit-2" size={13} color={theme.colors.primary} />
@@ -128,7 +123,7 @@ const AddressListModal = ({ visible, onClose }: Props) => {
       </Animated.View>
     </Animated.View>
   );
-};
+});
 
 export default AddressListModal;
 
@@ -142,9 +137,10 @@ const UseCurrentLocation = observer(
     const theme = useTheme();
 
     const addresses: AddressStore = useAppState("addresses");
+
     const isLocationAddressAvailable: boolean =
       addresses.isLocationAddressAvailable;
-    const locationAddress: Address | null = addresses.locationAddress;
+    const locationAddress = addresses.locationAddress?.data;
 
     if (!isLocationAddressAvailable || !locationAddress) return null;
     return (
@@ -157,12 +153,12 @@ const UseCurrentLocation = observer(
         <Box style={styles.address}>
           <Text style={styles.label}>Use Current Location</Text>
           <Text style={styles.street} numberOfLines={1} ellipsizeMode="tail">
-            {locationAddress.data.address}
+            {locationAddress.address}
           </Text>
         </Box>
 
         <Pressable
-          onPress={() => onEditLocation(locationAddress as AddressType)}
+          onPress={() => onEditLocation(locationAddress)}
           style={styles.editIcon}
         >
           <Icon name="edit-2" size={13} color={theme.colors.primary} />

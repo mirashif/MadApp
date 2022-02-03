@@ -10,6 +10,8 @@ import { observer } from "mobx-react";
 import { SafeArea, Box, makeStyles, Text, Button } from "../../components";
 import Input from "../../components/Input";
 import DissmissKeyboard from "../../components/DissmissKeyboard";
+import type { AddressStore } from "../../state/store/AddressStore";
+import { useAppState } from "../../state/StateContext";
 
 import MarkerIcon from "./assets/marker.svg";
 import Label, { LabelEnum } from "./Label";
@@ -27,6 +29,8 @@ const EditLocation = observer(() => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const route = useRoute();
+
+  const addresses: AddressStore = useAppState("addresses");
 
   const [region, setRegion] = useState<Region>();
   const [displayAddress, setDisplayAddress] = useState("");
