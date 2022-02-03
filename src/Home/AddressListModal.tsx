@@ -1,4 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
+import { observer } from "mobx-react";
 import React from "react";
 import { Pressable, StyleSheet } from "react-native";
 import Animated, {
@@ -10,8 +11,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import type { Theme } from "../components";
 import { Box, Icon, makeStyles, Text, useTheme } from "../components";
-
-const addresses = ["Home", "Work"];
+import { useAppState } from "../state/StateContext";
+import type { Address, AddressStore } from "../state/store/AddressStore";
 
 interface Props {
   visible: boolean;
@@ -78,23 +79,8 @@ const AddressListModal = ({ visible, onClose }: Props) => {
           );
         })}
 
-        {/* Current location */}
-        <Box style={styles.item}>
-          <Pressable onPress={() => undefined} style={styles.radioContainer}>
-            <Icon name="map-pin" size={18} color={theme.colors.primary} />
-          </Pressable>
-
-          <Box style={styles.address}>
-            <Text style={styles.label}>Use Current Location</Text>
-            <Text style={styles.street} numberOfLines={1} ellipsizeMode="tail">
-              123 Main St, New York
-            </Text>
-          </Box>
-
-          <Pressable onPress={undefined} style={styles.editIcon}>
-            <Icon name="edit-2" size={13} color={theme.colors.primary} />
-          </Pressable>
-        </Box>
+        {/* Use current location */}
+        <UseCurrentLocation />
 
         {/* Add new address */}
         <Pressable
@@ -118,6 +104,36 @@ const AddressListModal = ({ visible, onClose }: Props) => {
 };
 
 export default AddressListModal;
+
+const UseCurrentLocation = observer(() => {
+  const styles = useStyles();
+  const theme = useTheme();
+
+  const addresses: AddressStore = useAppState("addresses");
+  const isLocationAddressAvailable: boolean =
+    addresses.isLocationAddressAvailable;
+  const locationAddress = addresses.locationAddress;
+
+  if (!isLocationAddressAvailable || !locationAddress) return null;
+  return (
+    <Box style={styles.item}>
+      <Pressable onPress={() => undefined} style={styles.radioContainer}>
+        <Icon name="map-pin" size={18} color={theme.colors.primary} />
+      </Pressable>
+
+      <Box style={styles.address}>
+        <Text style={styles.label}>Use Current Location</Text>
+        <Text style={styles.street} numberOfLines={1} ellipsizeMode="tail">
+          {locationAddress.data.address}
+        </Text>
+      </Box>
+
+      <Pressable onPress={undefined} style={styles.editIcon}>
+        <Icon name="edit-2" size={13} color={theme.colors.primary} />
+      </Pressable>
+    </Box>
+  );
+});
 
 const useStyles = makeStyles((theme: Theme) => ({
   backdrop: {

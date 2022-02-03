@@ -154,7 +154,7 @@ const EditLocation = observer(() => {
             />
             <Label onLabelChange={setLabel} />
             <Button
-              onPress={saveLocation}
+              onPress={() => undefined}
               size="lg"
               style={{
                 marginBottom: insets.bottom,
