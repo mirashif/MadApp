@@ -53,7 +53,8 @@ const MyProfile = observer(() => {
     <SafeArea>
       <DissmissKeyboard>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <Box // Fix: stops the touch event propagation
+          <Box
+            // stops the touch event propagation
             onStartShouldSetResponder={() => true}
           >
             <HeaderBar title="My Profile" />

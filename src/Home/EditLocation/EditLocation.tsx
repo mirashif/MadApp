@@ -3,16 +3,13 @@ import { Alert, Dimensions, ScrollView } from "react-native";
 import type { Region } from "react-native-maps";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { observer } from "mobx-react";
 
 import { SafeArea, Box, makeStyles, Text, Button } from "../../components";
 import Input from "../../components/Input";
 import DissmissKeyboard from "../../components/DissmissKeyboard";
-import type { AddressBuilder } from "../../state/store/AddressBuilder";
-import { useAppState } from "../../state/StateContext";
-import type { AddressStore } from "../../state/store/AddressStore";
 
 import MarkerIcon from "./assets/marker.svg";
 import Label, { LabelEnum } from "./Label";
@@ -27,18 +24,13 @@ interface Coords {
 
 const EditLocation = observer(() => {
   const styles = useStyles();
-  const navigation = useNavigation();
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
+  const route = useRoute();
 
-  const addressStore: AddressStore = useAppState("addresses");
-  const builder: AddressBuilder = addressStore.builder;
-
-  const [label, setLabel] = useState<LabelEnum | string>(LabelEnum.HOME);
   const [region, setRegion] = useState<Region>();
-  const [locationServiceEnabled, setLocationServiceEnabled] = useState(false);
-  const [displayAddress, setDisplayAddress] = useState(
-    "Wait, we are fetching you location..."
-  );
+  const [displayAddress, setDisplayAddress] = useState("");
+  const [label, setLabel] = useState<LabelEnum | string>(LabelEnum.HOME);
 
   useEffect(() => {
     checkIfLocationEnabled();
@@ -49,22 +41,22 @@ const EditLocation = observer(() => {
   const checkIfLocationEnabled = async () => {
     const enabled = await Location.hasServicesEnabledAsync();
 
-    if (!enabled) {
+    // TODO: remove alert
+    if (!enabled)
       Alert.alert(
         "Location Service not enabled",
         "Please enable your location services to continue",
         [{ text: "OK" }],
         { cancelable: false }
       );
-    } else {
-      setLocationServiceEnabled(enabled);
-    }
+
+    // Location service enabled
   };
 
-  // create the handler method
   const getCurrentLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
 
+    // TODO: remove alert
     if (status !== "granted") {
       Alert.alert(
         "Permission not granted",
@@ -121,7 +113,7 @@ const EditLocation = observer(() => {
         <ScrollView showsVerticalScrollIndicator={false}>
           <Box
             padding="screen"
-            // Fix: stops the touch event propagation
+            // stops the touch event propagation
             onStartShouldSetResponder={() => true}
           >
             <Text fontFamily="Normal" fontSize={24} mb="xl">
@@ -154,6 +146,7 @@ const EditLocation = observer(() => {
             />
             <Label onLabelChange={setLabel} />
             <Button
+              // TODO: add save fn
               onPress={() => undefined}
               size="lg"
               style={{

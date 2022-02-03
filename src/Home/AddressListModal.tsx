@@ -37,7 +37,7 @@ const AddressListModal = ({ visible, onClose }: Props) => {
   const currentlySelectedAddress: Address | null = lockedAddress.lockedAddress;
 
   const handleEditLocation = (address: AddressType) => {
-    navigation.navigate("EditLocation", { address });
+    navigation.navigate("EditLocation", { params: address });
   };
 
   const handleLockAddress = ({ id }: AddressType) => {
