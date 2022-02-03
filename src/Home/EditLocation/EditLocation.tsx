@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Dimensions, ScrollView } from "react-native";
+import { Alert, Dimensions, ScrollView } from "react-native";
 import type { Region } from "react-native-maps";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import type { LocationGeocodedAddress } from "expo-location";
 import { observer } from "mobx-react";
 
 import { SafeArea, Box, makeStyles, Text, Button } from "../../components";
@@ -21,6 +20,11 @@ import Label, { LabelEnum } from "./Label";
 const { height: windowHeight, width } = Dimensions.get("window");
 const height = windowHeight * 0.4;
 
+interface Coords {
+  latitude: number;
+  longitude: number;
+}
+
 const EditLocation = observer(() => {
   const styles = useStyles();
   const navigation = useNavigation();
@@ -30,68 +34,71 @@ const EditLocation = observer(() => {
   const builder: AddressBuilder = addressStore.builder;
 
   const [label, setLabel] = useState<LabelEnum | string>(LabelEnum.HOME);
-  const [formattedAddress, setFormattedAddress] = useState("");
-  const [address, setAddress] =
-    useState<Location.LocationGeocodedAddress | null>(null);
-
   const [region, setRegion] = useState<Region>();
+  const [locationServiceEnabled, setLocationServiceEnabled] = useState(false);
+  const [displayAddress, setDisplayAddress] = useState(
+    "Wait, we are fetching you location..."
+  );
 
-  const handleRegionChange = async (_region: Region) => {
-    setRegion(_region);
-    await getAndSetAddress(_region.latitude, _region.longitude);
-  };
+  useEffect(() => {
+    checkIfLocationEnabled();
+    getCurrentLocation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const setCurrentLocation = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") return;
-    const {
-      coords: { latitude, longitude },
-    } = await Location.getCurrentPositionAsync({});
-    setRegion({
-      latitude,
-      longitude,
-      latitudeDelta: 0.0017,
-      longitudeDelta: 0.0017,
-    });
-    addressStore.setLocation(longitude, latitude);
-    await getAndSetAddress(latitude, longitude);
-  };
+  const checkIfLocationEnabled = async () => {
+    const enabled = await Location.hasServicesEnabledAsync();
 
-  const getAndSetAddress = async (latitude: number, longitude: number) => {
-    try {
-      await Location.setGoogleApiKey("AIzaSyBeg-gj3svjGRcJplqxdmIqHx0hX-dbaj4");
-      const _address = await Location.reverseGeocodeAsync({
-        latitude,
-        longitude,
-      });
-      if (_address.length > 0) return setAddress(_address[0]);
-      setAddress(null);
-    } catch (err) {
-      setAddress(null);
+    if (!enabled) {
+      Alert.alert(
+        "Location Service not enabled",
+        "Please enable your location services to continue",
+        [{ text: "OK" }],
+        { cancelable: false }
+      );
+    } else {
+      setLocationServiceEnabled(enabled);
     }
   };
 
-  const saveLocation = async () => {
-    if (!region) return;
+  // create the handler method
+  const getCurrentLocation = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
 
-    const { addressable } = builder;
-    builder.setLocation(region.longitude, region.latitude);
-    builder.setAddress(formattedAddress);
-    builder.setLabel(label);
-    await addressStore.addAddress(addressable);
+    if (status !== "granted") {
+      Alert.alert(
+        "Permission not granted",
+        "Allow the app to use location service.",
+        [{ text: "OK" }],
+        { cancelable: false }
+      );
+    }
 
-    navigation.goBack();
+    const { coords } = await Location.getCurrentPositionAsync();
+
+    if (coords) resolveDisplayAddress(coords);
   };
 
-  useEffect(() => {
-    const _address = getFormattedAddress(address);
-    setFormattedAddress(_address);
-  }, [address]);
+  const resolveDisplayAddress = async (coords: Coords) => {
+    const { latitude, longitude } = coords;
+    const response = await Location.reverseGeocodeAsync({
+      latitude,
+      longitude,
+    });
 
-  useEffect(() => {
-    setCurrentLocation();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    for (const item of response) {
+      const address = `${item.name}, ${item.street}, ${item.postalCode}, ${item.city}`;
+
+      setDisplayAddress(address);
+
+      if (address.length > 0) return;
+    }
+  };
+
+  const handleRegionChangeComplete = (_region: Region) => {
+    setRegion(_region);
+    resolveDisplayAddress(_region);
+  };
 
   return (
     <SafeArea>
@@ -104,7 +111,7 @@ const EditLocation = observer(() => {
             showsCompass={true}
             showsUserLocation={true}
             showsMyLocationButton={true}
-            onRegionChangeComplete={handleRegionChange}
+            onRegionChangeComplete={handleRegionChangeComplete}
           />
           <Box style={styles.marker}>
             <MarkerIcon />
@@ -124,7 +131,7 @@ const EditLocation = observer(() => {
               onChangeText={() => null}
               label="Address"
               placeholder="26, Block B, Lalmatia"
-              value={formattedAddress}
+              value={displayAddress}
               style={{
                 marginBottom: 12,
               }}
@@ -163,19 +170,6 @@ const EditLocation = observer(() => {
 });
 
 export default EditLocation;
-
-const getFormattedAddress = (
-  address: LocationGeocodedAddress | null
-): string => {
-  if (!address) return "";
-  const { name, street, city } = address;
-  if (name && !name.includes("+"))
-    if (street) return `${name}, ${street}`;
-    else return name;
-  else if (street) return street;
-  else if (city) return city;
-  else return "";
-};
 
 const useStyles = makeStyles(() => ({
   mapContainer: {

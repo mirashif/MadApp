@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Pressable, StyleSheet } from "react-native";
 import Animated, {
@@ -20,6 +21,7 @@ interface Props {
 const AddressListModal = ({ visible, onClose }: Props) => {
   const styles = useStyles();
   const theme = useTheme();
+  const navigation = useNavigation();
   const insets = useSafeAreaInsets();
 
   const [selected, setSelected] = React.useState(0);
@@ -95,7 +97,10 @@ const AddressListModal = ({ visible, onClose }: Props) => {
         </Box>
 
         {/* Add new address */}
-        <Pressable onPress={() => undefined} style={styles.addAddress}>
+        <Pressable
+          onPress={() => navigation.navigate("EditLocation")}
+          style={styles.addAddress}
+        >
           <Icon name="plus" size={23} color={theme.colors.primary} />
           <Text
             style={{
