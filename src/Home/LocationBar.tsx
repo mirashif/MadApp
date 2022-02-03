@@ -19,9 +19,9 @@ const LocationBar = observer(
     const theme = useTheme();
 
     const lockedAddress: LockedAddressStore = useAppState("lockedAddress");
-    const address: Address | null = lockedAddress.lockedAddress;
-    const addressLine: string | null = address?.data.address || null;
-    const addressLabel: string | null = address?.data.label || null;
+    const address = lockedAddress.lockedAddress?.data;
+    const addressLine: string | null = address?.address || null;
+    const addressLabel: string | null = address?.label || null;
 
     return (
       <View style={styles.container}>
