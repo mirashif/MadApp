@@ -6,6 +6,7 @@ import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { LocationGeocodedAddress } from "expo-location";
+import { observer } from "mobx-react";
 
 import { SafeArea, Box, makeStyles, Text, Button } from "../../components";
 import Input from "../../components/Input";
@@ -20,7 +21,7 @@ import Label, { LabelEnum } from "./Label";
 const { height: windowHeight, width } = Dimensions.get("window");
 const height = windowHeight * 0.4;
 
-const EditLocation = () => {
+const EditLocation = observer(() => {
   const styles = useStyles();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
@@ -159,7 +160,7 @@ const EditLocation = () => {
       </DissmissKeyboard>
     </SafeArea>
   );
-};
+});
 
 export default EditLocation;
 
