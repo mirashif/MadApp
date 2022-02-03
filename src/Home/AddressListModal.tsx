@@ -13,16 +13,18 @@ import { Box, Icon, makeStyles, Text, useTheme } from "../components";
 const addresses = ["Home", "Work"];
 
 interface Props {
+  visible: boolean;
   onClose: () => void;
 }
 
-const AddressListModal = ({ onClose }: Props) => {
+const AddressListModal = ({ visible, onClose }: Props) => {
   const styles = useStyles();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
 
   const [selected, setSelected] = React.useState(0);
 
+  if (!visible) return null;
   return (
     <Animated.View layout={FadingTransition} style={styles.backdrop}>
       <Animated.View
@@ -115,7 +117,7 @@ export default AddressListModal;
 const useStyles = makeStyles((theme: Theme) => ({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.15)",
+    backgroundColor: "rgba(0, 0, 0, 0.17)",
   },
   container: {
     backgroundColor: "white",

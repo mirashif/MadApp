@@ -139,9 +139,10 @@ const Home = observer(() => {
 
       {isFocused && !isLoggedIn && <AuthSheet />}
 
-      {addressListModalVisible && (
-        <AddressListModal onClose={() => setAddressListModalVisible(false)} />
-      )}
+      <AddressListModal
+        visible={addressListModalVisible}
+        onClose={() => setAddressListModalVisible(false)}
+      />
 
       {/* ItemSheet */}
       <BottomSheetModal
