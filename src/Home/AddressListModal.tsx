@@ -12,7 +12,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { Theme } from "../components";
 import { Box, Icon, makeStyles, Text, useTheme } from "../components";
 import { useAppState } from "../state/StateContext";
-import type { Address, AddressStore } from "../state/store/AddressStore";
+import type {
+  Address,
+  AddressStore,
+  AddressType,
+} from "../state/store/AddressStore";
+import type { LockedAddressStore } from "../state/store/LockedAddressStore";
 
 interface Props {
   visible: boolean;
@@ -25,7 +30,19 @@ const AddressListModal = ({ visible, onClose }: Props) => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
 
-  const [selected, setSelected] = React.useState(0);
+  const addresses: AddressStore = useAppState("addresses");
+  const lockedAddress: LockedAddressStore = useAppState("lockedAddress");
+
+  const addressList: Address[] = addresses.all;
+  const currentlySelectedAddress: Address | null = lockedAddress.lockedAddress;
+
+  const handleEditLocation = (address: AddressType) => {
+    navigation.navigate("EditLocation", { address });
+  };
+
+  const handleLockAddress = ({ id }: AddressType) => {
+    lockedAddress.lockAddress(id);
+  };
 
   if (!visible) return null;
   return (
@@ -45,48 +62,58 @@ const AddressListModal = ({ visible, onClose }: Props) => {
         </Box>
 
         {/* Saved locations */}
-        {addresses.map((address, idx) => {
-          const isSelected = selected === idx;
-          return (
-            <Box key={idx} style={styles.item}>
-              <Pressable
-                onPress={() => undefined}
-                style={styles.radioContainer}
-              >
-                <Box
-                  style={[
-                    styles.radio,
-                    isSelected ? styles.radioSelected : undefined,
-                  ]}
-                />
-              </Pressable>
+        {addressList.length &&
+          addressList.map((_address) => {
+            const { id, label, address } = _address.data as AddressType;
+            const { id: currentlySelectedId } =
+              currentlySelectedAddress?.data as AddressType;
+            const isSelected = id === currentlySelectedId;
 
-              <Box style={styles.address}>
-                <Text style={styles.label}>{address}</Text>
-                <Text
-                  style={styles.street}
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
+            return (
+              <Box key={id} style={styles.item}>
+                <Pressable
+                  // TODO: set selected address
+                  onPress={() =>
+                    handleLockAddress(_address.data as AddressType)
+                  }
+                  style={styles.radioContainer}
                 >
-                  123 Main St, New York
-                </Text>
-              </Box>
+                  <Box
+                    style={[
+                      styles.radio,
+                      isSelected ? styles.radioSelected : undefined,
+                    ]}
+                  />
+                </Pressable>
 
-              <Pressable onPress={undefined} style={styles.editIcon}>
-                <Icon name="edit-2" size={13} color={theme.colors.primary} />
-              </Pressable>
-            </Box>
-          );
-        })}
+                <Box style={styles.address}>
+                  <Text style={styles.label}>{label}</Text>
+                  <Text
+                    style={styles.street}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                  >
+                    {address}
+                  </Text>
+                </Box>
+
+                <Pressable
+                  onPress={() =>
+                    handleEditLocation(_address.data as AddressType)
+                  }
+                  style={styles.editIcon}
+                >
+                  <Icon name="edit-2" size={13} color={theme.colors.primary} />
+                </Pressable>
+              </Box>
+            );
+          })}
 
         {/* Use current location */}
-        <UseCurrentLocation />
+        <UseCurrentLocation onEditLocation={handleEditLocation} />
 
         {/* Add new address */}
-        <Pressable
-          onPress={() => navigation.navigate("EditLocation")}
-          style={styles.addAddress}
-        >
+        <Pressable onPress={() => handleEditLocation} style={styles.addAddress}>
           <Icon name="plus" size={23} color={theme.colors.primary} />
           <Text
             style={{
@@ -105,35 +132,45 @@ const AddressListModal = ({ visible, onClose }: Props) => {
 
 export default AddressListModal;
 
-const UseCurrentLocation = observer(() => {
-  const styles = useStyles();
-  const theme = useTheme();
+interface IUseCurrentLocation {
+  onEditLocation: (address: AddressType) => void;
+}
 
-  const addresses: AddressStore = useAppState("addresses");
-  const isLocationAddressAvailable: boolean =
-    addresses.isLocationAddressAvailable;
-  const locationAddress = addresses.locationAddress;
+const UseCurrentLocation = observer(
+  ({ onEditLocation }: IUseCurrentLocation) => {
+    const styles = useStyles();
+    const theme = useTheme();
 
-  if (!isLocationAddressAvailable || !locationAddress) return null;
-  return (
-    <Box style={styles.item}>
-      <Pressable onPress={() => undefined} style={styles.radioContainer}>
-        <Icon name="map-pin" size={18} color={theme.colors.primary} />
-      </Pressable>
+    const addresses: AddressStore = useAppState("addresses");
+    const isLocationAddressAvailable: boolean =
+      addresses.isLocationAddressAvailable;
+    const locationAddress: Address | null = addresses.locationAddress;
 
-      <Box style={styles.address}>
-        <Text style={styles.label}>Use Current Location</Text>
-        <Text style={styles.street} numberOfLines={1} ellipsizeMode="tail">
-          {locationAddress.data.address}
-        </Text>
+    if (!isLocationAddressAvailable || !locationAddress) return null;
+    return (
+      <Box style={styles.item}>
+        {/* TODO: set selected address */}
+        <Pressable onPress={() => undefined} style={styles.radioContainer}>
+          <Icon name="map-pin" size={18} color={theme.colors.primary} />
+        </Pressable>
+
+        <Box style={styles.address}>
+          <Text style={styles.label}>Use Current Location</Text>
+          <Text style={styles.street} numberOfLines={1} ellipsizeMode="tail">
+            {locationAddress.data.address}
+          </Text>
+        </Box>
+
+        <Pressable
+          onPress={() => onEditLocation(locationAddress as AddressType)}
+          style={styles.editIcon}
+        >
+          <Icon name="edit-2" size={13} color={theme.colors.primary} />
+        </Pressable>
       </Box>
-
-      <Pressable onPress={undefined} style={styles.editIcon}>
-        <Icon name="edit-2" size={13} color={theme.colors.primary} />
-      </Pressable>
-    </Box>
-  );
-});
+    );
+  }
+);
 
 const useStyles = makeStyles((theme: Theme) => ({
   backdrop: {
