@@ -5,7 +5,6 @@ import { Pressable, View } from "react-native";
 import type { Theme } from "../components";
 import { Icon, makeStyles, Text, useTheme } from "../components";
 import { useAppState } from "../state/StateContext";
-import type { Address } from "../state/store/AddressStore";
 import type { LockedAddressStore } from "../state/store/LockedAddressStore";
 
 interface LocationBarProps {
@@ -19,26 +18,23 @@ const LocationBar = observer(
     const theme = useTheme();
 
     const lockedAddress: LockedAddressStore = useAppState("lockedAddress");
-    const address = lockedAddress.lockedAddress?.data;
-    const addressLine: string | null = address?.address || null;
-    const addressLabel: string | null = address?.label || null;
+    const address = lockedAddress.lockedAddress;
+
+    const addressLine = address?.data.address || null;
+    const addressLabel = address?.data.label || null;
 
     return (
       <View style={styles.container}>
         <View>
           <Text numberOfLines={1} style={styles.address}>
-            {addressLine && address
-              ? addressLine
-              : "Set your delivery location"}
+            {addressLine}
           </Text>
-          {addressLabel && (
-            <View style={styles.label}>
-              <Icon color={theme.colors.darkGray} name="book-open" size={12} />
-              <Text numberOfLines={1} style={styles.labelText}>
-                {addressLabel}
-              </Text>
-            </View>
-          )}
+          <View style={styles.label}>
+            <Icon color={theme.colors.darkGray} name="book-open" size={12} />
+            <Text numberOfLines={1} style={styles.labelText}>
+              {addressLabel}
+            </Text>
+          </View>
         </View>
 
         <Pressable onPress={onEditPress}>

@@ -34,7 +34,7 @@ const AddressListModal = observer(({ visible, onClose }: Props) => {
   const lockedAddress: LockedAddressStore = useAppState("lockedAddress");
 
   const addressList: Address[] = addresses.all;
-  const currentlySelectedAddress = lockedAddress.lockedAddress?.data;
+  const currentlySelectedAddress: Address | null = lockedAddress.lockedAddress;
 
   const handleEditLocation = (address: AddressType) => {
     navigation.navigate("EditLocation", { params: address });
@@ -64,8 +64,8 @@ const AddressListModal = observer(({ visible, onClose }: Props) => {
         {/* Saved locations */}
         {addressList.length &&
           addressList.map((_address) => {
-            const address = _address.data;
-            const currentlySelectedId = currentlySelectedAddress?.id ?? "";
+            const address = _address?.data;
+            const currentlySelectedId = currentlySelectedAddress?.data.id ?? "";
             const isSelected = address.id === currentlySelectedId;
 
             return (
@@ -84,7 +84,7 @@ const AddressListModal = observer(({ visible, onClose }: Props) => {
                 </Pressable>
 
                 <Box style={styles.address}>
-                  <Text style={styles.label}>{address.label || ""}</Text>
+                  <Text style={styles.label}>{address.label}</Text>
                   <Text
                     style={styles.street}
                     numberOfLines={1}
@@ -140,7 +140,7 @@ const UseCurrentLocation = observer(
 
     const isLocationAddressAvailable: boolean =
       addresses.isLocationAddressAvailable;
-    const locationAddress = addresses.locationAddress?.data;
+    const locationAddress = addresses.locationAddress;
 
     if (!isLocationAddressAvailable || !locationAddress) return null;
     return (
@@ -153,12 +153,12 @@ const UseCurrentLocation = observer(
         <Box style={styles.address}>
           <Text style={styles.label}>Use Current Location</Text>
           <Text style={styles.street} numberOfLines={1} ellipsizeMode="tail">
-            {locationAddress.address}
+            {locationAddress.data.address}
           </Text>
         </Box>
 
         <Pressable
-          onPress={() => onEditLocation(locationAddress)}
+          onPress={() => onEditLocation(locationAddress.data)}
           style={styles.editIcon}
         >
           <Icon name="edit-2" size={13} color={theme.colors.primary} />
