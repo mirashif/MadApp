@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { observer } from "mobx-react";
 import React from "react";
-import { Pressable, StyleSheet } from "react-native";
+import { TouchableWithoutFeedback, StyleSheet, View } from "react-native";
 import Animated, {
   FadingTransition,
   SlideInUp,
@@ -53,73 +53,79 @@ const AddressListModal = observer(({ visible, onClose }: Props) => {
         style={styles.container}
       >
         <Box style={[styles.header, { paddingTop: insets.top }]}>
-          <Pressable onPress={onClose}>
+          <TouchableWithoutFeedback onPress={onClose}>
             <Icon name="arrow-left" size={24} />
-          </Pressable>
+          </TouchableWithoutFeedback>
           <Text ml="m" fontSize={24}>
             Delivery address
           </Text>
         </Box>
 
         {/* Saved locations */}
-        {addressList.length &&
-          addressList.map((_address) => {
-            const address = _address?.data;
-            const currentlySelectedId = currentlySelectedAddress?.data.id ?? "";
-            const isSelected = address.id === currentlySelectedId;
+        {addressList.map((_address) => {
+          const address = _address?.data;
+          const currentlySelectedId = currentlySelectedAddress?.data.id ?? "";
+          const isSelected = address.id === currentlySelectedId;
 
-            return (
-              <Box key={address.id} style={styles.item}>
-                <Pressable
-                  // TODO: set selected address
-                  onPress={() => handleLockAddress(address)}
-                  style={styles.radioContainer}
-                >
+          return (
+            <Box key={address.id} style={styles.item}>
+              <TouchableWithoutFeedback
+                // TODO: set selected address
+                onPress={() => handleLockAddress(address)}
+                style={styles.radioContainer}
+              >
+                <View>
                   <Box
                     style={[
                       styles.radio,
                       isSelected ? styles.radioSelected : undefined,
                     ]}
                   />
-                </Pressable>
 
-                <Box style={styles.address}>
-                  <Text style={styles.label}>{address.label}</Text>
-                  <Text
-                    style={styles.street}
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                  >
-                    {address.address}
-                  </Text>
-                </Box>
+                  <Box style={styles.address}>
+                    <Text style={styles.label}>{address.label}</Text>
+                    <Text
+                      style={styles.street}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
+                      {address.address}
+                    </Text>
+                  </Box>
+                </View>
+              </TouchableWithoutFeedback>
 
-                <Pressable
-                  onPress={() => handleEditLocation(address)}
-                  style={styles.editIcon}
-                >
-                  <Icon name="edit-2" size={13} color={theme.colors.primary} />
-                </Pressable>
-              </Box>
-            );
-          })}
+              <TouchableWithoutFeedback
+                onPress={() => handleEditLocation(address)}
+                style={styles.editIcon}
+              >
+                <Icon name="edit-2" size={13} color={theme.colors.primary} />
+              </TouchableWithoutFeedback>
+            </Box>
+          );
+        })}
 
         {/* Use current location */}
         <UseCurrentLocation onEditLocation={handleEditLocation} />
 
         {/* Add new address */}
-        <Pressable onPress={() => handleEditLocation} style={styles.addAddress}>
-          <Icon name="plus" size={23} color={theme.colors.primary} />
-          <Text
-            style={{
-              fontSize: 14,
-              color: theme.colors.primary,
-              marginLeft: 12,
-            }}
-          >
-            Add a New Address
-          </Text>
-        </Pressable>
+        <TouchableWithoutFeedback
+          onPress={() => handleEditLocation}
+          style={styles.addAddress}
+        >
+          <View>
+            <Icon name="plus" size={23} color={theme.colors.primary} />
+            <Text
+              style={{
+                fontSize: 14,
+                color: theme.colors.primary,
+                marginLeft: 12,
+              }}
+            >
+              Add a New Address
+            </Text>
+          </View>
+        </TouchableWithoutFeedback>
       </Animated.View>
     </Animated.View>
   );
@@ -146,23 +152,25 @@ const UseCurrentLocation = observer(
     return (
       <Box style={styles.item}>
         {/* TODO: set selected address */}
-        <Pressable onPress={() => undefined} style={styles.radioContainer}>
+        <TouchableWithoutFeedback
+          onPress={() => undefined}
+          style={styles.radioContainer}
+        >
           <Icon name="map-pin" size={18} color={theme.colors.primary} />
-        </Pressable>
+          <Box style={styles.address}>
+            <Text style={styles.label}>Use Current Location</Text>
+            <Text style={styles.street} numberOfLines={1} ellipsizeMode="tail">
+              {locationAddress.data.address}
+            </Text>
+          </Box>
+        </TouchableWithoutFeedback>
 
-        <Box style={styles.address}>
-          <Text style={styles.label}>Use Current Location</Text>
-          <Text style={styles.street} numberOfLines={1} ellipsizeMode="tail">
-            {locationAddress.data.address}
-          </Text>
-        </Box>
-
-        <Pressable
+        <TouchableWithoutFeedback
           onPress={() => onEditLocation(locationAddress.data)}
           style={styles.editIcon}
         >
           <Icon name="edit-2" size={13} color={theme.colors.primary} />
-        </Pressable>
+        </TouchableWithoutFeedback>
       </Box>
     );
   }

@@ -46,7 +46,7 @@ const LocationBar = observer(
               justifyContent: "center",
             }}
           >
-            {!address || editMode ? (
+            {editMode ? (
               <Icon name="edit-2" size={15} color={theme.colors.primary} />
             ) : (
               <Icon name="chevron-down" size={15} color={theme.colors.gray} />

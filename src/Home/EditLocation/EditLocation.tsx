@@ -39,6 +39,8 @@ const EditLocation = observer(() => {
   useEffect(() => {
     checkIfLocationEnabled();
     getCurrentLocation();
+    console.log("params", route.params);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
