@@ -84,8 +84,8 @@ const EditLocation = observer(() => {
           <MapView
             style={styles.map}
             region={{
-              latitude: builder.location?.lat ?? 0,
-              longitude: builder.location?.lon ?? 0,
+              latitude: builder.location?.lat ?? 23.8103,
+              longitude: builder.location?.lon ?? 90.4125,
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
             }}
