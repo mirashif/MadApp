@@ -9,11 +9,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SafeArea, Box, makeStyles, Text, Button } from "../../components";
 import Input from "../../components/Input";
 import DissmissKeyboard from "../../components/DissmissKeyboard";
+import type { AddressBuilder } from "../../state/store/AddressBuilder";
 import { useAppState } from "../../state/StateContext";
 import type { AddressStore } from "../../state/store/AddressStore";
 
 import MarkerIcon from "./assets/marker.svg";
 import Label, { LabelEnum } from "./Label";
+
+import { getFormattedAddress } from ".";
 
 const { height: windowHeight, width } = Dimensions.get("window");
 const height = windowHeight * 0.4;
@@ -23,7 +26,8 @@ const EditLocation = () => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
 
-  const addresses: AddressStore = useAppState("addresses");
+  const addressStore: AddressStore = useAppState("addresses");
+  const builder: AddressBuilder = addressStore.builder;
 
   const [label, setLabel] = useState<LabelEnum | string>(LabelEnum.HOME);
   const [formattedAddress, setFormattedAddress] = useState("");
@@ -39,40 +43,28 @@ const EditLocation = () => {
 
   const setCurrentLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
-
-    if (status !== "granted") {
-      return;
-    }
-
+    if (status !== "granted") return;
     const {
       coords: { latitude, longitude },
     } = await Location.getCurrentPositionAsync({});
-
     setRegion({
       latitude,
       longitude,
       latitudeDelta: 0.0017,
       longitudeDelta: 0.0017,
     });
-
-    addresses.setLocation(longitude, latitude);
+    addressStore.setLocation(longitude, latitude);
     await getAndSetAddress(latitude, longitude);
   };
 
   const getAndSetAddress = async (latitude: number, longitude: number) => {
     try {
       await Location.setGoogleApiKey("AIzaSyBeg-gj3svjGRcJplqxdmIqHx0hX-dbaj4");
-
-      const addr = await Location.reverseGeocodeAsync({
+      const _address = await Location.reverseGeocodeAsync({
         latitude,
         longitude,
       });
-
-      if (addr.length > 0) {
-        setAddress(addr[0]);
-        return;
-      }
-
+      if (_address.length > 0) return setAddress(_address[0]);
       setAddress(null);
     } catch (err) {
       setAddress(null);
@@ -80,42 +72,20 @@ const EditLocation = () => {
   };
 
   const saveLocation = async () => {
-    const { builder } = addresses;
-    if (region) {
-      builder.setLocation(region.longitude, region.latitude);
-      builder.setAddress(formattedAddress);
-      builder.setLabel(label);
-      const { addressable } = builder;
-      await addresses.addAddress(addressable);
-    }
+    if (!region) return;
+
+    const { addressable } = builder;
+    builder.setLocation(region.longitude, region.latitude);
+    builder.setAddress(formattedAddress);
+    builder.setLabel(label);
+    await addressStore.addAddress(addressable);
+
     navigation.goBack();
   };
 
   useEffect(() => {
-    if (address) {
-      const { name, street, city } = address;
-      if (name && !name.includes("+")) {
-        if (street) {
-          setFormattedAddress(`${name}, ${street}`);
-        } else {
-          setFormattedAddress(name);
-        }
-
-        return;
-      }
-
-      if (street) {
-        setFormattedAddress(street);
-        return;
-      }
-
-      if (city) {
-        setFormattedAddress(city);
-        return;
-      }
-
-      setFormattedAddress("");
-    }
+    const _address = getFormattedAddress(address);
+    setFormattedAddress(_address);
   }, [address]);
 
   useEffect(() => {
@@ -130,8 +100,11 @@ const EditLocation = () => {
           <MapView
             style={styles.map}
             region={region}
-            onRegionChangeComplete={handleRegionChange}
             provider={PROVIDER_GOOGLE}
+            showsCompass={true}
+            showsUserLocation={true}
+            showsMyLocationButton={true}
+            onRegionChangeComplete={handleRegionChange}
           />
           <Box style={styles.marker}>
             <MarkerIcon />
@@ -139,47 +112,49 @@ const EditLocation = () => {
         </Box>
 
         <ScrollView showsVerticalScrollIndicator={false}>
-          <Box padding="screen">
+          <Box
+            padding="screen"
+            // Fix: stops the touch event propagation
+            onStartShouldSetResponder={() => true}
+          >
             <Text fontFamily="Normal" fontSize={24} mb="xl">
               Edit Address
             </Text>
-
             <Input
               onChangeText={() => null}
               label="Address"
               placeholder="26, Block B, Lalmatia"
               value={formattedAddress}
+              style={{
+                marginBottom: 12,
+              }}
             />
-
-            <Box style={{ marginBottom: 12 }} />
-
             <Input
               onChangeText={() => null}
-              style={{
-                // Fix: ios multi-line broken
-                height: 32 * 3,
-                paddingTop: 16,
-                paddingBottom: 16,
-              }}
               placeholder="Note to rider - e.g landmark / building"
               inputProps={{
                 multiline: true,
                 numberOfLines: 3,
                 textAlignVertical: "top",
               }}
+              style={{
+                // Fix: ios multi-line
+                height: 32 * 3,
+                paddingTop: 16,
+                paddingBottom: 16,
+                marginBottom: 16,
+              }}
             />
-
-            <Box style={{ marginBottom: 16 }} />
-
             <Label onLabelChange={setLabel} />
-
-            <Box style={{ marginBottom: 36 }} />
-
-            <Button onPress={saveLocation} size="lg">
+            <Button
+              onPress={saveLocation}
+              size="lg"
+              style={{
+                marginBottom: insets.bottom,
+              }}
+            >
               Save
             </Button>
-
-            <Box style={{ marginBottom: insets.bottom }} />
           </Box>
         </ScrollView>
       </DissmissKeyboard>

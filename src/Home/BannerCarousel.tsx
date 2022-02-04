@@ -37,7 +37,7 @@ const BannerCarousel = observer(() => {
   };
 
   return (
-    <Box style={{ flex: 1, flexDirection: "row", justifyContent: "center" }}>
+    <Box style={styles.container}>
       <Carousel
         layout={"default"}
         data={bannersList}
@@ -62,11 +62,17 @@ const BannerCarousel = observer(() => {
 export default BannerCarousel;
 
 const useStyles = makeStyles((theme: Theme) => ({
+  container: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: theme.spacing.l,
+  },
   wideBanner: {
+    marginHorizontal: theme.spacing.screen,
     minHeight: 130,
     borderRadius: theme.borderRadii.l,
     overflow: "hidden",
-    marginHorizontal: theme.spacing.screen,
   },
   wideBannerImage: {
     flex: 1,
