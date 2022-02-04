@@ -22,7 +22,6 @@ import { Menu, MenuNavigator } from "../Menu";
 import type { AuthStackParamList } from "../Auth";
 import { AuthNavigator } from "../Auth";
 import { EditLocation } from "../Home/EditLocation";
-import type { AddressType } from "../state/store/AddressStore";
 
 import { useTheme } from "./theme";
 
@@ -118,7 +117,7 @@ type RootStackParamList = {
   HomeStack: NavigatorScreenParams<HomeStackParamList>;
   MenuStack: NavigatorScreenParams<MenuStackParamList>;
   AuthStack: NavigatorScreenParams<AuthStackParamList>;
-  EditLocation: { params: AddressType };
+  EditLocation: { id: string | null };
 };
 
 const RootStack = createStackNavigator<RootStackParamList>();

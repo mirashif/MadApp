@@ -11,6 +11,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import type { Theme } from "../components";
 import { Box, Icon, makeStyles, Text, useTheme } from "../components";
+import type { RootStackProps } from "../components/AppNavigator";
 import { useAppState } from "../state/StateContext";
 import type {
   Address,
@@ -27,7 +28,8 @@ interface Props {
 const AddressListModal = observer(({ visible, onClose }: Props) => {
   const styles = useStyles();
   const theme = useTheme();
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<RootStackProps<"EditLocation">["navigation"]>();
   const insets = useSafeAreaInsets();
 
   const addresses: AddressStore = useAppState("addresses");

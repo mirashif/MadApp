@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Alert, Dimensions, ScrollView } from "react-native";
 import type { Region } from "react-native-maps";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
@@ -10,8 +10,10 @@ import { observer } from "mobx-react";
 import { SafeArea, Box, makeStyles, Text, Button } from "../../components";
 import Input from "../../components/Input";
 import DissmissKeyboard from "../../components/DissmissKeyboard";
-import type { AddressStore } from "../../state/store/AddressStore";
+import type { Address, AddressStore } from "../../state/store/AddressStore";
 import { useAppState } from "../../state/StateContext";
+import type { AddressBuilder } from "../../state/store/AddressBuilder";
+import type { RootStackProps } from "../../components/AppNavigator";
 
 import MarkerIcon from "./assets/marker.svg";
 import Label, { LabelEnum } from "./Label";
@@ -28,9 +30,28 @@ const EditLocation = observer(() => {
   const styles = useStyles();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
-  const route = useRoute();
+  const route = useRoute<RootStackProps<"EditLocation">["route"]>();
+  const { id } = route?.params;
 
   const addresses: AddressStore = useAppState("addresses");
+
+  const builder: AddressBuilder = useMemo(() => {
+    if (id === "location" || null) {
+      // editing unsaved current location
+      // Fresh Builder (for new addresses)
+      return addresses.builder;
+    } else {
+      // editing existing address
+      // Pre-populated Builder (for address editing)
+      const addressList: Address[] = addresses.all;
+      const address = addressList.find(
+        ({ data: _address }) => _address.id === id
+      );
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      return address!.builder;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   // // # Fresh Builder (for new addresses)
   // const builder: AddressBuilder = addresses.builder;
