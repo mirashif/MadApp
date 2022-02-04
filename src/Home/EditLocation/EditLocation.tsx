@@ -9,7 +9,10 @@ import { observer } from "mobx-react";
 import { SafeArea, Box, makeStyles, Text, Button } from "../../components";
 import Input from "../../components/Input";
 import DissmissKeyboard from "../../components/DissmissKeyboard";
-import type { AddressStore } from "../../state/store/AddressStore";
+import type {
+  AddressStore,
+  UnsavedAddressType,
+} from "../../state/store/AddressStore";
 import { useAppState } from "../../state/StateContext";
 import type { AddressBuilder } from "../../state/store/AddressBuilder";
 import type { RootStackProps } from "../../components/AppNavigator";
@@ -31,17 +34,27 @@ const EditLocation = observer(() => {
 
   const builder: AddressBuilder = useMemo(() => {
     if (id === "location" || null) {
-      // for new addresses
+      // new addresses
       return addresses.builder;
     } else {
-      // for address editing
+      // address editing
       const _address = addresses.get(id as string);
       return _address ? _address.builder : addresses.builder;
     }
   }, [addresses, id]);
 
-  const handleSaveAddress = () => {
-    undefined;
+  const handleSaveAddress = async () => {
+    const addressable: UnsavedAddressType = builder.addressable;
+
+    if (id) {
+      // Updating Address
+      await addresses.updateAddress(id as string, addressable);
+    } else {
+      // Comitting Address
+      await addresses.addAddress(addressable);
+    }
+
+    navigation.goBack();
   };
 
   const handleDeleteAddress = async () => {
