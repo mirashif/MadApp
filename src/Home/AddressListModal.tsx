@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { observer } from "mobx-react";
 import React from "react";
-import { TouchableWithoutFeedback, StyleSheet, View } from "react-native";
+import { TouchableWithoutFeedback, StyleSheet } from "react-native";
 import Animated, {
   FadingTransition,
   SlideInUp,
@@ -72,9 +72,8 @@ const AddressListModal = observer(({ visible, onClose }: Props) => {
               <TouchableWithoutFeedback
                 // TODO: set selected address
                 onPress={() => handleLockAddress(address)}
-                style={styles.radioContainer}
               >
-                <View>
+                <Box style={styles.radioContainer}>
                   <Box
                     style={[
                       styles.radio,
@@ -92,7 +91,7 @@ const AddressListModal = observer(({ visible, onClose }: Props) => {
                       {address.address}
                     </Text>
                   </Box>
-                </View>
+                </Box>
               </TouchableWithoutFeedback>
 
               <TouchableWithoutFeedback
@@ -109,11 +108,8 @@ const AddressListModal = observer(({ visible, onClose }: Props) => {
         <UseCurrentLocation onEditLocation={handleEditLocation} />
 
         {/* Add new address */}
-        <TouchableWithoutFeedback
-          onPress={() => handleEditLocation}
-          style={styles.addAddress}
-        >
-          <View>
+        <TouchableWithoutFeedback onPress={() => handleEditLocation}>
+          <Box style={styles.addAddress}>
             <Icon name="plus" size={23} color={theme.colors.primary} />
             <Text
               style={{
@@ -124,7 +120,7 @@ const AddressListModal = observer(({ visible, onClose }: Props) => {
             >
               Add a New Address
             </Text>
-          </View>
+          </Box>
         </TouchableWithoutFeedback>
       </Animated.View>
     </Animated.View>
