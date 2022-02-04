@@ -36,8 +36,8 @@ const AddressListModal = observer(({ visible, onClose }: Props) => {
   const addressList: Address[] = addresses.all;
   const currentlySelectedAddress: Address | null = lockedAddress.lockedAddress;
 
-  const handleEditLocation = (address?: AddressType) => {
-    navigation.navigate("EditLocation", { address });
+  const handleEditLocation = (id: string | null) => {
+    navigation.navigate("EditLocation", { id });
   };
 
   const handleLockAddress = ({ id }: AddressType) => {
@@ -94,7 +94,7 @@ const AddressListModal = observer(({ visible, onClose }: Props) => {
                 </Box>
 
                 <TouchableWithoutFeedback
-                  onPress={() => handleEditLocation(address)}
+                  onPress={() => handleEditLocation(address.id)}
                   style={styles.editIcon}
                 >
                   <Icon name="edit-2" size={13} color={theme.colors.primary} />
@@ -105,10 +105,12 @@ const AddressListModal = observer(({ visible, onClose }: Props) => {
         })}
 
         {/* Use current location */}
-        <UseCurrentLocation onEditLocation={handleEditLocation} />
+        <UseCurrentLocation
+          onEditLocation={() => handleEditLocation("location")}
+        />
 
         {/* Add new address */}
-        <TouchableWithoutFeedback onPress={() => handleEditLocation}>
+        <TouchableWithoutFeedback onPress={() => handleEditLocation(null)}>
           <Box style={styles.addAddress}>
             <Icon name="plus" size={23} color={theme.colors.primary} />
             <Text

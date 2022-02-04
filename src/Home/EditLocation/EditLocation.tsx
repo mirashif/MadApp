@@ -32,6 +32,13 @@ const EditLocation = observer(() => {
 
   const addresses: AddressStore = useAppState("addresses");
 
+  // // # Fresh Builder (for new addresses)
+  // const builder: AddressBuilder = addresses.builder;
+
+  // // # Pre-populated Builder (for address editing)
+  // const address: Address = addresses.all[i];
+  // const builder: AddressBuilder = address.builder;
+
   const [region, setRegion] = useState<Region>();
   const [displayAddress, setDisplayAddress] = useState("");
   const [label, setLabel] = useState<LabelEnum | string>(LabelEnum.HOME);
