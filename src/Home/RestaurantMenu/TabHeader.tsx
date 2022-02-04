@@ -38,7 +38,7 @@ const TabHeader = ({
           paddingHorizontal: 8,
         }}
       >
-        {categories.map(({ data }, index) => (
+        {categories.map(({ data: category }, index) => (
           <TouchableWithoutFeedback
             onPress={() => onTabPress(index)}
             key={index}
@@ -65,7 +65,7 @@ const TabHeader = ({
                   { color: activeIndex === index ? "#FFB81B" : "black" },
                 ]}
               >
-                {data.name}
+                {category.name}
               </Text>
             </View>
           </TouchableWithoutFeedback>

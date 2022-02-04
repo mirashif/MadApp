@@ -39,15 +39,15 @@ const Content = ({
         paddingBottom: sHeight,
       }}
     >
-      {categories.map(({ data, items }, index) => (
+      {categories.map(({ data: category, items }, _idx) => (
         // menu container
         <View
-          key={index}
+          key={_idx}
           onLayout={({
             nativeEvent: {
               layout: { y: length },
             },
-          }) => onMeasurement(index, length)}
+          }) => onMeasurement(_idx, length)}
           style={{
             paddingHorizontal: theme.spacing.screen,
             paddingVertical: 15,
@@ -62,7 +62,7 @@ const Content = ({
               marginHorizontal: 8,
             }}
           >
-            {data.name}
+            {category.name}
           </Text>
 
           {/* items container */}
@@ -73,8 +73,8 @@ const Content = ({
               flexWrap: "wrap",
             }}
           >
-            {items.map((item, j) => (
-              <Item key={j} item={item} />
+            {items.map((item, _jdx) => (
+              <Item key={_jdx} item={item} />
             ))}
           </View>
         </View>

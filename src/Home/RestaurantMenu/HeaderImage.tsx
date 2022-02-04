@@ -14,9 +14,14 @@ import { HEADER_HEIGHT, HEADER_IMAGE_HEIGHT } from "./constants";
 interface HeaderImageProps {
   y: Animated.SharedValue<number>;
   restaurantName: string;
+  bannerImageURI: string;
 }
 
-const HeaderImage = ({ y, restaurantName }: HeaderImageProps) => {
+const HeaderImage = ({
+  y,
+  restaurantName,
+  bannerImageURI,
+}: HeaderImageProps) => {
   const navigation = useNavigation();
 
   const animatedStyles = useAnimatedStyle(() => {
@@ -54,7 +59,7 @@ const HeaderImage = ({ y, restaurantName }: HeaderImageProps) => {
         style={{
           flex: 1,
         }}
-        source={{ uri: "https://source.unsplash.com/a66sGfOnnqQ" }}
+        source={{ uri: bannerImageURI }}
       >
         <View
           style={{

@@ -2,10 +2,10 @@ import React from "react";
 import { View, Image } from "react-native";
 
 import { useTheme, Text } from "../../components";
-import type { Item as TItem } from "../../state/store/ItemStore";
+import type { Item as ItemType } from "../../state/store/ItemStore";
 
 interface ItemProps {
-  item: TItem;
+  item: ItemType;
 }
 
 const Item = ({ item }: ItemProps) => {

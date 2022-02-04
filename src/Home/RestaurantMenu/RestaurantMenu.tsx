@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import type Animated from "react-native-reanimated";
 import {
@@ -9,12 +9,9 @@ import {
 } from "react-native-reanimated";
 
 import type { HomeStackProps } from "..";
-import { SafeArea, Text } from "../../components";
+import { SafeArea } from "../../components";
 import { useAppState } from "../../state/StateContext";
-import type {
-  Restaurant,
-  RestaurantStore,
-} from "../../state/store/RestaurantStore";
+import type { RestaurantStore } from "../../state/store/RestaurantStore";
 
 import Content from "./Content";
 import HeaderImage from "./HeaderImage";
@@ -31,11 +28,6 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
     y.value = event.contentOffset.y;
   });
   const [activeIndex, setActiveIndex] = useState(0);
-
-  const { restaurantId } = route.params;
-  const restaurants: RestaurantStore = useAppState("restaurants");
-
-  const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
 
   const handleActiveIndex = (v: number) => {
     anchorY.forEach((_, i) => {
@@ -59,16 +51,30 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
     });
   }, [activeIndex, anchorX]);
 
-  useEffect(() => {
-    const _restaurant = restaurants.get(restaurantId);
-    setRestaurant(_restaurant);
-  }, [restaurantId, restaurants]);
+  const { restaurantId } = route.params;
 
+  const restaurants: RestaurantStore = useAppState("restaurants");
+
+  const restaurant = useMemo(
+    () => restaurants.get(restaurantId),
+    [restaurantId, restaurants]
+  );
+
+  if (!restaurant) return null;
   return (
     <SafeArea>
       <View>
-        <HeaderImage y={y} restaurantName={restaurant?.data.name || ""} />
-        <Offer y={y} />
+        <HeaderImage
+          y={y}
+          restaurantName={restaurant.data.name}
+          bannerImageURI={restaurant.data.bannerImageURI}
+        />
+        <Offer
+          y={y}
+          bannerTitle={restaurant.bannerTitle}
+          bannerDescription={restaurant.bannerDescription}
+          contactNumber={restaurant.data.phone}
+        />
       </View>
       <TabHeader
         scrollViewRefX={scrollViewRefX}
@@ -84,11 +90,8 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
           _anchorX[index] = length;
           setAnchorX(_anchorX);
         }}
-        categories={restaurant?.categories || []}
+        categories={restaurant.categories}
       />
-      {restaurant?.categories.map((c) => (
-        <Text key={c.id}>{c.items}</Text>
-      ))}
       <Content
         scrollViewRef={scrollViewRef}
         onMeasurement={(index, length) => {
@@ -97,7 +100,7 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
           setAnchorY(_anchorY);
         }}
         onScroll={scrollHandler}
-        categories={restaurant?.categories || []}
+        categories={restaurant.categories}
       />
     </SafeArea>
   );
