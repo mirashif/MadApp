@@ -20,8 +20,8 @@ const LocationBar = observer(
     const lockedAddress: LockedAddressStore = useAppState("lockedAddress");
     const address = lockedAddress.lockedAddress;
 
-    const addressLine = address?.data.address || null;
-    const addressLabel = address?.data.label || null;
+    const addressLine = address?.data.address || "";
+    const addressLabel = address?.data.label || "";
 
     return (
       <View style={styles.container}>
