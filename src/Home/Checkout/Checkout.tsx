@@ -50,12 +50,7 @@ const Checkout = () => {
           <HeaderBar title="Checkout" />
 
           <Box mx="screen">
-            <LocationBar
-              address="5 Rd No. 2/3, Dhaka 1213"
-              label="Scratchboard"
-              editMode
-              onEditPress={() => null}
-            />
+            <LocationBar editMode onEditPress={() => null} />
           </Box>
 
           <Box style={{ marginTop: 32 }}>

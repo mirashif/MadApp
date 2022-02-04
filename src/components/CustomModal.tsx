@@ -52,7 +52,7 @@ const CustomModal = ({
             style={{ paddingHorizontal: 22, paddingTop: 18, paddingBottom: 26 }}
           >
             {onBackPress && (
-              <Box flexDirection="row">
+              <Box flexDirection="row" alignItems="center">
                 <TouchableWithoutFeedback onPress={onBackPress}>
                   <Icon name="arrow-left" size={24} />
                 </TouchableWithoutFeedback>
