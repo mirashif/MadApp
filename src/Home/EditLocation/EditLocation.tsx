@@ -147,8 +147,8 @@ const EditLocation = observer(() => {
               }}
             />
             <Label
-              value={builder.label}
-              onLabelChange={(_label) => builder.setLabel(_label as string)}
+              label={builder.label || null}
+              onChange={(_label) => builder.setLabel(_label as string)}
             />
             <Button
               onPress={handleSaveAddress}
