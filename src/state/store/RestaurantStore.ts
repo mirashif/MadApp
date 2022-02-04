@@ -33,6 +33,14 @@ export class Restaurant {
         return this.data.id;
     }
 
+    get bannerTitle() {
+        return this.data.bannerDescription;
+    }
+
+    get bannerDescription() {
+        return this.data.bannerTitle;
+    }
+
     get items() {
         return this.parent.parent.items.getForRestaurant(this.data.id);
     }

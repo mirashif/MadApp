@@ -7,7 +7,7 @@ import {SerializedCartable} from './Cartable';
 export interface InterfaceAdditionType {
     addTo?:
         | 'restaurant'
-        | 'category'
+        // | 'category'
         | 'item-header'
         | 'item-builder'
         | 'item-builder-engaged'
@@ -63,7 +63,7 @@ export class Deal {
         makeAutoObservable(this, {}, {autoBind: true});
     }
 
-    get aplicationScript() {
+    get applicationScript() {
         try {
             // eslint-disable-next-line no-eval
             const doesApply: any = eval(
@@ -192,7 +192,7 @@ export class Deal {
             return false;
         }
 
-        return this.aplicationScript(
+        return this.applicationScript(
             this.parent.time,
             this.parent.parent.app.globals,
             this.parent.parent.user.user,
