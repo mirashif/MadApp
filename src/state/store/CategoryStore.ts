@@ -1,6 +1,6 @@
 import {makeAutoObservable} from 'mobx';
 import {Store} from '.';
-import {AddonType, Item, VariantGroupType} from './ItemStore';
+import {AddonType, CategoryVariantGroupType, Item} from './ItemStore';
 
 export interface CategoryType {
     id: string;
@@ -19,7 +19,7 @@ export interface CategoryType {
     };
 
     variantGroups: {
-        [variantGroupID: string]: VariantGroupType;
+        [variantGroupID: string]: CategoryVariantGroupType;
     };
 
     addonOrder: {
@@ -53,7 +53,7 @@ export class Category {
             this.data.restaurantID,
         )?.availableBranches[0];
 
-        return !this.data.isAvailable
+        return this.data.isAvailable === false
             ? false
             : !currentBranch?.data.unavailableCategories?.[this.id];
     }

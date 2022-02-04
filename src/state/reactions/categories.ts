@@ -10,11 +10,11 @@ export function categoryReactions(store: Store) {
                 console.log('LISTENING: Categories');
 
                 store.categories.listen();
-
-                return () => {
-                    store.categories.unlisten();
-                };
             }
+
+            return () => {
+                store.categories.unlisten();
+            };
         }),
         {fireImmediately: true},
     );

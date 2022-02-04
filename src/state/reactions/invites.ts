@@ -10,11 +10,11 @@ export function inviteReactions(store: Store) {
                 console.log('LISTENING: Invites');
 
                 store.invites.listen();
-
-                return () => {
-                    store.invites.unlisten();
-                };
             }
+
+            return () => {
+                store.invites.unlisten();
+            };
         }),
         {fireImmediately: true},
     );

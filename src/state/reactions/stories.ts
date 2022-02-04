@@ -1,4 +1,4 @@
-import { autorun, reaction } from "mobx";
+import {autorun, reaction} from 'mobx';
 import {withCleanup} from '../helpers/withCleanup';
 import {Store} from '../store';
 
@@ -10,17 +10,16 @@ export function storyReactions(store: Store) {
                 console.log('LISTENING: Stories');
 
                 store.stories.listen();
-
-                return () => {
-                    store.stories.unlisten();
-                };
             }
+
+            return () => {
+                store.stories.unlisten();
+            };
         }),
         {fireImmediately: true},
     );
 
-    autorun(function() {
-      console.log(store.stories.stories)
-
-    })
+    autorun(function () {
+        console.log(store.stories.stories);
+    });
 }

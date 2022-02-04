@@ -51,11 +51,6 @@ export interface ItemVariantGroupType extends BaseVariantGroupType {
 
 export type VariantGroupType = CategoryVariantGroupType | ItemVariantGroupType;
 
-export interface VariantGroupOrderedViewType
-    extends Omit<VariantGroupType, 'variants'> {
-    variants: VariantType[];
-}
-
 export interface ItemType {
     id: string;
     categoryID: string;

@@ -10,11 +10,11 @@ export function userReactions(store: Store) {
                 console.log('LISTENING: User');
 
                 store.user.listen();
-
-                return () => {
-                    store.user.unlisten();
-                };
             }
+
+            return () => {
+                store.user.unlisten();
+            };
         }),
         {fireImmediately: true},
     );

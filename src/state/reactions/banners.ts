@@ -10,11 +10,11 @@ export function bannerReactions(store: Store) {
                 console.log('LISTENING: Banners');
 
                 store.banners.listen();
-
-                return () => {
-                    store.banners.unlisten();
-                };
             }
+
+            return () => {
+                store.banners.unlisten();
+            };
         }),
         {fireImmediately: true},
     );
