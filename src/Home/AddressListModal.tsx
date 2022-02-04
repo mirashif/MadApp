@@ -68,11 +68,10 @@ const AddressListModal = observer(({ visible, onClose }: Props) => {
           const isSelected = address.id === currentlySelectedId;
 
           return (
-            <Box key={address.id} style={styles.item}>
-              <TouchableWithoutFeedback
-                // TODO: set selected address
-                onPress={() => handleLockAddress(address)}
-              >
+            <TouchableWithoutFeedback
+              onPress={() => handleLockAddress(address)}
+            >
+              <Box key={address.id} style={styles.item}>
                 <Box style={styles.radioContainer}>
                   <Box
                     style={[
@@ -80,27 +79,27 @@ const AddressListModal = observer(({ visible, onClose }: Props) => {
                       isSelected ? styles.radioSelected : undefined,
                     ]}
                   />
-
-                  <Box style={styles.address}>
-                    <Text style={styles.label}>{address.label}</Text>
-                    <Text
-                      style={styles.street}
-                      numberOfLines={1}
-                      ellipsizeMode="tail"
-                    >
-                      {address.address}
-                    </Text>
-                  </Box>
                 </Box>
-              </TouchableWithoutFeedback>
 
-              <TouchableWithoutFeedback
-                onPress={() => handleEditLocation(address)}
-                style={styles.editIcon}
-              >
-                <Icon name="edit-2" size={13} color={theme.colors.primary} />
-              </TouchableWithoutFeedback>
-            </Box>
+                <Box style={styles.address}>
+                  <Text style={styles.label}>{address.label}</Text>
+                  <Text
+                    style={styles.street}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                  >
+                    {address.address}
+                  </Text>
+                </Box>
+
+                <TouchableWithoutFeedback
+                  onPress={() => handleEditLocation(address)}
+                  style={styles.editIcon}
+                >
+                  <Icon name="edit-2" size={13} color={theme.colors.primary} />
+                </TouchableWithoutFeedback>
+              </Box>
+            </TouchableWithoutFeedback>
           );
         })}
 
@@ -139,35 +138,42 @@ const UseCurrentLocation = observer(
     const theme = useTheme();
 
     const addresses: AddressStore = useAppState("addresses");
+    const lockedAddress: LockedAddressStore = useAppState("lockedAddress");
 
     const isLocationAddressAvailable: boolean =
       addresses.isLocationAddressAvailable;
     const locationAddress = addresses.locationAddress;
 
+    const handleLockCurrentLocation = async () => {
+      lockedAddress.lockAddress("location" as string);
+    };
+
     if (!isLocationAddressAvailable || !locationAddress) return null;
     return (
-      <Box style={styles.item}>
-        {/* TODO: set selected address */}
-        <TouchableWithoutFeedback
-          onPress={() => undefined}
-          style={styles.radioContainer}
-        >
-          <Icon name="map-pin" size={18} color={theme.colors.primary} />
-          <Box style={styles.address}>
-            <Text style={styles.label}>Use Current Location</Text>
-            <Text style={styles.street} numberOfLines={1} ellipsizeMode="tail">
-              {locationAddress.data.address}
-            </Text>
+      <TouchableWithoutFeedback onPress={handleLockCurrentLocation}>
+        <Box style={styles.item}>
+          <Box style={styles.radioContainer}>
+            <Icon name="map-pin" size={18} color={theme.colors.primary} />
+            <Box style={styles.address}>
+              <Text style={styles.label}>Use Current Location</Text>
+              <Text
+                style={styles.street}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {locationAddress.data.address}
+              </Text>
+            </Box>
           </Box>
-        </TouchableWithoutFeedback>
 
-        <TouchableWithoutFeedback
-          onPress={() => onEditLocation(locationAddress.data)}
-          style={styles.editIcon}
-        >
-          <Icon name="edit-2" size={13} color={theme.colors.primary} />
-        </TouchableWithoutFeedback>
-      </Box>
+          <TouchableWithoutFeedback
+            onPress={() => onEditLocation(locationAddress.data)}
+            style={styles.editIcon}
+          >
+            <Icon name="edit-2" size={13} color={theme.colors.primary} />
+          </TouchableWithoutFeedback>
+        </Box>
+      </TouchableWithoutFeedback>
     );
   }
 );
