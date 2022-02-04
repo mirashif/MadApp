@@ -20,116 +20,123 @@ import type {
 } from "../state/store/AddressStore";
 import type { LockedAddressStore } from "../state/store/LockedAddressStore";
 
-interface Props {
+interface AddressListModalProps {
   visible: boolean;
   onClose: () => void;
 }
 
-const AddressListModal = observer(({ visible, onClose }: Props) => {
-  const styles = useStyles();
-  const theme = useTheme();
-  const navigation =
-    useNavigation<RootStackProps<"EditLocation">["navigation"]>();
-  const insets = useSafeAreaInsets();
+const AddressListModal = observer(
+  ({ visible, onClose }: AddressListModalProps) => {
+    const styles = useStyles();
+    const theme = useTheme();
+    const navigation =
+      useNavigation<RootStackProps<"EditLocation">["navigation"]>();
+    const insets = useSafeAreaInsets();
 
-  const addresses: AddressStore = useAppState("addresses");
-  const lockedAddress: LockedAddressStore = useAppState("lockedAddress");
+    const addresses: AddressStore = useAppState("addresses");
+    const lockedAddress: LockedAddressStore = useAppState("lockedAddress");
 
-  const addressList: Address[] = addresses.all;
-  const currentlySelectedAddress: Address | null = lockedAddress.lockedAddress;
+    const addressList: Address[] = addresses.all;
+    const currentlySelectedAddress: Address | null =
+      lockedAddress.lockedAddress;
 
-  const handleEditLocation = (id: string | null) => {
-    navigation.navigate("EditLocation", { id });
-  };
+    const handleEditLocation = (id: string | null) => {
+      navigation.navigate("EditLocation", { id });
+    };
 
-  const handleLockAddress = ({ id }: AddressType) => {
-    lockedAddress.lockAddress(id);
-  };
+    const handleLockAddress = ({ id }: AddressType) => {
+      lockedAddress.lockAddress(id);
+    };
 
-  if (!visible) return null;
-  return (
-    <Animated.View layout={FadingTransition} style={styles.backdrop}>
-      <Animated.View
-        entering={SlideInUp}
-        exiting={SlideOutUp}
-        style={styles.container}
-      >
-        <Box style={[styles.header, { paddingTop: insets.top }]}>
-          <TouchableWithoutFeedback onPress={onClose}>
-            <Icon name="arrow-left" size={24} />
-          </TouchableWithoutFeedback>
-          <Text ml="m" fontSize={24}>
-            Delivery address
-          </Text>
-        </Box>
-
-        {/* Saved locations */}
-        {addressList.map((_address) => {
-          const address = _address?.data;
-          const currentlySelectedId = currentlySelectedAddress?.data.id ?? "";
-          const isSelected = address.id === currentlySelectedId;
-
-          return (
-            <TouchableWithoutFeedback
-              key={address.id}
-              onPress={() => handleLockAddress(address)}
-            >
-              <Box style={styles.item}>
-                <Box style={styles.radioContainer}>
-                  <Box
-                    style={[
-                      styles.radio,
-                      isSelected ? styles.radioSelected : undefined,
-                    ]}
-                  />
-                </Box>
-
-                <Box style={styles.address}>
-                  <Text style={styles.label}>{address.label}</Text>
-                  <Text
-                    style={styles.street}
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                  >
-                    {address.address}
-                  </Text>
-                </Box>
-
-                <TouchableWithoutFeedback
-                  onPress={() => handleEditLocation(address.id)}
-                  style={styles.editIcon}
-                >
-                  <Icon name="edit-2" size={13} color={theme.colors.primary} />
-                </TouchableWithoutFeedback>
-              </Box>
+    if (!visible) return null;
+    return (
+      <Animated.View layout={FadingTransition} style={styles.backdrop}>
+        <Animated.View
+          entering={SlideInUp}
+          exiting={SlideOutUp}
+          style={styles.container}
+        >
+          <Box style={[styles.header, { paddingTop: insets.top }]}>
+            <TouchableWithoutFeedback onPress={onClose}>
+              <Icon name="arrow-left" size={24} />
             </TouchableWithoutFeedback>
-          );
-        })}
-
-        {/* Use current location */}
-        <UseCurrentLocation
-          onEditLocation={() => handleEditLocation("location")}
-        />
-
-        {/* Add new address */}
-        <TouchableWithoutFeedback onPress={() => handleEditLocation(null)}>
-          <Box style={styles.addAddress}>
-            <Icon name="plus" size={23} color={theme.colors.primary} />
-            <Text
-              style={{
-                fontSize: 14,
-                color: theme.colors.primary,
-                marginLeft: 12,
-              }}
-            >
-              Add a New Address
+            <Text ml="m" fontSize={24}>
+              Delivery address
             </Text>
           </Box>
-        </TouchableWithoutFeedback>
+
+          {/* Saved locations */}
+          {addressList.map((_address) => {
+            const address = _address?.data;
+            const currentlySelectedId = currentlySelectedAddress?.data.id ?? "";
+            const isSelected = address.id === currentlySelectedId;
+
+            return (
+              <TouchableWithoutFeedback
+                key={address.id}
+                onPress={() => handleLockAddress(address)}
+              >
+                <Box style={styles.item}>
+                  <Box style={styles.radioContainer}>
+                    <Box
+                      style={[
+                        styles.radio,
+                        isSelected ? styles.radioSelected : undefined,
+                      ]}
+                    />
+                  </Box>
+
+                  <Box style={styles.address}>
+                    <Text style={styles.label}>{address.label}</Text>
+                    <Text
+                      style={styles.street}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
+                      {address.address}
+                    </Text>
+                  </Box>
+
+                  <TouchableWithoutFeedback
+                    onPress={() => handleEditLocation(address.id)}
+                    style={styles.editIcon}
+                  >
+                    <Icon
+                      name="edit-2"
+                      size={13}
+                      color={theme.colors.primary}
+                    />
+                  </TouchableWithoutFeedback>
+                </Box>
+              </TouchableWithoutFeedback>
+            );
+          })}
+
+          {/* Use current location */}
+          <UseCurrentLocation
+            onEditLocation={() => handleEditLocation("location")}
+          />
+
+          {/* Add new address */}
+          <TouchableWithoutFeedback onPress={() => handleEditLocation(null)}>
+            <Box style={styles.addAddress}>
+              <Icon name="plus" size={23} color={theme.colors.primary} />
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: theme.colors.primary,
+                  marginLeft: 12,
+                }}
+              >
+                Add a New Address
+              </Text>
+            </Box>
+          </TouchableWithoutFeedback>
+        </Animated.View>
       </Animated.View>
-    </Animated.View>
-  );
-});
+    );
+  }
+);
 
 export default AddressListModal;
 

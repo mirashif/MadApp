@@ -26,7 +26,8 @@ const height = windowHeight * 0.4;
 const EditLocation = observer(() => {
   const styles = useStyles();
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<RootStackProps<"EditLocation">["navigation"]>();
   const route = useRoute<RootStackProps<"EditLocation">["route"]>();
   const { id } = route?.params;
 
@@ -46,12 +47,11 @@ const EditLocation = observer(() => {
   const handleSaveAddress = async () => {
     const addressable: UnsavedAddressType = builder.addressable;
 
-    if (id) {
-      // Updating Address
-      await addresses.updateAddress(id as string, addressable);
-    } else {
-      // Comitting Address
-      await addresses.addAddress(addressable);
+    try {
+      if (id) await addresses.updateAddress(id as string, addressable);
+      else await addresses.addAddress(addressable);
+    } catch (error) {
+      console.error(error);
     }
 
     navigation.goBack();
