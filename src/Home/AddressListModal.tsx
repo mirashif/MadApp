@@ -228,6 +228,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: 18,
     color: "#111",
     marginBottom: 5,
+    textTransform: "capitalize",
   },
   street: {
     fontSize: 14,
