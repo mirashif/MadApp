@@ -73,6 +73,8 @@ const Label = ({ label, onChange }: LabelProps) => {
   useEffect(() => {
     if (!label) return;
     _setUniqueLabels(label);
+    const _activeIndex = labels.findIndex((l) => l === label.toLowerCase());
+    setActiveIndex(_activeIndex);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

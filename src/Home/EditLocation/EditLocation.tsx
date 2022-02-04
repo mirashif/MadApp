@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { SafeArea, Box, makeStyles, Text, Button } from "../../components";
 import Input from "../../components/Input";
 import DissmissKeyboard from "../../components/DissmissKeyboard";
-import type { Address, AddressStore } from "../../state/store/AddressStore";
+import type { AddressStore } from "../../state/store/AddressStore";
 import { useAppState } from "../../state/StateContext";
 import type { AddressBuilder } from "../../state/store/AddressBuilder";
 import type { RootStackProps } from "../../components/AppNavigator";
@@ -19,7 +19,6 @@ import Label from "./Label";
 
 const { height: windowHeight, width } = Dimensions.get("window");
 const height = windowHeight * 0.4;
-const INFERRING_DELAY = 1000;
 
 const EditLocation = observer(() => {
   const styles = useStyles();
@@ -30,20 +29,14 @@ const EditLocation = observer(() => {
 
   const addresses: AddressStore = useAppState("addresses");
 
-  const address: Address | null = useMemo(() => {
-    if (id !== "location" || null) return addresses.get(id as string);
-    else return null;
-  }, [addresses, id]);
-
   const builder: AddressBuilder = useMemo(() => {
     if (id === "location" || null) {
-      // Fresh Builder (for new addresses)
+      // for new addresses
       return addresses.builder;
     } else {
-      // Pre-populated Builder (for address editing)
+      // for address editing
       const _address = addresses.get(id as string);
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      return _address!.builder;
+      return _address ? _address.builder : addresses.builder;
     }
   }, [addresses, id]);
 
@@ -51,8 +44,9 @@ const EditLocation = observer(() => {
     undefined;
   };
 
-  const handleDeleteAddress = () => {
-    undefined;
+  const handleDeleteAddress = async () => {
+    await addresses.deleteAddress(id as string);
+    navigation.goBack();
   };
 
   useEffect(() => {
@@ -110,13 +104,11 @@ const EditLocation = observer(() => {
             <Input
               value={builder.address}
               onChangeText={(_address) =>
-                setTimeout(
-                  () => builder.setAddress(_address as string),
-                  INFERRING_DELAY
-                )
+                builder.setAddress(_address as string)
               }
               inputProps={{
-                editable: builder.isAddressInferring,
+                editable:
+                  builder.isAddressInferring || !builder.isAddressInferred,
               }}
               label="Address"
               placeholder="26, Block B, Lalmatia"
@@ -127,10 +119,7 @@ const EditLocation = observer(() => {
             <Input
               value={builder.directions}
               onChangeText={(_directions) =>
-                setTimeout(
-                  () => builder.setDirections(_directions as string),
-                  INFERRING_DELAY
-                )
+                builder.setDirections(_directions as string)
               }
               placeholder="Note to rider - e.g landmark / building"
               inputProps={{
@@ -159,16 +148,18 @@ const EditLocation = observer(() => {
             >
               Save
             </Button>
-            <Button
-              onPress={handleDeleteAddress}
-              size="lg"
-              variant="outlined"
-              style={{
-                marginBottom: insets.bottom,
-              }}
-            >
-              Delete
-            </Button>
+            {id && (
+              <Button
+                onPress={handleDeleteAddress}
+                size="lg"
+                variant="outlined"
+                style={{
+                  marginBottom: insets.bottom,
+                }}
+              >
+                Delete
+              </Button>
+            )}
           </Box>
         </ScrollView>
       </DissmissKeyboard>
