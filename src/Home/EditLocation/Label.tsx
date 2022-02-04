@@ -47,6 +47,7 @@ const otherLabel: LabelType = {
 };
 
 interface LabelProps {
+  value: string;
   onLabelChange: (label: LabelEnum | string) => void;
 }
 
@@ -76,10 +77,6 @@ const Label = ({ onLabelChange }: LabelProps) => {
     setIsAddModalOpen(false);
   };
 
-  const _handleLabelOther = () => {
-    setIsAddModalOpen(true);
-  };
-
   return (
     <Box
       style={{
@@ -91,10 +88,8 @@ const Label = ({ onLabelChange }: LabelProps) => {
         visible={isAddModalOpen}
         title="Add Label"
         buttonTitle="Add"
-        onRequestClose={function (): void {
-          throw new Error("Function not implemented.");
-        }}
-        onBackPress={() => navigation.goBack()}
+        onRequestClose={() => undefined}
+        onBackPress={() => setIsAddModalOpen(false)}
         onButtonPress={_handleLabelAdd}
       >
         <Input
@@ -153,7 +148,7 @@ const Label = ({ onLabelChange }: LabelProps) => {
           })}
 
           <Box style={styles.labelItem}>
-            <TouchableWithoutFeedback onPress={_handleLabelOther}>
+            <TouchableWithoutFeedback onPress={() => setIsAddModalOpen(true)}>
               <CircularIcon
                 name={otherLabel.icon}
                 size={50}

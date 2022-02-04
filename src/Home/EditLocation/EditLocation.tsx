@@ -47,6 +47,14 @@ const EditLocation = observer(() => {
     }
   }, [addresses, id]);
 
+  const handleSaveAddress = () => {
+    undefined;
+  };
+
+  const handleDeleteAddress = () => {
+    undefined;
+  };
+
   useEffect(() => {
     checkIfLocationEnabled();
     getCurrentLocation();
@@ -139,14 +147,14 @@ const EditLocation = observer(() => {
               }}
             />
             <Label
-              value={builder.label || "Other"}
+              value={builder.label}
               onLabelChange={(_label) => builder.setLabel(_label as string)}
             />
             <Button
               onPress={handleSaveAddress}
               size="lg"
               style={{
-                marginBottom: 16,
+                marginBottom: 15,
               }}
             >
               Save
