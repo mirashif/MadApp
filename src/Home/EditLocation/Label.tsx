@@ -152,22 +152,19 @@ const Label = ({ onLabelChange }: LabelProps) => {
             );
           })}
 
-          {labels.length <= 3 && (
-            // otherLabel
-            <Box style={styles.labelItem}>
-              <TouchableWithoutFeedback onPress={_handleLabelOther}>
-                <CircularIcon
-                  name={otherLabel.icon}
-                  size={50}
-                  backgroundColor={theme.colors.primaryContrast}
-                  color={theme.colors.primary}
-                />
-              </TouchableWithoutFeedback>
-              <Text style={[styles.label, { color: "#a3a3a3" }]}>
-                {otherLabel.name}
-              </Text>
-            </Box>
-          )}
+          <Box style={styles.labelItem}>
+            <TouchableWithoutFeedback onPress={_handleLabelOther}>
+              <CircularIcon
+                name={otherLabel.icon}
+                size={50}
+                backgroundColor={theme.colors.primaryContrast}
+                color={theme.colors.primary}
+              />
+            </TouchableWithoutFeedback>
+            <Text style={[styles.label, { color: "#a3a3a3" }]}>
+              {otherLabel.name}
+            </Text>
+          </Box>
         </ScrollView>
       </Box>
     </Box>

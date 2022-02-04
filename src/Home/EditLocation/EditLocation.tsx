@@ -1,6 +1,5 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Alert, Dimensions, ScrollView } from "react-native";
-import type { Region } from "react-native-maps";
+import React, { useEffect, useMemo } from "react";
+import { Dimensions, ScrollView } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -16,15 +15,11 @@ import type { AddressBuilder } from "../../state/store/AddressBuilder";
 import type { RootStackProps } from "../../components/AppNavigator";
 
 import MarkerIcon from "./assets/marker.svg";
-import Label, { LabelEnum } from "./Label";
+import Label from "./Label";
 
 const { height: windowHeight, width } = Dimensions.get("window");
 const height = windowHeight * 0.4;
-
-interface Coords {
-  latitude: number;
-  longitude: number;
-}
+const INFERRING_DELAY = 1000;
 
 const EditLocation = observer(() => {
   const styles = useStyles();
@@ -35,95 +30,36 @@ const EditLocation = observer(() => {
 
   const addresses: AddressStore = useAppState("addresses");
 
+  const address: Address | null = useMemo(() => {
+    if (id !== "location" || null) return addresses.get(id as string);
+    else return null;
+  }, [addresses, id]);
+
   const builder: AddressBuilder = useMemo(() => {
     if (id === "location" || null) {
-      // editing unsaved current location
       // Fresh Builder (for new addresses)
       return addresses.builder;
     } else {
-      // editing existing address
       // Pre-populated Builder (for address editing)
-      const addressList: Address[] = addresses.all;
-      const address = addressList.find(
-        ({ data: _address }) => _address.id === id
-      );
+      const _address = addresses.get(id as string);
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      return address!.builder;
+      return _address!.builder;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
-
-  // // # Fresh Builder (for new addresses)
-  // const builder: AddressBuilder = addresses.builder;
-
-  // // # Pre-populated Builder (for address editing)
-  // const address: Address = addresses.all[i];
-  // const builder: AddressBuilder = address.builder;
-
-  const [region, setRegion] = useState<Region>();
-  const [displayAddress, setDisplayAddress] = useState("");
-  const [label, setLabel] = useState<LabelEnum | string>(LabelEnum.HOME);
+  }, [addresses, id]);
 
   useEffect(() => {
     checkIfLocationEnabled();
     getCurrentLocation();
-    console.log("params", route.params);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkIfLocationEnabled = async () => {
     const enabled = await Location.hasServicesEnabledAsync();
-
-    // TODO: remove alert
-    if (!enabled)
-      Alert.alert(
-        "Location Service not enabled",
-        "Please enable your location services to continue",
-        [{ text: "OK" }],
-        { cancelable: false }
-      );
-
-    // Location service enabled
+    if (!enabled) return;
   };
 
   const getCurrentLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
-
-    // TODO: remove alert
-    if (status !== "granted") {
-      Alert.alert(
-        "Permission not granted",
-        "Allow the app to use location service.",
-        [{ text: "OK" }],
-        { cancelable: false }
-      );
-    }
-
-    const { coords } = await Location.getCurrentPositionAsync();
-
-    if (coords) resolveDisplayAddress(coords);
-  };
-
-  const resolveDisplayAddress = async (coords: Coords) => {
-    const { latitude, longitude } = coords;
-    const response = await Location.reverseGeocodeAsync({
-      latitude,
-      longitude,
-    });
-
-    for (const item of response) {
-      const address = `${item.name}, ${item.street}, ${item.postalCode}, ${item.city}`;
-
-      setDisplayAddress(address);
-
-      if (address.length > 0) return;
-    }
-  };
-
-  const handleRegionChangeComplete = (_region: Region) => {
-    setRegion(_region);
-    resolveDisplayAddress(_region);
+    if (status !== "granted") return;
   };
 
   return (
@@ -132,12 +68,22 @@ const EditLocation = observer(() => {
         <Box style={styles.mapContainer}>
           <MapView
             style={styles.map}
-            region={region}
+            region={{
+              latitude: builder.location?.lat ?? 0,
+              longitude: builder.location?.lon ?? 0,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
             provider={PROVIDER_GOOGLE}
             showsCompass={true}
             showsUserLocation={true}
             showsMyLocationButton={true}
-            onRegionChangeComplete={handleRegionChangeComplete}
+            onRegionChangeComplete={(region) =>
+              builder.setLocation(
+                region.longitude as number,
+                region.latitude as number
+              )
+            }
           />
           <Box style={styles.marker}>
             <MarkerIcon />
@@ -154,16 +100,30 @@ const EditLocation = observer(() => {
               Edit Address
             </Text>
             <Input
-              onChangeText={() => null}
+              value={builder.address}
+              onChangeText={(_address) =>
+                setTimeout(
+                  () => builder.setAddress(_address as string),
+                  INFERRING_DELAY
+                )
+              }
+              inputProps={{
+                editable: builder.isAddressInferring,
+              }}
               label="Address"
               placeholder="26, Block B, Lalmatia"
-              value={displayAddress}
               style={{
                 marginBottom: 12,
               }}
             />
             <Input
-              onChangeText={() => null}
+              value={builder.directions}
+              onChangeText={(_directions) =>
+                setTimeout(
+                  () => builder.setDirections(_directions as string),
+                  INFERRING_DELAY
+                )
+              }
               placeholder="Note to rider - e.g landmark / building"
               inputProps={{
                 multiline: true,
@@ -178,16 +138,28 @@ const EditLocation = observer(() => {
                 marginBottom: 16,
               }}
             />
-            <Label onLabelChange={setLabel} />
+            <Label
+              value={builder.label || "Other"}
+              onLabelChange={(_label) => builder.setLabel(_label as string)}
+            />
             <Button
-              // TODO: add save fn
-              onPress={() => undefined}
+              onPress={handleSaveAddress}
               size="lg"
+              style={{
+                marginBottom: 16,
+              }}
+            >
+              Save
+            </Button>
+            <Button
+              onPress={handleDeleteAddress}
+              size="lg"
+              variant="outlined"
               style={{
                 marginBottom: insets.bottom,
               }}
             >
-              Save
+              Delete
             </Button>
           </Box>
         </ScrollView>
