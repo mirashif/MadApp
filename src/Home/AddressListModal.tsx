@@ -36,8 +36,8 @@ const AddressListModal = observer(({ visible, onClose }: Props) => {
   const addressList: Address[] = addresses.all;
   const currentlySelectedAddress: Address | null = lockedAddress.lockedAddress;
 
-  const handleEditLocation = (address: AddressType) => {
-    navigation.navigate("EditLocation", { params: address });
+  const handleEditLocation = (address?: AddressType) => {
+    navigation.navigate("EditLocation", { address });
   };
 
   const handleLockAddress = ({ id }: AddressType) => {
