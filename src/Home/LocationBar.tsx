@@ -89,5 +89,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontFamily: "Bold",
     fontSize: 11,
     marginLeft: theme.spacing.s,
+    textTransform: "capitalize",
   },
 }));
