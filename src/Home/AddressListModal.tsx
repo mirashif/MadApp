@@ -69,9 +69,10 @@ const AddressListModal = observer(({ visible, onClose }: Props) => {
 
           return (
             <TouchableWithoutFeedback
+              key={address.id}
               onPress={() => handleLockAddress(address)}
             >
-              <Box key={address.id} style={styles.item}>
+              <Box style={styles.item}>
                 <Box style={styles.radioContainer}>
                   <Box
                     style={[
