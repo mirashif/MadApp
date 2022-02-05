@@ -162,16 +162,19 @@ const EditLocation = observer(() => {
               Save
             </Button>
             {id && (
-              <Button
-                onPress={handleDeleteAddress}
-                size="lg"
-                variant="outlined"
+              <Box
                 style={{
                   marginBottom: insets.bottom,
                 }}
               >
-                Delete
-              </Button>
+                <Button
+                  onPress={handleDeleteAddress}
+                  size="lg"
+                  variant="outlined"
+                >
+                  Delete
+                </Button>
+              </Box>
             )}
           </Box>
         </ScrollView>
