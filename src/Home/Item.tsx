@@ -22,7 +22,7 @@ const Item = ({ item, onItemPress }: ItemProps) => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTagIdx((_currentTagIdx) => (_currentTagIdx + 1) % tags.length);
-    }, 3000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [tags]);
