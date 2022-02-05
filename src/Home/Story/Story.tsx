@@ -1,6 +1,11 @@
 import type { NavigationProp, RouteProp } from "@react-navigation/native";
 import React from "react";
-import { Image, ImageBackground, TouchableWithoutFeedback } from "react-native";
+import {
+  Dimensions,
+  Image,
+  ImageBackground,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import GestureRecognizer from "react-native-swipe-gestures";
 
@@ -17,23 +22,14 @@ interface IStory {
 const Story = ({ route, navigation }: IStory) => {
   const styles = useStyles();
   const insets = useSafeAreaInsets();
+  const { height } = Dimensions.get("window");
 
   const { story } = route.params;
 
   // TODO: Add swipe navigation to restaurant?
   return (
     <SafeArea>
-      <GestureRecognizer
-        onSwipeUp={
-          () => navigation.goBack()
-          // navigation.navigate("RestaurantMenu", {
-          //   restaurantId: "44f9bb5d-b5c5-4d55-9a1a-a91912d45f2f",
-          // })
-        }
-        style={{
-          flex: 1,
-        }}
-      >
+      <Box flex={1}>
         <ImageBackground
           source={{ uri: story.imageURI }}
           resizeMode="cover"
@@ -70,13 +66,20 @@ const Story = ({ route, navigation }: IStory) => {
             </Box>
           </Box>
 
-          <Box
-            flex={1}
-            flexDirection="column"
-            justifyContent="flex-end"
-            alignItems="center"
+          <GestureRecognizer
+            onSwipeUp={
+              () => navigation.goBack()
+              // navigation.navigate("RestaurantMenu", {
+              //   restaurantId: "44f9bb5d-b5c5-4d55-9a1a-a91912d45f2f",
+              // })
+            }
             style={{
+              flex: 1,
+              flexDirection: "column",
+              justifyContent: "flex-end",
+              alignItems: "center",
               marginBottom: insets.bottom,
+              marginTop: height * 0.2,
             }}
           >
             <Text
@@ -108,9 +111,9 @@ const Story = ({ route, navigation }: IStory) => {
                 Swipe up to browse
               </Text>
             </Box>
-          </Box>
+          </GestureRecognizer>
         </ImageBackground>
-      </GestureRecognizer>
+      </Box>
     </SafeArea>
   );
 };
