@@ -15,6 +15,7 @@ import {
 
 import type { Theme } from "../components";
 import {
+  useTheme,
   Box,
   Button,
   CircularIcon,
@@ -26,6 +27,7 @@ import {
 import { useCart } from "../state/hooks/useCart";
 import { useAppState } from "../state/StateContext";
 import type { AuthStore } from "../state/store/AuthStore";
+import type { Item } from "../state/store/ItemStore";
 import type {
   Restaurant,
   RestaurantStore,
@@ -43,15 +45,6 @@ import VariationItem from "./VariationItem";
 
 const FOOTER_SHEET_HEIGHT = 144;
 
-export interface IItem {
-  id: number | string;
-  discount?: string;
-  name: string;
-  previousPrice?: string;
-  price: string;
-  imageUri: string;
-}
-
 const variations = [
   {
     id: 1,
@@ -68,6 +61,7 @@ const variations = [
 const Home = observer(() => {
   const styles = useStyles();
   const isFocused = useIsFocused();
+  const theme = useTheme();
 
   const auth: AuthStore = useAppState("auth");
   const restaurants: RestaurantStore = useAppState("restaurants");
@@ -79,12 +73,14 @@ const Home = observer(() => {
   const itemSheetRef = useRef<BottomSheetModal>(null);
   const itemFooterSheetRef = useRef<BottomSheetModal>(null);
 
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [addressListModalVisible, setAddressListModalVisible] = useState(false);
   const [selectedVariationID, setSelectedVariationID] = useState<
     null | string | number
   >(null);
 
-  const handleItemPress = () => {
+  const handleItemPress = (item: Item) => {
+    setSelectedItem(item);
     itemSheetRef.current?.present();
   };
 
@@ -165,8 +161,9 @@ const Home = observer(() => {
             imageStyle={{
               borderTopLeftRadius: 12,
               borderTopRightRadius: 12,
+              backgroundColor: theme.colors.gray,
             }}
-            source={{ uri: "https://source.unsplash.com/a66sGfOnnqQ/" }}
+            source={{ uri: selectedItem?.data.pictureURI }}
           >
             {/* CLOSE ICON */}
             <TouchableWithoutFeedback onPress={handleDismiss}>
@@ -214,7 +211,7 @@ const Home = observer(() => {
                 marginBottom: 16,
               }}
             >
-              Chicken Alfredo
+              {selectedItem?.data.name}
             </Text>
             <Text
               style={{
@@ -223,8 +220,7 @@ const Home = observer(() => {
                 color: "#8A8A8A",
               }}
             >
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mattis
-              condimentum faucibus viverra non nullam nisl bibendum egestas.
+              {selectedItem?.data.description}
             </Text>
 
             <View style={{ marginTop: 24 }}>
@@ -244,15 +240,18 @@ const Home = observer(() => {
               </Box>
             </View>
 
-            <View style={{ marginTop: 14 }}>
-              <Text style={styles.modalSectionTitle}>Add-ons</Text>
-              <Text style={styles.modalSectionSubtitle}>Select one</Text>
+            {selectedItem && selectedItem.addons.length > 0 && (
+              <View style={{ marginTop: 14 }}>
+                <Text style={styles.modalSectionTitle}>Add-ons</Text>
+                <Text style={styles.modalSectionSubtitle}>Select one</Text>
 
-              <Box>
-                <AddonsItem />
-                <AddonsItem />
-              </Box>
-            </View>
+                <Box>
+                  {selectedItem.addons.map((addon) => (
+                    <AddonsItem key={addon.data.id} {...{ addon }} />
+                  ))}
+                </Box>
+              </View>
+            )}
           </View>
         </BottomSheetScrollView>
       </BottomSheetModal>
@@ -283,7 +282,7 @@ const Home = observer(() => {
                 color: "black",
               }}
             >
-              ৳699.00
+              ৳{selectedItem?.data.price}
             </Text>
           </View>
 
