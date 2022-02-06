@@ -1,97 +1,81 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Dimensions, ScrollView } from "react-native";
-import type { Region } from "react-native-maps";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { observer } from "mobx-react";
 
 import { SafeArea, Box, makeStyles, Text, Button } from "../../components";
 import Input from "../../components/Input";
 import DissmissKeyboard from "../../components/DissmissKeyboard";
-import type { AddressBuilder } from "../../state/store/AddressBuilder";
+import type {
+  AddressStore,
+  UnsavedAddressType,
+} from "../../state/store/AddressStore";
 import { useAppState } from "../../state/StateContext";
-import type { AddressStore } from "../../state/store/AddressStore";
+import type { AddressBuilder } from "../../state/store/AddressBuilder";
+import type { RootStackProps } from "../../components/AppNavigator";
 
 import MarkerIcon from "./assets/marker.svg";
-import Label, { LabelEnum } from "./Label";
-
-import { getFormattedAddress } from ".";
+import Label from "./Label";
 
 const { height: windowHeight, width } = Dimensions.get("window");
 const height = windowHeight * 0.4;
 
-const EditLocation = () => {
+const EditLocation = observer(() => {
   const styles = useStyles();
-  const navigation = useNavigation();
   const insets = useSafeAreaInsets();
+  const navigation =
+    useNavigation<RootStackProps<"EditLocation">["navigation"]>();
+  const route = useRoute<RootStackProps<"EditLocation">["route"]>();
+  const { id } = route?.params;
 
-  const addressStore: AddressStore = useAppState("addresses");
-  const builder: AddressBuilder = addressStore.builder;
+  const addresses: AddressStore = useAppState("addresses");
 
-  const [label, setLabel] = useState<LabelEnum | string>(LabelEnum.HOME);
-  const [formattedAddress, setFormattedAddress] = useState("");
-  const [address, setAddress] =
-    useState<Location.LocationGeocodedAddress | null>(null);
-
-  const [region, setRegion] = useState<Region>();
-
-  const handleRegionChange = async (_region: Region) => {
-    setRegion(_region);
-    await getAndSetAddress(_region.latitude, _region.longitude);
-  };
-
-  const setCurrentLocation = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") return;
-    const {
-      coords: { latitude, longitude },
-    } = await Location.getCurrentPositionAsync({});
-    setRegion({
-      latitude,
-      longitude,
-      latitudeDelta: 0.0017,
-      longitudeDelta: 0.0017,
-    });
-    addressStore.setLocation(longitude, latitude);
-    await getAndSetAddress(latitude, longitude);
-  };
-
-  const getAndSetAddress = async (latitude: number, longitude: number) => {
-    try {
-      await Location.setGoogleApiKey("AIzaSyBeg-gj3svjGRcJplqxdmIqHx0hX-dbaj4");
-      const _address = await Location.reverseGeocodeAsync({
-        latitude,
-        longitude,
-      });
-      if (_address.length > 0) return setAddress(_address[0]);
-      setAddress(null);
-    } catch (err) {
-      setAddress(null);
+  const builder: AddressBuilder = useMemo(() => {
+    if (id === "location" || null) {
+      // new addresses
+      return addresses.builder;
+    } else {
+      // address editing
+      const _address = addresses.get(id as string);
+      return _address ? _address.builder : addresses.builder;
     }
-  };
+  }, [addresses, id]);
 
-  const saveLocation = async () => {
-    if (!region) return;
+  const handleSaveAddress = async () => {
+    const addressable: UnsavedAddressType = builder.addressable;
 
-    const { addressable } = builder;
-    builder.setLocation(region.longitude, region.latitude);
-    builder.setAddress(formattedAddress);
-    builder.setLabel(label);
-    await addressStore.addAddress(addressable);
+    try {
+      if (id) await addresses.updateAddress(id as string, addressable);
+      else await addresses.addAddress(addressable);
+    } catch (error) {
+      console.error(error);
+    }
 
     navigation.goBack();
   };
 
-  useEffect(() => {
-    const _address = getFormattedAddress(address);
-    setFormattedAddress(_address);
-  }, [address]);
+  const handleDeleteAddress = async () => {
+    await addresses.deleteAddress(id as string);
+    navigation.goBack();
+  };
 
   useEffect(() => {
-    setCurrentLocation();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    checkIfLocationEnabled();
+    getCurrentLocation();
   }, []);
+
+  const checkIfLocationEnabled = async () => {
+    const enabled = await Location.hasServicesEnabledAsync();
+    if (!enabled) return;
+  };
+
+  const getCurrentLocation = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") return;
+  };
 
   return (
     <SafeArea>
@@ -99,12 +83,22 @@ const EditLocation = () => {
         <Box style={styles.mapContainer}>
           <MapView
             style={styles.map}
-            region={region}
+            region={{
+              latitude: builder.location?.lat ?? 23.8103,
+              longitude: builder.location?.lon ?? 90.4125,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
             provider={PROVIDER_GOOGLE}
             showsCompass={true}
             showsUserLocation={true}
             showsMyLocationButton={true}
-            onRegionChangeComplete={handleRegionChange}
+            onRegionChangeComplete={(region) =>
+              builder.setLocation(
+                region.longitude as number,
+                region.latitude as number
+              )
+            }
           />
           <Box style={styles.marker}>
             <MarkerIcon />
@@ -114,23 +108,32 @@ const EditLocation = () => {
         <ScrollView showsVerticalScrollIndicator={false}>
           <Box
             padding="screen"
-            // Fix: stops the touch event propagation
+            // stops the touch event propagation
             onStartShouldSetResponder={() => true}
           >
             <Text fontFamily="Normal" fontSize={24} mb="xl">
               Edit Address
             </Text>
             <Input
-              onChangeText={() => null}
+              value={builder.address}
+              onChangeText={(_address) =>
+                builder.setAddress(_address as string)
+              }
+              inputProps={{
+                editable:
+                  builder.isAddressInferring || !builder.isAddressInferred,
+              }}
               label="Address"
               placeholder="26, Block B, Lalmatia"
-              value={formattedAddress}
               style={{
                 marginBottom: 12,
               }}
             />
             <Input
-              onChangeText={() => null}
+              value={builder.directions}
+              onChangeText={(_directions) =>
+                builder.setDirections(_directions as string)
+              }
               placeholder="Note to rider - e.g landmark / building"
               inputProps={{
                 multiline: true,
@@ -145,22 +148,39 @@ const EditLocation = () => {
                 marginBottom: 16,
               }}
             />
-            <Label onLabelChange={setLabel} />
+            <Label
+              label={builder.label || null}
+              onChange={(_label) => builder.setLabel(_label as string)}
+            />
             <Button
-              onPress={saveLocation}
+              onPress={handleSaveAddress}
               size="lg"
               style={{
-                marginBottom: insets.bottom,
+                marginBottom: 15,
               }}
             >
               Save
             </Button>
+            {id && (
+              <Button
+                onPress={handleDeleteAddress}
+                size="lg"
+                variant="outlined"
+                style={{
+                  marginBottom: insets.bottom,
+                }}
+              >
+                Delete
+              </Button>
+            )}
           </Box>
         </ScrollView>
       </DissmissKeyboard>
     </SafeArea>
   );
-};
+});
+
+export default EditLocation;
 
 const useStyles = makeStyles(() => ({
   mapContainer: {
@@ -180,5 +200,3 @@ const useStyles = makeStyles(() => ({
     pointerEvents: "none",
   },
 }));
-
-export default EditLocation;

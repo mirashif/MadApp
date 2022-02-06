@@ -18,9 +18,10 @@ const AuthSheet = () => {
     <BottomSheetModal
       ref={authSheetRef}
       snapPoints={[210]}
-      dismissOnPanDown={false}
-      handleComponent={null}
+      enableContentPanningGesture={false}
+      enableHandlePanningGesture={false}
       enableOverDrag={false}
+      handleComponent={null}
       backdropComponent={() => (
         <Box
           style={{

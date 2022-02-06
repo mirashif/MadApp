@@ -1,7 +1,7 @@
 import React from "react";
-import { RouteProp } from "@react-navigation/native";
+import type { RouteProp } from "@react-navigation/native";
+import type { StackNavigationProp } from "@react-navigation/stack";
 import {
-  StackNavigationProp,
   createStackNavigator,
   CardStyleInterpolators,
 } from "@react-navigation/stack";

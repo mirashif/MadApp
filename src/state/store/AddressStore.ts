@@ -25,7 +25,7 @@ export interface AddressType extends UnsavedAddressType {
 
 export class Address {
     parent: AddressStore;
-    data: AddressType | UnsavedAddressType;
+    data: AddressType;
 
     constructor(parent: AddressStore, data: AddressType) {
         this.parent = parent;

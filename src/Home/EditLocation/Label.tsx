@@ -1,6 +1,4 @@
-import type { Feather } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import React from "react";
+import React, { useEffect } from "react";
 import { TouchableWithoutFeedback } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
@@ -14,71 +12,71 @@ import {
   useTheme,
 } from "../../components";
 
-export enum LabelEnum {
-  HOME = "Home",
-  WORK = "Work",
-  PARTNER = "Partner",
-  OTHER = "Other",
+enum LabelEnum {
+  HOME = "home",
+  WORK = "work",
+  PARTNER = "partner",
+  OTHER = "other",
 }
 
-interface LabelType {
-  name: LabelEnum | string;
-  icon: React.ComponentProps<typeof Feather>["name"];
-}
-
-const defaultLabels: LabelType[] = [
-  {
-    name: LabelEnum.HOME,
-    icon: "home",
-  },
-  {
-    name: LabelEnum.WORK,
-    icon: "briefcase",
-  },
-  {
-    name: LabelEnum.PARTNER,
-    icon: "heart",
-  },
-];
-
-const otherLabel: LabelType = {
-  name: LabelEnum.OTHER,
-  icon: "plus",
+const getIconName = (label: string) => {
+  switch (label.toLowerCase()) {
+    case LabelEnum.HOME:
+      return "home";
+    case LabelEnum.WORK:
+      return "briefcase";
+    case LabelEnum.PARTNER:
+      return "heart";
+    case LabelEnum.OTHER:
+      return "plus";
+    default:
+      return "x";
+  }
 };
 
+const defaultLabels: string[] = [
+  LabelEnum.HOME,
+  LabelEnum.WORK,
+  LabelEnum.PARTNER,
+];
+
 interface LabelProps {
-  onLabelChange: (label: LabelEnum | string) => void;
+  label: string | null;
+  onChange: (label: string) => void;
 }
 
-const Label = ({ onLabelChange }: LabelProps) => {
+const Label = ({ label, onChange }: LabelProps) => {
   const styles = useStyles();
   const theme = useTheme();
-  const navigation = useNavigation();
 
-  const [labels, setLabels] = React.useState<LabelType[]>(defaultLabels);
-  const [selected, setSelected] = React.useState<LabelEnum | string>(
-    LabelEnum.HOME
-  );
-  const [newLabelName, setNewLabelName] = React.useState("");
+  const [labels, setLabels] = React.useState(defaultLabels);
+  const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
+
+  const [newLabel, setNewLabel] = React.useState("");
   const [isAddModalOpen, setIsAddModalOpen] = React.useState(false);
 
-  const _handleLabelChange = (name: LabelEnum | string) => {
-    setSelected(name);
-    onLabelChange(name);
+  const _setUniqueLabels = (_label: string) => {
+    const uniqueLabels = [...new Set([...labels, _label.toLowerCase()])];
+    setLabels(uniqueLabels);
   };
 
-  const _handleLabelAdd = () => {
-    const _newLabel: LabelType = {
-      name: newLabelName,
-      icon: "x",
-    };
-    setLabels((_labels) => [..._labels, _newLabel]);
+  const _handleChangeLabel = (idx: number, _label: string) => {
+    setActiveIndex(idx);
+    onChange(_label);
+  };
+
+  const _handleAddNewLabel = () => {
+    _setUniqueLabels(newLabel);
     setIsAddModalOpen(false);
   };
 
-  const _handleLabelOther = () => {
-    setIsAddModalOpen(true);
-  };
+  useEffect(() => {
+    if (!label) return;
+    _setUniqueLabels(label);
+    const _activeIndex = labels.findIndex((l) => l === label.toLowerCase());
+    setActiveIndex(_activeIndex);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Box
@@ -91,15 +89,13 @@ const Label = ({ onLabelChange }: LabelProps) => {
         visible={isAddModalOpen}
         title="Add Label"
         buttonTitle="Add"
-        onRequestClose={function (): void {
-          throw new Error("Function not implemented.");
-        }}
-        onBackPress={() => navigation.goBack()}
-        onButtonPress={_handleLabelAdd}
+        onRequestClose={() => undefined}
+        onBackPress={() => setIsAddModalOpen(false)}
+        onButtonPress={_handleAddNewLabel}
       >
         <Input
-          onChangeText={setNewLabelName}
-          value={newLabelName}
+          onChangeText={setNewLabel}
+          value={newLabel}
           style={{
             marginVertical: 16,
           }}
@@ -118,15 +114,15 @@ const Label = ({ onLabelChange }: LabelProps) => {
 
       <Box style={styles.labels}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {labels.map(({ name, icon }, idx) => {
-            const isSelected = selected === name;
+          {labels.map((_label, idx) => {
+            const isSelected = activeIndex === idx;
             return (
               <Box key={idx} style={styles.labelItem}>
                 <TouchableWithoutFeedback
-                  onPress={() => _handleLabelChange(name)}
+                  onPress={() => _handleChangeLabel(idx, _label)}
                 >
                   <CircularIcon
-                    name={icon}
+                    name={getIconName(_label)}
                     size={50}
                     backgroundColor={
                       isSelected
@@ -146,28 +142,25 @@ const Label = ({ onLabelChange }: LabelProps) => {
                     { color: isSelected ? "#3d3d3d" : "#a3a3a3" },
                   ]}
                 >
-                  {name}
+                  {_label}
                 </Text>
               </Box>
             );
           })}
 
-          {labels.length <= 3 && (
-            // otherLabel
-            <Box style={styles.labelItem}>
-              <TouchableWithoutFeedback onPress={_handleLabelOther}>
-                <CircularIcon
-                  name={otherLabel.icon}
-                  size={50}
-                  backgroundColor={theme.colors.primaryContrast}
-                  color={theme.colors.primary}
-                />
-              </TouchableWithoutFeedback>
-              <Text style={[styles.label, { color: "#a3a3a3" }]}>
-                {otherLabel.name}
-              </Text>
-            </Box>
-          )}
+          <Box style={styles.labelItem}>
+            <TouchableWithoutFeedback onPress={() => setIsAddModalOpen(true)}>
+              <CircularIcon
+                name="plus"
+                size={50}
+                backgroundColor={theme.colors.primaryContrast}
+                color={theme.colors.primary}
+              />
+            </TouchableWithoutFeedback>
+            <Text style={[styles.label, { color: "#a3a3a3" }]}>
+              {LabelEnum.OTHER}
+            </Text>
+          </Box>
         </ScrollView>
       </Box>
     </Box>
@@ -188,5 +181,6 @@ const useStyles = makeStyles(() => ({
   },
   label: {
     marginTop: 6,
+    textTransform: "capitalize",
   },
 }));

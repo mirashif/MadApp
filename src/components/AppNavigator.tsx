@@ -117,7 +117,7 @@ type RootStackParamList = {
   HomeStack: NavigatorScreenParams<HomeStackParamList>;
   MenuStack: NavigatorScreenParams<MenuStackParamList>;
   AuthStack: NavigatorScreenParams<AuthStackParamList>;
-  EditLocation: undefined;
+  EditLocation: { id: string | null };
 };
 
 const RootStack = createStackNavigator<RootStackParamList>();

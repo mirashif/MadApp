@@ -215,7 +215,7 @@ const UserInfo = observer(({ navigation }: RootStackProps<"AuthStack">) => {
           </Box>
 
           <TouchableWithoutFeedback
-            onPress={() => navigation.navigate("EditLocation")}
+            onPress={() => navigation.navigate("EditLocation", { id: null })}
           >
             <Box
               style={{
