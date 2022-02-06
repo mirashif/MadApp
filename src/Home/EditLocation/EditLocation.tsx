@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Dimensions, ScrollView } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
@@ -77,13 +77,23 @@ const EditLocation = observer(() => {
     if (status !== "granted") return;
   };
 
+  // Fix for android showsMyLocationButton
+  // https://github.com/react-native-maps/react-native-maps/issues/2010
+  const [paddingTop, setPaddingTop] = useState(1);
+  const [marginBottom, setMarginBottom] = useState(1);
+  const _onMapReady = () => {
+    setMarginBottom(0);
+    setPaddingTop(0);
+  };
+
   return (
     <SafeArea>
       <DissmissKeyboard>
         <Box style={styles.mapContainer}>
           <MapView
-            style={styles.map}
+            style={[styles.map, { marginBottom, paddingTop }]}
             region={{
+              // builder location ?? dhaka
               latitude: builder.location?.lat ?? 23.8103,
               longitude: builder.location?.lon ?? 90.4125,
               latitudeDelta: 0.0922,
@@ -99,6 +109,7 @@ const EditLocation = observer(() => {
                 region.latitude as number
               )
             }
+            onMapReady={_onMapReady}
           />
           <Box style={styles.marker}>
             <MarkerIcon />
