@@ -2,6 +2,7 @@ import {makeAutoObservable} from 'mobx';
 import {Store} from './index';
 import {Category} from './CategoryStore';
 import {InterfaceAdditionType} from './DealStore';
+import {Cartable} from './Cartable';
 
 export interface AddonType {
     id: string;
@@ -20,6 +21,7 @@ export interface VariantType {
 
     name: string;
     description?: string;
+    imageURI?: string;
 
     hash: string;
 
@@ -251,6 +253,10 @@ export class Item {
 
         const dealTags = dealTag ? [dealTag] : [];
         return [...itemTags, ...dealTags];
+    }
+
+    get cartable() {
+        return new Cartable(this.parent.parent, this);
     }
 }
 

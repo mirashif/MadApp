@@ -213,6 +213,10 @@ export class Cartable {
         return this.singularPrice * this.count;
     }
 
+    get originalPrice(): number {
+        return this.item.originalPrice * this.count;
+    }
+
     get freebies(): Freebie[] {
         return this.dealt instanceof Array &&
             typeof this.dealt[0] === 'string' &&
@@ -231,7 +235,9 @@ export class Cartable {
 
     get isDealApplied() {
         return (
-            this.hasFreebies || this.singularPrice !== this.item.originalPrice
+            this.hasFreebies ||
+            (this.singularPrice !== this.originalPrice &&
+                this.singularPrice < this.originalPrice)
         );
     }
 
