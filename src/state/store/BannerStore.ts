@@ -1,5 +1,6 @@
 import {makeAutoObservable} from 'mobx';
 import {Store} from '.';
+import {profile} from '../helpers/profile';
 
 export interface BannerType {
     id: string;
@@ -32,15 +33,31 @@ export class BannerStore {
         makeAutoObservable(this, {}, {autoBind: true});
     }
 
+    ready = false;
+
+    setReady(ready: boolean = true) {
+        this.ready = ready;
+    }
+
     upsert(id: string, data: BannerType): void {
+        const _p = profile('BannerStore.upsert');
+
         this.banners[id] = new Banner(this, data);
+
+        _p();
     }
 
     remove(id: string): void {
+        const _p = profile('BannerStore.remove');
+
         delete this.banners[id];
+
+        _p();
     }
 
     listen(): void {
+        const _p = profile('BannerStore.listen');
+
         this.listener = this.parent.firebase
             .firestore()
             .collection('banners')
@@ -55,26 +72,40 @@ export class BannerStore {
                         this.remove(change.doc.id);
                     }
                 });
+
+                this.setReady();
             });
+
+        _p();
     }
 
     unlisten(): void {
+        const _p = profile('BannerStore.unlisten');
+
         if (this.listener) {
             this.listener();
             this.listener = null;
         }
+
+        _p();
     }
 
     get all(): Banner[] {
-        return Object.values(this.banners).sort((a, b) => {
-            return (
-                (this.parent.app.globals?.bannerOrder?.[a.data.id] || 0) -
-                (this.parent.app.globals?.bannerOrder?.[b.data.id] || 0)
-            );
-        });
+        const _p = profile('BannerStore.all');
+
+        return _p(
+            Object.values(this.banners).sort((a, b) => {
+                return (
+                    (this.parent.app.globals?.bannerOrder?.[a.data.id] || 0) -
+                    (this.parent.app.globals?.bannerOrder?.[b.data.id] || 0)
+                );
+            }),
+        );
     }
 
     get(id: string): Banner | null {
-        return this.banners[id] || null;
+        const _p = profile('BannerStore.get');
+
+        return _p(this.banners[id] || null);
     }
 }

@@ -1,5 +1,6 @@
 import {makeAutoObservable} from 'mobx';
 import {Store} from './index';
+import {profile} from '../helpers/profile';
 
 export interface RestaurantType {
     id: string;
@@ -30,43 +31,66 @@ export class Restaurant {
     }
 
     get id() {
-        return this.data.id;
+        const _p = profile('Restaurant.id');
+
+        return _p(this.data.id);
     }
 
     get bannerTitle() {
-        return this.data.bannerDescription;
+        const _p = profile('Restaurant.bannerTitle');
+
+        return _p(this.data.bannerTitle);
     }
 
     get bannerDescription() {
-        return this.data.bannerTitle;
+        const _p = profile('Restaurant.bannerDescription');
+
+        return _p(this.data.bannerDescription);
     }
 
     get items() {
-        return this.parent.parent.items.getForRestaurant(this.data.id);
+        const _p = profile('Restaurant.items');
+
+        return _p(this.parent.parent.items.getForRestaurant(this.data.id));
     }
 
     get popularItems() {
-        return this.parent.parent.items.popularForRestaurant(this.data.id);
+        const _p = profile('Restaurant.popularItems');
+
+        return _p(this.parent.parent.items.popularForRestaurant(this.data.id));
     }
 
     get isAvailable() {
-        return this.data.isAvailable && this.availableBranches.length > 0;
+        const _p = profile('Restaurant.isAvailable');
+
+        return _p(this.data.isAvailable && this.availableBranches.length > 0);
     }
 
     get branches() {
-        return this.parent.parent.branches.all.filter(
-            (branch) => branch.data.restaurantID === this.id,
+        const _p = profile('Restaurant.branches');
+
+        return _p(
+            this.parent.parent.branches.all.filter(
+                (branch) => branch.data.restaurantID === this.id,
+            ),
         );
     }
 
     get availableBranches() {
-        return this.branches.filter((branch) => branch.isAvailable);
+        const _p = profile('Restaurant.availableBranches');
+
+        return _p(this.branches.filter((branch) => branch.isAvailable));
     }
 
     get categories() {
-        return Object.keys(
-            this.parent.parent.categories.categoriesByRestaurant[this.id] || {},
-        ).map((key) => this.parent.parent.categories.categories[key]);
+        const _p = profile('Restaurant.categories');
+
+        return _p(
+            Object.keys(
+                this.parent.parent.categories.categoriesByRestaurant[this.id] ||
+                    {},
+            ).map((key) => this.parent.parent.categories.categories[key]),
+        );
     }
 }
 
@@ -84,15 +108,31 @@ export class RestaurantStore {
         makeAutoObservable(this, {}, {autoBind: true});
     }
 
+    ready = false;
+
+    setReady(ready: boolean = true) {
+        this.ready = ready;
+    }
+
     upsert(id: string, data: RestaurantType): void {
+        const _p = profile('RestaurantStore.upsert');
+
         this.restaurants[id] = new Restaurant(this, data);
+
+        _p();
     }
 
     remove(id: string): void {
+        const _p = profile('RestaurantStore.remove');
+
         delete this.restaurants[id];
+
+        _p();
     }
 
     listen(): void {
+        const _p = profile('RestaurantStore.listen');
+
         this.listener = this.parent.firebase
             .firestore()
             .collection('restaurants')
@@ -108,26 +148,41 @@ export class RestaurantStore {
                         this.remove(change.doc.id);
                     }
                 });
+
+                this.setReady();
             });
+
+        _p();
     }
 
     unlisten(): void {
+        const _p = profile('RestaurantStore.unlisten');
+
         if (this.listener) {
             this.listener();
             this.listener = null;
         }
+
+        _p();
     }
 
     get all(): Restaurant[] {
-        return Object.values(this.restaurants).sort((a, b) => {
-            return (
-                (this.parent.app.globals?.restaurantOrder?.[a.data.id] || 0) -
-                (this.parent.app.globals?.restaurantOrder?.[b.data.id] || 0)
-            );
-        });
+        const _p = profile('RestaurantStore.all');
+
+        return _p(
+            Object.values(this.restaurants).sort((a, b) => {
+                return (
+                    (this.parent.app.globals?.restaurantOrder?.[a.data.id] ||
+                        0) -
+                    (this.parent.app.globals?.restaurantOrder?.[b.data.id] || 0)
+                );
+            }),
+        );
     }
 
     get(id: string): Restaurant | null {
-        return this.restaurants[id] || null;
+        const _p = profile('RestaurantStore.get');
+
+        return _p(this.restaurants[id] || null);
     }
 }

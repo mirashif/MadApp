@@ -1,6 +1,7 @@
 import {makeAutoObservable} from 'mobx';
 import {Store} from './index';
 import {AddressType, UnsavedAddressType} from './AddressStore';
+import {profile} from '../helpers/profile';
 
 export class AddressBuilder {
     parent: Store;
@@ -46,24 +47,42 @@ export class AddressBuilder {
     }
 
     setLocation(lon: number, lat: number) {
+        const _p = profile('AddressBuilder.setLocation');
+
         this.location = {lon, lat};
         this.locationTouched = true;
+
+        _p();
     }
 
     setDirections(directions: string) {
+        const _p = profile('AddressBuilder.setDirections');
+
         this.directions = directions;
+
+        _p();
     }
 
     setAddress(address: string) {
+        const _p = profile('AddressBuilder.setAddress');
+
         this.address = address;
         this.addressTouched = true;
+
+        _p();
     }
 
     setLabel(label: string) {
+        const _p = profile('AddressBuilder.setLabel');
+
         this.label = label;
+
+        _p();
     }
 
     *inferLocation() {
+        const _p = profile('AddressBuilder.inferLocation');
+
         this.isLocationInferring = true;
 
         try {
@@ -74,9 +93,13 @@ export class AddressBuilder {
         } finally {
             this.isLocationInferring = false;
         }
+
+        _p();
     }
 
     *inferAddress() {
+        const _p = profile('AddressBuilder.inferAddress');
+
         this.isAddressInferring = true;
 
         try {
@@ -87,15 +110,19 @@ export class AddressBuilder {
         } finally {
             this.isAddressInferring = false;
         }
+
+        _p();
     }
 
     get addressable(): UnsavedAddressType {
-        return {
+        const _p = profile('AddressBuilder.addressable');
+
+        return _p({
             address: this.address,
             directions: this.directions,
             lat: this.location?.lat || 0,
             lon: this.location?.lon || 0,
             label: this.label,
-        };
+        });
     }
 }

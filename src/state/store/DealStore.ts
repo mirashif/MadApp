@@ -3,6 +3,7 @@ import {Store} from '.';
 import {GlobalsType} from './AppStore';
 import {UserAttributesType, UserType} from './UserStore';
 import {SerializedCartable} from './Cartable';
+import {profile} from '../helpers/profile';
 
 export interface InterfaceAdditionType {
     addTo?:
@@ -64,38 +65,47 @@ export class Deal {
     }
 
     get applicationScript() {
+        const _p = profile('Deal.applicationScript');
+
         try {
             // eslint-disable-next-line no-eval
             const doesApply: any = eval(
                 this.data.scripts.applicability + '; doesApply',
             );
 
-            return (
-                time: number,
-                globals: GlobalsType,
-                user: UserType,
-                attributes: UserAttributesType,
-            ): boolean => {
-                try {
-                    return !!doesApply(time, globals, user, attributes);
-                } catch (error) {
-                    console.error(`Matcher script error on invocation.`, error);
-                    return false;
-                }
-            };
+            return _p(
+                (
+                    time: number,
+                    globals: GlobalsType,
+                    user: UserType,
+                    attributes: UserAttributesType,
+                ): boolean => {
+                    try {
+                        return !!doesApply(time, globals, user, attributes);
+                    } catch (error) {
+                        console.error(
+                            `Matcher script error on invocation.`,
+                            error,
+                        );
+                        return false;
+                    }
+                },
+            );
         } catch (error) {
             console.error(
                 `Matcher Script Parse Error. ID = ${this.data.id}`,
                 error,
             );
 
-            return () => false;
+            return _p(() => false);
         }
     }
 
     get genericScript() {
+        const _p = profile('Deal.genericScript');
+
         if (!('generic' in this.data.scripts)) {
-            return () => false;
+            return _p(() => false);
         }
 
         try {
@@ -104,7 +114,7 @@ export class Deal {
                 this.data.scripts.generic + '; genericDeal',
             );
 
-            return (originalPrice: number): number | boolean => {
+            return _p((originalPrice: number): number | boolean => {
                 try {
                     const dealPrice = genericDeal(originalPrice);
 
@@ -121,20 +131,22 @@ export class Deal {
 
                     return false;
                 }
-            };
+            });
         } catch (error) {
             console.error(
                 `Generic Script Parse Error. ID = ${this.data.id}`,
                 error,
             );
 
-            return () => false;
+            return _p(() => false);
         }
     }
 
     get calcScript() {
+        const _p = profile('Deal.calcScript');
+
         if (!('calc' in this.data.scripts)) {
-            return () => false;
+            return _p(() => false);
         }
 
         try {
@@ -163,14 +175,14 @@ export class Deal {
                         return false;
                     }
 
-                    return dealPrice;
+                    return _p(dealPrice);
                 } catch (error) {
                     console.error(
                         `Calc script error on invocation. ID = ${this.data.id}`,
                         error,
                     );
 
-                    return false;
+                    return _p(false);
                 }
             };
         } catch (error) {
@@ -179,11 +191,13 @@ export class Deal {
                 error,
             );
 
-            return () => false;
+            return _p(() => false);
         }
     }
 
     get isApplicable(): boolean {
+        const _p = profile('Deal.isApplicable');
+
         if (
             !this.parent.parent.app?.globals ||
             !this.parent.parent.user?.user ||
@@ -192,11 +206,13 @@ export class Deal {
             return false;
         }
 
-        return this.applicationScript(
-            this.parent.time,
-            this.parent.parent.app.globals,
-            this.parent.parent.user.user,
-            this.parent.parent.user.userAttributes,
+        return _p(
+            this.applicationScript(
+                this.parent.time,
+                this.parent.parent.app.globals,
+                this.parent.parent.user.user,
+                this.parent.parent.user.userAttributes,
+            ),
         );
     }
 }
@@ -230,11 +246,23 @@ export class DealStore {
         makeAutoObservable(this, {}, {autoBind: true});
     }
 
+    ready = false;
+
+    setReady(ready: boolean = true) {
+        this.ready = ready;
+    }
+
     tick() {
+        const _p = profile('DealStore.tick');
+
         this.time = Date.now();
+
+        _p();
     }
 
     upsert(id: string, data: DealType): void {
+        const _p = profile('DealStore.upsert');
+
         this.deals[id] = new Deal(this, data);
 
         if (
@@ -269,31 +297,49 @@ export class DealStore {
 
             this.byItem[itemID].push(id);
         });
+
+        _p();
     }
 
     get universals() {
-        return this.universalDeals.map((id) => this.deals[id]);
+        const _p = profile('DealStore.universals');
+
+        return _p(this.universalDeals.map((id) => this.deals[id]));
     }
 
     getForItem(itemID: string) {
-        return (this.byItem[itemID] || []).map((id) => this.deals[id]);
+        const _p = profile('DealStore.getForItem');
+
+        return _p(this.byItem[itemID] || []).map((id) => this.deals[id]);
     }
 
     getForCategory(categoryID: string) {
-        return (this.byCategory[categoryID] || []).map((id) => this.deals[id]);
+        const _p = profile('DealStore.getForCategory');
+
+        return _p(this.byCategory[categoryID] || []).map(
+            (id) => this.deals[id],
+        );
     }
 
     getForRestaurant(restaurantID: string) {
-        return (this.byRestaurant[restaurantID] || []).map(
+        const _p = profile('DealStore.getForRestaurant');
+
+        return _p(this.byRestaurant[restaurantID] || []).map(
             (id) => this.deals[id],
         );
     }
 
     remove(id: string): void {
+        const _p = profile('DealStore.remove');
+
         delete this.deals[id];
+
+        _p();
     }
 
     listen(): void {
+        const _p = profile('DealStore.listen');
+
         this.listener = this.parent.firebase
             .firestore()
             .collection('deals')
@@ -305,26 +351,40 @@ export class DealStore {
                         this.remove(change.doc.id);
                     }
                 });
+
+                this.setReady();
             });
+
+        _p();
     }
 
     unlisten(): void {
+        const _p = profile('DealStore.unlisten');
+
         if (this.listener) {
             this.listener();
             this.listener = null;
         }
+
+        _p();
     }
 
     get all(): Deal[] {
-        return Object.values(this.deals).sort((a, b) => {
-            return (
-                (this.parent.app.globals?.dealOrder?.[a.data.id] || 0) -
-                (this.parent.app.globals?.dealOrder?.[b.data.id] || 0)
-            );
-        });
+        const _p = profile('DealStore.all');
+
+        return _p(
+            Object.values(this.deals).sort((a, b) => {
+                return (
+                    (this.parent.app.globals?.dealOrder?.[a.data.id] || 0) -
+                    (this.parent.app.globals?.dealOrder?.[b.data.id] || 0)
+                );
+            }),
+        );
     }
 
     get(id: string): Deal | null {
-        return this.deals[id] || null;
+        const _p = profile('DealStore.get');
+
+        return _p(this.deals[id] || null);
     }
 }

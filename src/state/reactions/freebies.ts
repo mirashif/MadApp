@@ -2,17 +2,18 @@ import {reaction} from 'mobx';
 import {withCleanup} from '../helpers/withCleanup';
 import {Store} from '../store';
 
-export function inviteReactions(store: Store) {
+export function freebieReactions(store: Store) {
     reaction(
-        () => !!store.auth.user,
+        () => true,
         withCleanup((shouldListen) => {
+            console.log('LISTENING: Freebies');
+
             if (shouldListen) {
-                console.log('LISTENING: Invites');
-                store.invites.listen();
+                store.freebies.listen();
             }
 
             return () => {
-                store.invites.unlisten();
+                store.freebies.unlisten();
             };
         }),
         {fireImmediately: true},

@@ -2,6 +2,7 @@ import {makeAutoObservable} from 'mobx';
 import {Store} from './index';
 import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 import {UserBuilder} from './UserBuilder';
+import {profile} from '../helpers/profile';
 
 export interface SettingsType {
     receivePush?: boolean;
@@ -48,12 +49,16 @@ export class UserStore {
     user: UserType | null = null;
     userAttributes: UserAttributesType | null = null;
 
+    _ready = 0;
+
     constructor(parent: Store) {
         this.parent = parent;
         makeAutoObservable(this, {}, {autoBind: true});
     }
 
     *updateUser(data: Partial<UserType>) {
+        const _p = profile('UserStore.updateUser');
+
         if (!this.user) {
             throw new Error('User not loaded.');
         }
@@ -63,27 +68,53 @@ export class UserStore {
             .collection('users')
             .doc(this.user.id)
             .set(data, {merge: true});
+
+        _p();
     }
 
     *updateSettings(settings: SettingsType) {
+        const _p = profile('UserStore.updateSettings');
+
         yield this.updateUser({
             settings: settings,
         });
+
+        _p();
     }
 
     get settings() {
-        return this.user?.settings || {};
+        const _p = profile('UserStore.settings');
+
+        return _p(this.user?.settings || {});
     }
 
     setUser(data: UserType) {
+        const _p = profile('UserStore.setUser');
+
         this.user = data;
+
+        _p();
     }
 
     setUserAttributes(data: UserAttributesType) {
+        const _p = profile('UserStore.setUserAttributes');
+
         this.userAttributes = data;
+
+        _p();
+    }
+
+    get ready() {
+        return !this.parent.auth.user || this._ready >= 2;
+    }
+
+    incrementReady() {
+        return this._ready++;
     }
 
     listen(): void {
+        const _p = profile('UserStore.listen');
+
         if (!this.parent.auth.user || this.parent.auth.user === true) {
             throw new Error('User not loaded.');
         }
@@ -94,6 +125,8 @@ export class UserStore {
             .doc(this.parent.auth.user?.uid)
             .onSnapshot((snap) => {
                 snap && this.setUser(<UserType>snap.data());
+
+                this.incrementReady();
             }, console.error);
 
         this.listeners[1] = this.parent.firebase
@@ -102,10 +135,16 @@ export class UserStore {
             .doc(this.parent.auth.user?.uid)
             .onSnapshot((snap) => {
                 snap && this.setUserAttributes(<UserAttributesType>snap.data());
+
+                this.incrementReady();
             }, console.error);
+
+        _p();
     }
 
     unlisten(): void {
+        const _p = profile('UserStore.unlisten');
+
         if (this.listeners[0]) {
             this.listeners[0]();
             this.listeners[0] = null;
@@ -115,21 +154,31 @@ export class UserStore {
             this.listeners[1]();
             this.listeners[1] = null;
         }
+
+        _p();
     }
 
     get points(): number {
-        return this.userAttributes?.points || 0;
+        const _p = profile('UserStore.points');
+
+        return _p(this.userAttributes?.points || 0);
     }
 
     get builder(): UserBuilder | null {
+        const _p = profile('UserStore.builder');
+
         if (this.user) {
-            return new UserBuilder(this.parent, this.user);
+            return _p(new UserBuilder(this.parent, this.user));
         } else {
-            return null;
+            return _p(null);
         }
     }
 
     get fullname() {
-        return `${this.user?.firstName || ''} ${this.user?.lastName || ''}`.trim();
+        const _p = profile('UserStore.fullname');
+
+        return _p(
+            `${this.user?.firstName || ''} ${this.user?.lastName || ''}`.trim(),
+        );
     }
 }

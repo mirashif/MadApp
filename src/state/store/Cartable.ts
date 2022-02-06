@@ -13,6 +13,7 @@ import {
 } from './ItemStore';
 import {Category} from './CategoryStore';
 import {Freebie} from './FreebieStore';
+import {profile} from '../helpers/profile';
 
 export class CartableAddon {
     parent: Cartable;
@@ -32,6 +33,8 @@ export class CartableAddon {
     }
 
     get count() {
+        const _p = profile('CartableAddon.count');
+
         const item: Item = this.addon.parent;
         const category: Category | null = item.category;
 
@@ -53,19 +56,31 @@ export class CartableAddon {
             count = 0;
         }
 
-        return count;
+        return _p(count);
     }
 
     increment() {
+        const _p = profile('CartableAddon.increment');
+
         this.delta(1);
+
+        _p();
     }
 
     decrement() {
+        const _p = profile('CartableAddon.decrement');
+
         this.delta(-1);
+
+        _p();
     }
 
     clear() {
+        const _p = profile('CartableAddon.clear');
+
         this._count = 0;
+
+        _p();
     }
 }
 
@@ -81,11 +96,19 @@ export class CartableVariant {
     }
 
     get isSelected() {
-        return this.parent.selected?.variant.data.id === this.variant.data.id;
+        const _p = profile('CartableVariant.isSelected');
+
+        return _p(
+            this.parent.selected?.variant.data.id === this.variant.data.id,
+        );
     }
 
     select() {
+        const _p = profile('CartableVariant.select');
+
         this.parent.setSelected(this);
+
+        _p();
     }
 }
 
@@ -103,16 +126,28 @@ export class CartableVariantGroup {
     }
 
     setSelected(cartableVariant: CartableVariant) {
+        const _p = profile('CartableVariantGroup.setSelected');
+
         this.selected = cartableVariant;
+
+        _p();
     }
 
     clear() {
+        const _p = profile('CartableVariantGroup.clear');
+
         this.selected = null;
+
+        _p();
     }
 
     get variants() {
-        return this.variantGroup.variants.map(
-            (variant) => new CartableVariant(this, variant),
+        const _p = profile('CartableVariantGroup.variants');
+
+        return _p(
+            this.variantGroup.variants.map(
+                (variant) => new CartableVariant(this, variant),
+            ),
         );
     }
 }
@@ -130,6 +165,8 @@ export class Cartable {
     }
 
     get id(): string {
+        const _p = profile('Cartable.id');
+
         const itemID = this.item.id;
 
         const addonsWithCounts = this.cartableAddons
@@ -145,25 +182,41 @@ export class Cartable {
             .sort((a, b) => (a > b ? 1 : a < b ? -1 : 0))
             .join('-');
 
-        return `${itemID}#${addonsWithCounts}#${chosenVariants}`;
+        return _p(`${itemID}#${addonsWithCounts}#${chosenVariants}`);
     }
 
     get cartableAddons() {
-        return this.item.addons.map((addon) => new CartableAddon(this, addon));
+        const _p = profile('Cartable.cartableAddons');
+
+        return _p(
+            this.item.addons.map((addon) => new CartableAddon(this, addon)),
+        );
     }
 
     get cartableVariantGroups() {
-        return this.item.variantGroups.map(
-            (variantGroup) => new CartableVariantGroup(this, variantGroup),
+        const _p = profile('Cartable.cartableVariantGroups');
+
+        return _p(
+            this.item.variantGroups.map(
+                (variantGroup) => new CartableVariantGroup(this, variantGroup),
+            ),
         );
     }
 
     increment() {
+        const _p = profile('Cartable.increment');
+
         this.count++;
+
+        _p();
     }
 
     decrement() {
+        const _p = profile('Cartable.decrement');
+
         this.count = Math.max(this.count - 1, 1);
+
+        _p();
     }
 
     private get dealt(): [string, number] | number {
@@ -206,49 +259,69 @@ export class Cartable {
     }
 
     get singularPrice(): number {
-        return this.dealt instanceof Array ? this.dealt[1] : this.dealt;
+        const _p = profile('Cartable.singularPrice');
+
+        return _p(this.dealt instanceof Array ? this.dealt[1] : this.dealt);
     }
 
     get price(): number {
-        return this.singularPrice * this.count;
+        const _p = profile('Cartable.price');
+
+        return _p(this.singularPrice * this.count);
     }
 
     get originalPrice(): number {
-        return this.item.originalPrice * this.count;
+        const _p = profile('Cartable.originalPrice');
+
+        return _p(this.item.originalPrice * this.count);
     }
 
     get freebies(): Freebie[] {
-        return this.dealt instanceof Array &&
-            typeof this.dealt[0] === 'string' &&
-            this.dealt[0].indexOf('freebies') === 0
-            ? <Freebie[]>this.dealt[0]
-                  .substr(this.dealt[0].indexOf(':') + 1)
-                  .split(',')
-                  .map((freebieID) => this.parent.freebies.get(freebieID))
-                  .filter((freebie) => freebie instanceof Freebie)
-            : [];
+        const _p = profile('Cartable.freebies');
+
+        return _p(
+            this.dealt instanceof Array &&
+                typeof this.dealt[0] === 'string' &&
+                this.dealt[0].indexOf('freebies') === 0
+                ? <Freebie[]>this.dealt[0]
+                      .substr(this.dealt[0].indexOf(':') + 1)
+                      .split(',')
+                      .map((freebieID) => this.parent.freebies.get(freebieID))
+                      .filter((freebie) => freebie instanceof Freebie)
+                : [],
+        );
     }
 
     get hasFreebies() {
-        return this.freebies.length >= 0;
+        const _p = profile('Cartable.hasFreebies');
+
+        return _p(this.freebies.length >= 0);
     }
 
     get isDealApplied() {
-        return (
+        const _p = profile('Cartable.isDealApplied');
+
+        return _p(
             this.hasFreebies ||
-            (this.singularPrice !== this.originalPrice &&
-                this.singularPrice < this.originalPrice)
+                (this.singularPrice !== this.originalPrice &&
+                    this.singularPrice < this.originalPrice),
         );
     }
 
     addToCart() {
+        const _p = profile('Cartable.addToCart');
+
         this.count = 1;
         const serialized = this.cartablePacket;
         this.parent.cart.upsert(serialized);
+
+        _p();
     }
 
     get cartablePacket() {
-        return new CartablePacket(this);
+        const _p = profile('Cartable.cartablePacket');
+
+        return _p(new CartablePacket(this));
     }
 }
 
@@ -292,6 +365,8 @@ export class CartablePacket {
     data: CartablePacketData;
 
     constructor(cartable: Cartable) {
+        const _p = profile('CartablePacket.constructor');
+
         this.data = {
             id: cartable.id,
             count: cartable.count,
@@ -322,10 +397,14 @@ export class CartablePacket {
         };
 
         makeAutoObservable(this, {}, {autoBind: true});
+
+        _p();
     }
 
     get serialized(): SerializedCartable {
-        return {
+        const _p = profile('CartablePacket.serialized');
+
+        return _p({
             id: this.data.id,
             count: this.data.count,
             item: this.data.item.data,
@@ -347,6 +426,6 @@ export class CartablePacket {
                     },
                 ]),
             ),
-        };
+        });
     }
 }

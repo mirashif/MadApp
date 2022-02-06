@@ -1,6 +1,7 @@
 import {makeAutoObservable} from 'mobx';
 import {Store} from './index';
 import {composeFlow} from '../helpers/composeFlow';
+import {profile} from '../helpers/profile';
 
 export interface ReferralType {}
 
@@ -22,10 +23,16 @@ export class ReferralValidator {
     }
 
     setReferral(referral: string) {
+        const _p = profile('ReferralValidator.setReferral');
+
         this.referral = referral;
+
+        _p();
     }
 
     *validate() {
+        const _p = profile('ReferralValidator.validate');
+
         this.isValidating = true;
 
         try {
@@ -53,6 +60,6 @@ export class ReferralValidator {
             this.isValidating = false;
         }
 
-        return true;
+        return _p(true);
     }
 }

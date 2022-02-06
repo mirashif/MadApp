@@ -1,5 +1,6 @@
 import {makeAutoObservable} from 'mobx';
 import {Store} from './index';
+import {profile} from '../helpers/profile';
 
 export interface CashbackType {
     id: string;
@@ -23,13 +24,17 @@ export class Cashback {
     }
 
     get id() {
-        return this.data.id;
+        const _p = profile('Cashback.id');
+
+        return _p(this.data.id);
     }
 
     get isAvailable() {
-        return (
+        const _p = profile('Cashback.isAvailable');
+
+        return _p(
             this.data?.requiredPoints <=
-            (this.parent.parent.user.userAttributes?.points || 0)
+                (this.parent.parent.user.userAttributes?.points || 0),
         );
     }
 }
@@ -48,15 +53,31 @@ export class CashbackStore {
         makeAutoObservable(this, {}, {autoBind: true});
     }
 
+    ready = false;
+
+    setReady(ready: boolean = true) {
+        this.ready = ready;
+    }
+
     upsert(id: string, data: CashbackType): void {
+        const _p = profile('CashbackStore.upsert');
+
         this.cashbacks[id] = new Cashback(this, data);
+
+        _p();
     }
 
     remove(id: string): void {
+        const _p = profile('CashbackStore.remove');
+
         delete this.cashbacks[id];
+
+        _p();
     }
 
     listen(): void {
+        const _p = profile('CashbackStore.listen');
+
         this.listener = this.parent.firebase
             .firestore()
             .collection('cashbacks')
@@ -71,26 +92,40 @@ export class CashbackStore {
                         this.remove(change.doc.id);
                     }
                 });
+
+                this.setReady();
             });
+
+        _p();
     }
 
     unlisten(): void {
+        const _p = profile('CashbackStore.unlisten');
+
         if (this.listener) {
             this.listener();
             this.listener = null;
         }
+
+        _p();
     }
 
     get all(): Cashback[] {
-        return Object.values(this.cashbacks).sort((a, b) => {
-            return (
-                (this.parent.app.globals?.cashbackOrder?.[a.data.id] || 0) -
-                (this.parent.app.globals?.cashbackOrder?.[b.data.id] || 0)
-            );
-        });
+        const _p = profile('CashbackStore.all');
+
+        return _p(
+            Object.values(this.cashbacks).sort((a, b) => {
+                return (
+                    (this.parent.app.globals?.cashbackOrder?.[a.data.id] || 0) -
+                    (this.parent.app.globals?.cashbackOrder?.[b.data.id] || 0)
+                );
+            }),
+        );
     }
 
     get(id: string): Cashback | null {
-        return this.cashbacks[id] || null;
+        const _p = profile('CashbackStore.get');
+
+        return _p(this.cashbacks[id] || null);
     }
 }

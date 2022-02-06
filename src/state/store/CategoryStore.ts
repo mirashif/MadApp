@@ -1,6 +1,7 @@
 import {makeAutoObservable} from 'mobx';
 import {Store} from '.';
 import {AddonType, CategoryVariantGroupType, Item} from './ItemStore';
+import {profile} from '../helpers/profile';
 
 export interface CategoryType {
     id: string;
@@ -45,33 +46,41 @@ export class Category {
     }
 
     get id() {
-        return this.data.id;
+        const _p = profile('Category.id');
+
+        return _p(this.data.id);
     }
 
     get isAvailable() {
+        const _p = profile('Category.isAvailable');
+
         const currentBranch = this.parent.parent.restaurants.get(
             this.data.restaurantID,
         )?.availableBranches[0];
 
-        return this.data.isAvailable === false
-            ? false
-            : !currentBranch?.data.unavailableCategories?.[this.id];
+        return _p(
+            this.data.isAvailable === false
+                ? false
+                : !currentBranch?.data.unavailableCategories?.[this.id],
+        );
     }
 
     get items(): Item[] {
+        const _p = profile('Category.items');
+
         const category = this.parent.parent.categories.get(this.id);
 
-        return Object.keys(
-            this.parent.parent.items.itemsByCategory[this.id] || {},
-        )
-            .map((id) => this.parent.parent.items.items[id] || null)
-            .filter((item) => !!item)
-            .sort((a, b) => {
-                const orderA = category?.data?.itemOrder?.[a.id] || 0;
-                const orderB = category?.data?.itemOrder?.[b.id] || 0;
+        return _p(
+            Object.keys(this.parent.parent.items.itemsByCategory[this.id] || {})
+                .map((id) => this.parent.parent.items.items[id] || null)
+                .filter((item) => !!item)
+                .sort((a, b) => {
+                    const orderA = category?.data?.itemOrder?.[a.id] || 0;
+                    const orderB = category?.data?.itemOrder?.[b.id] || 0;
 
-                return orderA - orderB;
-            });
+                    return orderA - orderB;
+                }),
+        );
     }
 }
 
@@ -95,7 +104,15 @@ export class CategoryStore {
         makeAutoObservable(this, {}, {autoBind: true});
     }
 
+    ready = false;
+
+    setReady(ready: boolean = true) {
+        this.ready = ready;
+    }
+
     upsert(id: string, data: CategoryType): void {
+        const _p = profile('CategoryStore.upsert');
+
         this.categories[id] = new Category(this, data);
 
         if (!(data.restaurantID in this.categoriesByRestaurant)) {
@@ -103,16 +120,24 @@ export class CategoryStore {
         }
 
         this.categoriesByRestaurant[data.restaurantID][id] = true;
+
+        _p();
     }
 
     remove(id: string): void {
+        const _p = profile('CategoryStore.remove');
+
         const restaurantID = this.categories[id].data.restaurantID;
 
         delete this.categoriesByRestaurant[restaurantID][id];
         delete this.categories[id];
+
+        _p();
     }
 
     listen(): void {
+        const _p = profile('CategoryStore.listen');
+
         this.listener = this.parent.firebase
             .firestore()
             .collectionGroup('categories')
@@ -127,17 +152,27 @@ export class CategoryStore {
                         this.remove(change.doc.id);
                     }
                 });
+
+                this.setReady();
             });
+
+        _p();
     }
 
     unlisten(): void {
+        const _p = profile('CategoryStore.unlisten');
+
         if (this.listener) {
             this.listener();
             this.listener = null;
         }
+
+        _p();
     }
 
     get(id: string): Category | null {
-        return this.categories[id] || null;
+        const _p = profile('CategoryStore.get');
+
+        return _p(this.categories[id] || null);
     }
 }

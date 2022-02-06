@@ -74,4 +74,25 @@ export class Store implements RootStoreType {
 
         makeAutoObservable(this, {}, {autoBind: true});
     }
+
+    get ready() {
+        const obj = {
+            app: this.app.ready,
+            auth: this.auth.ready,
+            user: this.user.ready,
+            banners: this.banners.ready,
+            stories: this.stories.ready,
+            cashbacks: this.cashbacks.ready,
+            addresses: this.addresses.ready,
+            branches: this.branches.ready,
+            categories: this.categories.ready,
+            invites: this.invites.ready,
+            items: this.items.ready,
+            orders: this.orders.ready,
+            deals: this.deals.ready,
+            freebies: this.freebies.ready,
+        };
+
+        return Object.values(obj).every((v) => v);
+    }
 }

@@ -2,14 +2,16 @@ import React, { useEffect, useRef, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { LogBox } from "react-native";
+import { LogBox, Text } from "react-native";
 import "react-native-get-random-values";
+
+import { observer } from "mobx-react";
 
 import AppNavigator from "./src/components/AppNavigator";
 import { assets as CashbackAssets } from "./src/Cashback";
 import { LoadAssets, ThemeProvider } from "./src/components";
 import { augmentedFirebase } from "./src/state/augmentedFirebase";
-import { StateProvider } from "./src/state/StateContext";
+import { StateProvider, useAppState } from "./src/state/StateContext";
 import { Store } from "./src/state/store";
 import { initializeReactions } from "./src/state/reactions";
 
@@ -24,6 +26,21 @@ const fonts = {
   Medium: require("./assets/fonts/Roboto-Medium.ttf"),
   Normal: require("./assets/fonts/Roboto-Regular.ttf"),
 };
+
+const AppLoader = observer(() => {
+  const store = useAppState();
+
+  return store.ready ? (
+    <BottomSheetModalProvider>
+      <StatusBar />
+      <AppNavigator />
+    </BottomSheetModalProvider>
+  ) : (
+    <>
+      <Text>LOADING</Text>
+    </>
+  );
+});
 
 const App = () => {
   const [ready, setReady] = useState(false);
@@ -50,10 +67,7 @@ const App = () => {
       <LoadAssets {...{ assets, fonts }}>
         <StateProvider store={store.current}>
           <SafeAreaProvider>
-            <BottomSheetModalProvider>
-              <StatusBar />
-              <AppNavigator />
-            </BottomSheetModalProvider>
+            <AppLoader />
           </SafeAreaProvider>
         </StateProvider>
       </LoadAssets>

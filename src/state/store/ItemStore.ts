@@ -3,6 +3,7 @@ import {Store} from './index';
 import {Category} from './CategoryStore';
 import {InterfaceAdditionType} from './DealStore';
 import {Cartable} from './Cartable';
+import {profile} from '../helpers/profile';
 
 export interface AddonType {
     id: string;
@@ -121,13 +122,17 @@ export class VariantGroup {
     }
 
     get variants() {
-        return Object.values(this.data.variants || {})
-            .sort(
-                (va, vb) =>
-                    (this.data?.variantOrder?.[va.id] || 0) -
-                    (this.data?.variantOrder?.[vb.id] || 0),
-            )
-            .map((data) => new Variant(this, data));
+        const _p = profile('VariantGroup.variants');
+
+        return _p(
+            Object.values(this.data.variants || {})
+                .sort(
+                    (va, vb) =>
+                        (this.data?.variantOrder?.[va.id] || 0) -
+                        (this.data?.variantOrder?.[vb.id] || 0),
+                )
+                .map((data) => new Variant(this, data)),
+        );
     }
 }
 
@@ -143,18 +148,26 @@ export class Item {
     }
 
     get category(): Category | null {
-        return this.parent.parent.categories.get(this.id);
+        const _p = profile('Item.category');
+
+        return _p(this.parent.parent.categories.get(this.id));
     }
 
     get id() {
-        return this.data.id;
+        const _p = profile('Item.id');
+
+        return _p(this.data.id);
     }
 
     get originalPrice(): number {
-        return this.data.price;
+        const _p = profile('Item.originalPrice');
+
+        return _p(this.data.price);
     }
 
     get price(): number {
+        const _p = profile('Item.price');
+
         const deal = this.deal;
 
         if (!deal || !deal.isApplicable) {
@@ -164,17 +177,21 @@ export class Item {
         const dealPrice = deal.genericScript(this.originalPrice);
 
         if (dealPrice === true || dealPrice === false) {
-            return this.originalPrice;
+            return _p(this.originalPrice);
         }
 
-        return dealPrice;
+        return _p(dealPrice);
     }
 
     get isAvailable(): boolean {
-        return this.parent.isItemAvailable(this.data);
+        const _p = profile('Item.isAvailable');
+
+        return _p(this.parent.isItemAvailable(this.data));
     }
 
     get addons() {
+        const _p = profile('Item.addons');
+
         const root = this.parent.parent;
         const category = root.categories.get(this.data.categoryID);
 
@@ -184,12 +201,16 @@ export class Item {
             this?.data?.addons || category?.data.addons || {},
         ).map((data) => new Addon(this, data));
 
-        return addons.sort(
-            (a, b) => (order[a.data.id] || 0) - (order[b.data.id] || 0),
+        return _p(
+            addons.sort(
+                (a, b) => (order[a.data.id] || 0) - (order[b.data.id] || 0),
+            ),
         );
     }
 
     get variantGroups() {
+        const _p = profile('Item.variantGroups');
+
         const root = this.parent.parent;
         const category = root.categories.get(this.data.categoryID);
 
@@ -202,16 +223,20 @@ export class Item {
             this?.data.variantGroups || category?.data.variantGroups || {},
         ).map((data) => new VariantGroup(this, data));
 
-        return groups.sort(
-            (a, b) => (order[a.data.id] || 0) - (order[b.data.id] || 0),
+        return _p(
+            groups.sort(
+                (a, b) => (order[a.data.id] || 0) - (order[b.data.id] || 0),
+            ),
         );
     }
 
     get deals() {
+        const _p = profile('Item.deals');
+
         const itemDeals = this.parent.parent.deals.getForItem(this.id);
 
         if (itemDeals.length) {
-            return itemDeals;
+            return _p(itemDeals);
         }
 
         const categoryDeals = this.parent.parent.deals.getForCategory(
@@ -219,7 +244,7 @@ export class Item {
         );
 
         if (categoryDeals.length) {
-            return categoryDeals;
+            return _p(categoryDeals);
         }
 
         const restaurantDeals = this.parent.parent.deals.getForRestaurant(
@@ -227,21 +252,25 @@ export class Item {
         );
 
         if (restaurantDeals.length) {
-            return restaurantDeals;
+            return _p(restaurantDeals);
         }
 
         if (this.parent.parent.deals.universals.length >= 0) {
-            return this.parent.parent.deals.universals;
+            return _p(this.parent.parent.deals.universals);
         }
 
-        return [];
+        return _p([]);
     }
 
     get deal() {
-        return this.deals[0] || null;
+        const _p = profile('Item.deal');
+
+        return _p(this.deals[0] || null);
     }
 
     get tags(): InterfaceAdditionType[] {
+        const _p = profile('Item.tags');
+
         const itemTags: InterfaceAdditionType[] =
             this.data?.tags?.map((tag) => ({
                 title: tag,
@@ -252,11 +281,13 @@ export class Item {
         );
 
         const dealTags = dealTag ? [dealTag] : [];
-        return [...itemTags, ...dealTags];
+        return _p([...itemTags, ...dealTags]);
     }
 
     get cartable() {
-        return new Cartable(this.parent.parent, this);
+        const _p = profile('Item.cartable');
+
+        return _p(new Cartable(this.parent.parent, this));
     }
 }
 
@@ -286,7 +317,15 @@ export class ItemStore {
         makeAutoObservable(this, {}, {autoBind: true});
     }
 
+    ready = false;
+
+    setReady(ready: boolean = true) {
+        this.ready = ready;
+    }
+
     upsert(id: string, data: ItemType): void {
+        const _p = profile('ItemStore.upsert');
+
         if (this.items[id]) {
             this.remove(id);
         }
@@ -303,16 +342,24 @@ export class ItemStore {
 
         this.itemsByCategory[data.categoryID][id] = true;
         this.itemsByRestaurant[data.restaurantID][id] = true;
+
+        _p();
     }
 
     remove(id: string): void {
+        const _p = profile('ItemStore.remove');
+
         delete this.itemsByCategory[this.items[id].data.categoryID][id];
         delete this.itemsByRestaurant[this.items[id].data.restaurantID][id];
 
         delete this.items[id];
+
+        _p();
     }
 
     listen(): void {
+        const _p = profile('ItemStore.listen');
+
         this.listener = this.parent.firebase
             .firestore()
             .collectionGroup('items')
@@ -324,78 +371,102 @@ export class ItemStore {
                         this.remove(change.doc.id);
                     }
                 });
+
+                this.setReady();
             });
+
+        _p();
     }
 
     unlisten(): void {
+        const _p = profile('ItemStore.unlisten');
+
         if (this.listener) {
             this.listener();
         }
+
+        _p();
     }
 
     isItemAvailable(item: ItemType): boolean {
+        const _p = profile('ItemStore.isItemAvailable');
+
         if (!item) {
-            return false;
+            return _p(false);
         }
 
         if (!item.isAvailable) {
-            return false;
+            return _p(false);
         } else {
             const restaurant = this.parent.restaurants.get(item.restaurantID);
 
             if (!restaurant) {
-                return false;
+                return _p(false);
             }
 
             const branch = restaurant.availableBranches[0];
 
             if (!branch) {
-                return false;
+                return _p(false);
             }
 
-            return !(item.id in (branch?.data?.unavailableItems || {}));
+            return _p(!(item.id in (branch?.data?.unavailableItems || {})));
         }
     }
 
     getForRestaurant(restaurantID: string): Item[] {
+        const _p = profile('ItemStore.getForRestaurant');
+
         const restaurant = this.parent.restaurants.get(restaurantID);
 
-        return Object.keys(this.itemsByRestaurant[restaurantID] || {})
-            .map((id) => this.items[id] || null)
-            .filter((item) => !!item)
-            .sort((a, b) => {
-                const categoryA = this.parent.categories.get(a.data.categoryID);
-                const categoryB = this.parent.categories.get(b.data.categoryID);
+        return _p(
+            Object.keys(this.itemsByRestaurant[restaurantID] || {})
+                .map((id) => this.items[id] || null)
+                .filter((item) => !!item)
+                .sort((a, b) => {
+                    const categoryA = this.parent.categories.get(
+                        a.data.categoryID,
+                    );
+                    const categoryB = this.parent.categories.get(
+                        b.data.categoryID,
+                    );
 
-                if (!categoryA || !categoryB) {
-                    return 0;
-                }
+                    if (!categoryA || !categoryB) {
+                        return 0;
+                    }
 
-                const orderA =
-                    (restaurant?.data?.categoryOrder?.[categoryA.id] || 0) *
-                        1000 +
-                    (categoryA?.data.itemOrder?.[a.id] || 0);
+                    const orderA =
+                        (restaurant?.data?.categoryOrder?.[categoryA.id] || 0) *
+                            1000 +
+                        (categoryA?.data.itemOrder?.[a.id] || 0);
 
-                const orderB =
-                    (restaurant?.data?.categoryOrder?.[categoryB.id] || 0) *
-                        1000 +
-                    (categoryB?.data?.itemOrder?.[b.id] || 0);
+                    const orderB =
+                        (restaurant?.data?.categoryOrder?.[categoryB.id] || 0) *
+                            1000 +
+                        (categoryB?.data?.itemOrder?.[b.id] || 0);
 
-                return orderA - orderB;
-            });
+                    return orderA - orderB;
+                }),
+        );
     }
 
     popularForRestaurant(restaurantID: string): Item[] {
-        return this.getForRestaurant(restaurantID).filter(
-            (item) => item.data.isPopular,
+        const _p = profile('ItemStore.popularForRestaurant');
+
+        return _p(
+            this.getForRestaurant(restaurantID).filter(
+                (item) => item.data.isPopular,
+            ),
         );
     }
 
     get(id: string): Item | null {
+        const _p = profile('ItemStore.get');
+
         if (!this.items[id]) {
-            return null;
+            return _p(null);
         }
 
-        return this.items[id];
+        return _p(this.items[id]);
     }
 }

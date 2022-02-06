@@ -1,6 +1,7 @@
 import {makeAutoObservable} from 'mobx';
 import {Store} from './index';
 import {CartablePacket} from './Cartable';
+import {profile} from '../helpers/profile';
 
 export class CartStore {
     parent: Store;
@@ -15,6 +16,8 @@ export class CartStore {
     }
 
     upsert(cartablePacket: CartablePacket) {
+        const _p = profile('CartStore.upsert');
+
         if (cartablePacket.data.id in this.cart) {
             this.cart[cartablePacket.data.id].data.count =
                 cartablePacket.data.count +
@@ -22,9 +25,13 @@ export class CartStore {
         } else {
             this.cart[cartablePacket.data.id] = cartablePacket;
         }
+
+        _p();
     }
 
     get all() {
-        return Object.values(this.cart);
+        const _p = profile('CartStore.all');
+
+        return _p(Object.values(this.cart));
     }
 }

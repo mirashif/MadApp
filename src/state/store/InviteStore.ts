@@ -1,6 +1,7 @@
 import {makeAutoObservable} from 'mobx';
 import {Store} from './index';
 import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
+import {profile} from '../helpers/profile';
 
 export interface InviteType {
     id: string;
@@ -38,15 +39,35 @@ export class InviteStore {
         makeAutoObservable(this, {}, {autoBind: true});
     }
 
+    _ready = false;
+
+    get ready() {
+        return !this.parent.auth.user || this._ready;
+    }
+
+    setReady(ready: boolean = true) {
+        this._ready = ready;
+    }
+
     upsert(id: string, data: InviteType): void {
+        const _p = profile('InviteStore.upsert');
+
         this.invites[id] = new Invite(this, data);
+
+        _p();
     }
 
     remove(id: string): void {
+        const _p = profile('InviteStore.remove');
+
         delete this.invites[id];
+
+        _p();
     }
 
     listen() {
+        const _p = profile('InviteStore.listen');
+
         if (!this.parent.auth.user || this.parent.auth.user === true) {
             throw new Error("Can't listen if auth-user is not initialized.");
         }
@@ -67,26 +88,40 @@ export class InviteStore {
                         this.remove(change.doc.id);
                     }
                 });
+
+                this.setReady();
             });
+
+        _p();
     }
 
     unlisten(): void {
+        const _p = profile('InviteStore.unlisten');
+
         if (this.listener) {
             this.listener();
             this.listener = null;
         }
+
+        _p();
     }
 
     get all(): Invite[] {
-        return Object.values(this.invites).sort((a, b) => {
-            return (
-                (b?.data?.createdAt?.toMillis() || 0) -
-                (a?.data?.createdAt?.toMillis() || 0)
-            );
-        });
+        const _p = profile('InviteStore.all');
+
+        return _p(
+            Object.values(this.invites).sort((a, b) => {
+                return (
+                    (b?.data?.createdAt?.toMillis() || 0) -
+                    (a?.data?.createdAt?.toMillis() || 0)
+                );
+            }),
+        );
     }
 
     get(id: string): Invite | null {
-        return this.invites[id] || null;
+        const _p = profile('InviteStore.get');
+
+        return _p(this.invites[id] || null);
     }
 }
