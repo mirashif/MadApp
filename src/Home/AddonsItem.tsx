@@ -1,8 +1,13 @@
 import React from "react";
 
 import { Box, CircularIcon, Text } from "../components";
+import type { Addon } from "../state/store/ItemStore";
 
-const AddonsItem = () => {
+interface AddonsItemProps {
+  addon: Addon;
+}
+
+const AddonsItem = ({ addon }: AddonsItemProps) => {
   return (
     <Box
       flexDirection="row"
@@ -11,9 +16,9 @@ const AddonsItem = () => {
       style={{ marginVertical: 7.5 }}
     >
       <Text fontSize={18}>
-        + Cheese{" "}
+        + {addon.data.name}{" "}
         <Text fontSize={13} style={{ color: "#BEBEBE" }}>
-          ৳ 50.00
+          ৳ {addon.data.price}
         </Text>
       </Text>
 

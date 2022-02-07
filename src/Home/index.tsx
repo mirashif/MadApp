@@ -3,8 +3,6 @@ import type { RouteProp } from "@react-navigation/native";
 import type { StackNavigationProp } from "@react-navigation/stack";
 import { createStackNavigator } from "@react-navigation/stack";
 
-import type { StoryType } from "../state/store/StoryStore";
-
 import { RestaurantMenu } from "./RestaurantMenu";
 import { Cart } from "./Cart";
 import { Checkout } from "./Checkout";
@@ -24,7 +22,7 @@ export type HomeStackParamList = {
   Cart: undefined;
   Checkout: undefined;
   Story: {
-    story: StoryType;
+    id: string;
   };
 };
 

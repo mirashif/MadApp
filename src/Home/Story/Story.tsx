@@ -1,41 +1,42 @@
-import type { NavigationProp, RouteProp } from "@react-navigation/native";
 import React from "react";
-import { Image, ImageBackground, TouchableWithoutFeedback } from "react-native";
+import {
+  Dimensions,
+  Image,
+  ImageBackground,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import GestureRecognizer from "react-native-swipe-gestures";
+import Markdown from "react-native-markdown-display";
 
-import type { HomeStackParamList } from "..";
+import type { HomeStackProps } from "..";
 import type { Theme } from "../../components";
-import { SafeArea, Icon, Box, makeStyles, Text } from "../../components";
-import type { StoryType } from "../../state/store/StoryStore";
+import { Box, Icon, makeStyles, SafeArea, Text } from "../../components";
+import { useAppState } from "../../state/StateContext";
+import type { RestaurantStore } from "../../state/store/RestaurantStore";
+import type { StoryStore } from "../../state/store/StoryStore";
 
-interface IStory {
-  route: RouteProp<{ params: { story: StoryType } }, "params">;
-  navigation: NavigationProp<HomeStackParamList>;
-}
-
-const Story = ({ route, navigation }: IStory) => {
+const Story = ({ route, navigation }: HomeStackProps<"Story">) => {
   const styles = useStyles();
   const insets = useSafeAreaInsets();
+  const { height } = Dimensions.get("window");
 
-  const { story } = route.params;
+  const { id } = route.params;
+
+  const restaurants: RestaurantStore = useAppState("restaurants");
+  const stories: StoryStore = useAppState("stories");
+
+  const story = stories.get(id);
+  const restaurant = restaurants.get(story?.data.restaurantID || "");
+
+  if (!story || !restaurant) return null;
 
   // TODO: Add swipe navigation to restaurant?
   return (
     <SafeArea>
-      <GestureRecognizer
-        onSwipeUp={
-          () => navigation.goBack()
-          // navigation.navigate("RestaurantMenu", {
-          //   restaurantId: "44f9bb5d-b5c5-4d55-9a1a-a91912d45f2f",
-          // })
-        }
-        style={{
-          flex: 1,
-        }}
-      >
+      <Box flex={1}>
         <ImageBackground
-          source={{ uri: story.imageURI }}
+          source={{ uri: story.data.imageURI }}
           resizeMode="cover"
           style={styles.image}
         >
@@ -52,7 +53,7 @@ const Story = ({ route, navigation }: IStory) => {
 
             {/* TODO: Add avatar from new design */}
             <Image
-              source={{ uri: story.thumbnailImageURI }}
+              source={{ uri: restaurant.data.logoImageURI }}
               style={styles.avatar}
             />
 
@@ -60,36 +61,48 @@ const Story = ({ route, navigation }: IStory) => {
               <Text
                 style={{ fontSize: 15, fontFamily: "Bold", color: "white" }}
               >
-                Madchef
+                {restaurant.data.name}
               </Text>
               <Text
                 style={{ fontSize: 11, fontFamily: "Normal", color: "white" }}
               >
-                30 mins
+                NO DOC:30 mins
               </Text>
             </Box>
           </Box>
 
-          <Box
-            flex={1}
-            flexDirection="column"
-            justifyContent="flex-end"
-            alignItems="center"
+          <GestureRecognizer
+            onSwipeUp={
+              () => navigation.goBack()
+              // navigation.navigate("RestaurantMenu", {
+              //   restaurantId: "44f9bb5d-b5c5-4d55-9a1a-a91912d45f2f",
+              // })
+            }
             style={{
+              flex: 1,
+              flexDirection: "column",
+              justifyContent: "flex-end",
+              alignItems: "center",
               marginBottom: insets.bottom,
+              marginTop: height * 0.2,
             }}
           >
-            <Text
-              style={{
-                fontSize: 12,
-                fontFamily: "Bold",
-                color: "white",
-                marginHorizontal: 70,
-                marginBottom: 30,
-              }}
-            >
-              OMG, Madchef is alwayssss there for me!!!! #Madchef #MyLove
-            </Text>
+            {story.data.caption && (
+              <Box
+                style={{
+                  marginHorizontal: 70,
+                  marginBottom: 30,
+                }}
+              >
+                <Markdown
+                  style={{
+                    body: { color: "white", fontWeight: "bold", fontSize: 12 },
+                  }}
+                >
+                  {story.data.caption}
+                </Markdown>
+              </Box>
+            )}
 
             <Box
               flexDirection="column"
@@ -108,9 +121,9 @@ const Story = ({ route, navigation }: IStory) => {
                 Swipe up to browse
               </Text>
             </Box>
-          </Box>
+          </GestureRecognizer>
         </ImageBackground>
-      </GestureRecognizer>
+      </Box>
     </SafeArea>
   );
 };
