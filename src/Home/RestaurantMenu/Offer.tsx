@@ -13,9 +13,12 @@ import { HEADER_IMAGE_HEIGHT } from "./constants";
 
 interface OfferProps {
   y: Animated.SharedValue<number>;
+  title: string;
+  description: string;
+  phone: string;
 }
 
-const Offer = ({ y }: OfferProps) => {
+const Offer = ({ y, title, description, phone }: OfferProps) => {
   const theme = useTheme();
 
   const animatedStyles = useAnimatedStyle(() => {
@@ -72,7 +75,7 @@ const Offer = ({ y }: OfferProps) => {
             color: "white",
           }}
         >
-          20% OFF
+          {title}
         </Text>
         <Text
           style={{
@@ -81,12 +84,12 @@ const Offer = ({ y }: OfferProps) => {
             color: "white",
           }}
         >
-          Enjoy 20% OFF on the entire menu!
+          {description}
         </Text>
       </View>
       <TouchableWithoutFeedback
         onPress={() => {
-          Linking.openURL("tel:8777111223");
+          Linking.openURL(`tel:${phone}`);
         }}
       >
         <CircularIcon name="phone" size={58} />

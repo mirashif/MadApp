@@ -9,7 +9,7 @@ import {
 } from "react-native-reanimated";
 
 import type { HomeStackProps } from "..";
-import { SafeArea, Text } from "../../components";
+import { SafeArea } from "../../components";
 import { useAppState } from "../../state/StateContext";
 import type { RestaurantStore } from "../../state/store/RestaurantStore";
 
@@ -44,12 +44,12 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
     runOnJS(handleActiveIndex)(y.value);
   });
 
-  useEffect(() => {
-    scrollViewRefX.current?.getNode().scrollTo({
-      x: anchorX[activeIndex],
-      animated: true,
-    });
-  }, [activeIndex, anchorX]);
+  // useEffect(() => {
+  //   scrollViewRefX.current?.getNode().scrollTo({
+  //     x: anchorX[activeIndex],
+  //     animated: true,
+  //   });
+  // }, [activeIndex, anchorX]);
 
   const { restaurantId } = route.params;
   const restaurants: RestaurantStore = useAppState("restaurants");
@@ -59,18 +59,30 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
   return (
     <SafeArea>
       <View>
-        <HeaderImage y={y} restaurantName={restaurant?.data.name || ""} />
-        <Offer y={y} />
+        <HeaderImage
+          y={y}
+          restaurantName={restaurant.data.name}
+          imageURI={restaurant.data.bannerImageURI}
+        />
+        <Offer
+          y={y}
+          title={restaurant.bannerTitle}
+          description={restaurant.bannerDescription}
+          phone={restaurant.data.phone}
+        />
       </View>
       <TabHeader
         scrollViewRefX={scrollViewRefX}
         activeIndex={activeIndex}
-        onTabPress={(index: number) => {
-          scrollViewRef.current?.getNode().scrollTo({
-            y: anchorY[index],
-            animated: true,
-          });
-        }}
+        onTabPress={
+          (_) => undefined
+          // (index: number) => {
+          //   scrollViewRef.current?.getNode().scrollTo({
+          //     y: anchorY[index],
+          //     animated: true,
+          //   });
+          // }
+        }
         onMeasurement={(index, length) => {
           const _anchorX = anchorX;
           _anchorX[index] = length;

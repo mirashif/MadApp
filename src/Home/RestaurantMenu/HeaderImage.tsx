@@ -7,17 +7,23 @@ import Animated, {
   useAnimatedStyle,
 } from "react-native-reanimated";
 
-import { Icon, Text } from "../../components";
+import { Icon, Text, useTheme } from "../../components";
 
 import { HEADER_HEIGHT, HEADER_IMAGE_HEIGHT } from "./constants";
 
 interface HeaderImageProps {
   y: Animated.SharedValue<number>;
   restaurantName: string;
+  imageURI: string;
 }
 
-const HeaderImage = ({ y, restaurantName }: HeaderImageProps) => {
+const HeaderImage = ({
+  y,
+  restaurantName,
+  imageURI: uri,
+}: HeaderImageProps) => {
   const navigation = useNavigation();
+  const theme = useTheme();
 
   const animatedStyles = useAnimatedStyle(() => {
     const height = interpolate(
@@ -53,8 +59,9 @@ const HeaderImage = ({ y, restaurantName }: HeaderImageProps) => {
       <ImageBackground
         style={{
           flex: 1,
+          backgroundColor: theme.colors.gray,
         }}
-        source={{ uri: "https://source.unsplash.com/a66sGfOnnqQ" }}
+        source={{ uri }}
       >
         <View
           style={{
