@@ -46,12 +46,12 @@ const RestaurantMenu = observer(
       runOnJS(handleActiveIndex)(y.value);
     });
 
-    // useEffect(() => {
-    //   scrollViewRefX.current?.getNode().scrollTo({
-    //     x: anchorX[activeIndex],
-    //     animated: true,
-    //   });
-    // }, [activeIndex, anchorX]);
+    useEffect(() => {
+      scrollViewRefX.current?.getNode().scrollTo({
+        x: anchorX[activeIndex],
+        animated: true,
+      });
+    }, [activeIndex, anchorX]);
 
     const { restaurantId } = route.params;
     const restaurants: RestaurantStore = useAppState("restaurants");
@@ -73,35 +73,38 @@ const RestaurantMenu = observer(
             phone={restaurant.data.phone}
           />
         </View>
-        <TabHeader
-          scrollViewRefX={scrollViewRefX}
-          activeIndex={activeIndex}
-          onTabPress={
-            (_) => undefined
-            // (index: number) => {
-            //   scrollViewRef.current?.getNode().scrollTo({
-            //     y: anchorY[index],
-            //     animated: true,
-            //   });
-            // }
-          }
-          onMeasurement={(index, length) => {
-            const _anchorX = anchorX;
-            _anchorX[index] = length;
-            setAnchorX(_anchorX);
-          }}
-          categories={restaurant?.categories || []}
-        />
-        <Content
-          scrollViewRef={scrollViewRef}
-          onMeasurement={(index, length) => {
-            const _anchorY = anchorY;
-            _anchorY[index] = length;
-            setAnchorY(_anchorY);
-          }}
-          onScroll={scrollHandler}
-          categories={restaurant?.categories || []}
-        />
+
+        {restaurant.categories && (
+          <TabHeader
+            scrollViewRefX={scrollViewRefX}
+            activeIndex={activeIndex}
+            onTabPress={(index: number) => {
+              scrollViewRef.current?.getNode().scrollTo({
+                y: anchorY[index],
+                animated: true,
+              });
+            }}
+            onMeasurement={(index, length) => {
+              const _anchorX = anchorX;
+              _anchorX[index] = length;
+              setAnchorX(_anchorX);
+            }}
+            categories={restaurant.categories}
+          />
+        )}
+
+        {restaurant.categories && (
+          <Content
+            scrollViewRef={scrollViewRef}
+            onMeasurement={(index, length) => {
+              const _anchorY = anchorY;
+              _anchorY[index] = length;
+              setAnchorY(_anchorY);
+            }}
+            onScroll={scrollHandler}
+            categories={restaurant.categories}
+          />
+        )}
       </SafeArea>
     );
   }
