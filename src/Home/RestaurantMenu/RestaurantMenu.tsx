@@ -1,9 +1,10 @@
 import { observer } from "mobx-react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { View } from "react-native";
-import type Animated from "react-native-reanimated";
 import {
   runOnJS,
+  scrollTo,
+  useAnimatedRef,
   useAnimatedScrollHandler,
   useDerivedValue,
   useSharedValue,
@@ -21,46 +22,70 @@ import TabHeader from "./TabHeader";
 
 const RestaurantMenu = observer(
   ({ route }: HomeStackProps<"RestaurantMenu">) => {
-    const y = useSharedValue(0);
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [anchorX, setAnchorX] = useState<number[]>([]);
-    const [anchorY, setAnchorY] = useState<number[]>([]);
-    const scrollViewRefX = useRef<Animated.ScrollView>(null);
-    const scrollViewRef = useRef<Animated.ScrollView>(null);
-
-    const scrollHandler = useAnimatedScrollHandler((event) => {
-      y.value = event.contentOffset.y;
-    });
-
-    const handleActiveIndex = (v: number) => {
-      anchorY.forEach((_, i) => {
-        if (v < Math.floor(anchorY[1])) setActiveIndex(0);
-        else if (v > Math.floor(anchorY[i]) && v < Math.floor(anchorY[i + 1]))
-          setActiveIndex(i);
-        else if (v >= Math.floor(anchorY[anchorY.length - 1]))
-          setActiveIndex(anchorY.length - 1);
-      });
-    };
-
-    useDerivedValue(() => {
-      runOnJS(handleActiveIndex)(y.value);
-    });
-
-    useEffect(() => {
-      if (scrollViewRefX.current && scrollViewRefX.current.getNode) {
-        const node = scrollViewRefX.current.getNode();
-        if (node) {
-          node.scrollTo({
-            x: anchorX[activeIndex],
-            animated: true,
-          });
-        }
-      }
-    }, [activeIndex, anchorX]);
-
     const { restaurantId } = route.params;
     const restaurants: RestaurantStore = useAppState("restaurants");
     const restaurant = restaurants.get(restaurantId);
+
+    const [anchorX, setAnchorX] = useState<number[] | null>(null);
+    const [anchorY, setAnchorY] = useState<number[] | null>(null);
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    const manualScrolling = useSharedValue(false);
+    const scrollViewRefX = useAnimatedRef();
+    const scrollViewRefY = useAnimatedRef();
+    const y = useSharedValue(0);
+
+    const scrollHandler = useAnimatedScrollHandler(
+      {
+        onScroll: (event) => {
+          if (manualScrolling.value) return;
+          y.value = event.contentOffset.y;
+          runOnJS(handleSelectedIndex)(y.value);
+        },
+      },
+      [manualScrolling]
+    );
+
+    useDerivedValue(() => {
+      manualScrolling.value = true;
+      scrollTo(scrollViewRefY, 0, y.value, true);
+      manualScrolling.value = false;
+    });
+
+    const handleIndexScroll = (index: number) => {
+      "worklet";
+      if (!anchorY) return;
+      y.value = anchorY[index];
+      runOnJS(handleSelectedIndex)(y.value);
+    };
+
+    // const y = useSharedValue(0);
+    // const activeIndex = useSharedValue(0);
+    // const [anchorX, setAnchorX] = useState<number[] | null>(null);
+    // const [anchorY, setAnchorY] = useState<number[] | null>(null);
+    // const scrollViewRefX = useAnimatedRef();
+    // const scrollViewRefY = useAnimatedRef();
+
+    // const scrollHandler = useAnimatedScrollHandler((event) => {
+    //   y.value = event.contentOffset.y;
+    // });
+
+    const handleSelectedIndex = (_y: number) => {
+      if (!anchorY) return;
+      anchorY.forEach((_, i) => {
+        if (_y < Math.floor(anchorY[1])) setSelectedIndex(0);
+        else if (_y > Math.floor(anchorY[i]) && _y < Math.floor(anchorY[i + 1]))
+          setSelectedIndex(i);
+        else if (_y >= Math.floor(anchorY[anchorY.length - 1]))
+          setSelectedIndex(anchorY.length - 1);
+      });
+    };
+
+    // useDerivedValue(() => {
+    //   if (!anchorX || !anchorY) return;
+    //   scrollTo(scrollViewRefY, 0, anchorY[activeIndex.value], true);
+    //   // scrollTo(scrollViewRefX, anchorX[activeIndex.value], 0, true);
+    //   runOnJS(handleActiveIndex)(y.value);
+    // }, [activeIndex, anchorX, anchorY]);
 
     if (!restaurant) return null;
     return (
@@ -82,20 +107,10 @@ const RestaurantMenu = observer(
         {restaurant.categories && (
           <TabHeader
             scrollViewRefX={scrollViewRefX}
-            activeIndex={activeIndex}
-            onTabPress={(index: number) => {
-              if (scrollViewRef.current && scrollViewRef.current.getNode) {
-                const node = scrollViewRef.current.getNode();
-                if (node) {
-                  node.scrollTo({
-                    y: anchorY[index],
-                    animated: true,
-                  });
-                }
-              }
-            }}
+            activeIndex={selectedIndex}
+            onTabPress={(index: number) => handleIndexScroll(index)}
             onMeasurement={(index, length) => {
-              const _anchorX = anchorX;
+              const _anchorX = anchorX || [];
               _anchorX[index] = length;
               setAnchorX(_anchorX);
             }}
@@ -105,9 +120,9 @@ const RestaurantMenu = observer(
 
         {restaurant.categories && (
           <Content
-            scrollViewRef={scrollViewRef}
+            scrollViewRef={scrollViewRefY}
             onMeasurement={(index, length) => {
-              const _anchorY = anchorY;
+              const _anchorY = anchorY || [];
               _anchorY[index] = length;
               setAnchorY(_anchorY);
             }}
