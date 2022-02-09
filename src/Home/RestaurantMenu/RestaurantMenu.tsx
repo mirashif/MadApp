@@ -47,10 +47,15 @@ const RestaurantMenu = observer(
     });
 
     useEffect(() => {
-      scrollViewRefX.current?.getNode().scrollTo({
-        x: anchorX[activeIndex],
-        animated: true,
-      });
+      if (scrollViewRefX.current && scrollViewRefX.current.getNode) {
+        const node = scrollViewRefX.current.getNode();
+        if (node) {
+          node.scrollTo({
+            x: anchorX[activeIndex],
+            animated: true,
+          });
+        }
+      }
     }, [activeIndex, anchorX]);
 
     const { restaurantId } = route.params;
@@ -79,10 +84,15 @@ const RestaurantMenu = observer(
             scrollViewRefX={scrollViewRefX}
             activeIndex={activeIndex}
             onTabPress={(index: number) => {
-              scrollViewRef.current?.getNode().scrollTo({
-                y: anchorY[index],
-                animated: true,
-              });
+              if (scrollViewRef.current && scrollViewRef.current.getNode) {
+                const node = scrollViewRef.current.getNode();
+                if (node) {
+                  node.scrollTo({
+                    y: anchorY[index],
+                    animated: true,
+                  });
+                }
+              }
             }}
             onMeasurement={(index, length) => {
               const _anchorX = anchorX;
