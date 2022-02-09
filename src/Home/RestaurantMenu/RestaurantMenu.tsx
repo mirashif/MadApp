@@ -11,10 +11,7 @@ import {
 import type { HomeStackProps } from "..";
 import { SafeArea, Text } from "../../components";
 import { useAppState } from "../../state/StateContext";
-import type {
-  Restaurant,
-  RestaurantStore,
-} from "../../state/store/RestaurantStore";
+import type { RestaurantStore } from "../../state/store/RestaurantStore";
 
 import Content from "./Content";
 import HeaderImage from "./HeaderImage";
@@ -22,20 +19,16 @@ import Offer from "./Offer";
 import TabHeader from "./TabHeader";
 
 const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
+  const y = useSharedValue(0);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [anchorX, setAnchorX] = useState<number[]>([]);
   const [anchorY, setAnchorY] = useState<number[]>([]);
   const scrollViewRefX = useRef<Animated.ScrollView>(null);
-  const y = useSharedValue(0);
   const scrollViewRef = useRef<Animated.ScrollView>(null);
+
   const scrollHandler = useAnimatedScrollHandler((event) => {
     y.value = event.contentOffset.y;
   });
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  const { restaurantId } = route.params;
-  const restaurants: RestaurantStore = useAppState("restaurants");
-
-  const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
 
   const handleActiveIndex = (v: number) => {
     anchorY.forEach((_, i) => {
@@ -51,7 +44,6 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
     runOnJS(handleActiveIndex)(y.value);
   });
 
-  // Handles Tab scroll
   useEffect(() => {
     scrollViewRefX.current?.getNode().scrollTo({
       x: anchorX[activeIndex],
@@ -59,11 +51,11 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
     });
   }, [activeIndex, anchorX]);
 
-  useEffect(() => {
-    const _restaurant = restaurants.get(restaurantId);
-    setRestaurant(_restaurant);
-  }, [restaurantId, restaurants]);
+  const { restaurantId } = route.params;
+  const restaurants: RestaurantStore = useAppState("restaurants");
+  const restaurant = restaurants.get(restaurantId);
 
+  if (!restaurant) return null;
   return (
     <SafeArea>
       <View>
@@ -86,9 +78,6 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
         }}
         categories={restaurant?.categories || []}
       />
-      {restaurant?.categories.map((c) => (
-        <Text key={c.id}>{c.items}</Text>
-      ))}
       <Content
         scrollViewRef={scrollViewRef}
         onMeasurement={(index, length) => {
