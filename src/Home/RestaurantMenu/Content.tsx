@@ -15,7 +15,7 @@ interface ContentProps {
         ((event: NativeSyntheticEvent<NativeScrollEvent>) => void) | undefined
       >
     | undefined;
-  scrollViewRef: React.RefObject<Animated.ScrollView>;
+  scrollViewRef: any;
   onMeasurement: (index: number, length: number) => void;
   categories: Category[];
 }
@@ -35,9 +35,10 @@ const Content = ({
       showsVerticalScrollIndicator={false}
       scrollEventThrottle={16}
       onScroll={onScroll}
-      contentContainerStyle={{
-        paddingBottom: sHeight,
-      }}
+      // contentContainerStyle={{
+      //   paddingBottom: sHeight,
+      // }}
+      scrollToOverflowEnabled={true}
     >
       {categories.map(({ data, items }, index) => (
         // menu container
