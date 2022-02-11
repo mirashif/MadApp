@@ -19,6 +19,10 @@ import HeaderImage from "./HeaderImage";
 import Offer from "./Offer";
 import TabHeader from "./TabHeader";
 
+/* 
+TODO: implement new scroll library
+https://github.com/slorber/react-native-scroll-into-view#readme
+ */
 const RestaurantMenu = observer(
   ({ route }: HomeStackProps<"RestaurantMenu">) => {
     const y = useSharedValue(0);
