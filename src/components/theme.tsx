@@ -13,6 +13,7 @@ const palette = {
   white: "#ffffff",
   black: "#000000",
   gray500: "#5b5b5b",
+  gray550: "#8A8A8A",
   gray400: "#bebebe",
   gray300: "#dddddd",
 };
@@ -29,6 +30,8 @@ const theme = {
     darkGray: palette.gray500,
     gray: palette.gray400,
     lightGray: palette.gray300,
+
+    sectionSubtitle: palette.gray550,
   },
   spacing: {
     s: 5,
@@ -60,10 +63,10 @@ const theme = {
     },
     modalSectionTitle: {
       fontSize: 20,
-      marginBottom: 5,
+      marginBottom: "s",
     },
     modalSectionSubtitle: {
-      color: "#8A8A8A",
+      color: "sectionSubtitle",
     },
   },
 };
