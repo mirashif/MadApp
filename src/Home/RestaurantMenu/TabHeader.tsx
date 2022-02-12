@@ -11,7 +11,7 @@ interface TabHeaderProps {
   onMeasurement: (index: number, length: number) => void;
   onTabPress: (index: number) => void;
   activeIndex: number;
-  scrollViewRefX: React.RefObject<Animated.ScrollView>;
+  scrollViewRefX: any;
   categories: Category[];
 }
 
@@ -41,7 +41,7 @@ const TabHeader = ({
         {categories.map(({ data }, index) => (
           <TouchableWithoutFeedback
             onPress={() => onTabPress(index)}
-            key={index}
+            key={data.id}
           >
             <View
               onLayout={({

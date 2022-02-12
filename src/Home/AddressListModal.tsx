@@ -51,7 +51,8 @@ const AddressListModal = observer(
     if (!visible) return null;
     return (
       <Animated.View layout={FadingTransition} style={styles.backdrop}>
-        <Animated.View
+        <Animated.ScrollView
+          showsVerticalScrollIndicator={false}
           entering={SlideInUp}
           exiting={SlideOutUp}
           style={styles.container}
@@ -132,7 +133,7 @@ const AddressListModal = observer(
               </Text>
             </Box>
           </TouchableWithoutFeedback>
-        </Animated.View>
+        </Animated.ScrollView>
       </Animated.View>
     );
   }
@@ -200,6 +201,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingVertical: 25,
     borderBottomLeftRadius: 12,
     borderBottomRightRadius: 12,
+    flexGrow: 0,
   },
   header: {
     flexDirection: "row",

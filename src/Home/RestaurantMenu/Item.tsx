@@ -25,6 +25,7 @@ const Item = ({ item }: ItemProps) => {
           width: 150,
           borderRadius: 12,
           marginBottom: 7,
+          backgroundColor: theme.colors.gray,
         }}
         source={{ uri: thumbnailURI }}
       />
