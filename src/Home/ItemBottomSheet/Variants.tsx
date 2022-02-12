@@ -1,5 +1,5 @@
-import { observer } from "mobx-react";
 import React from "react";
+import { observer } from "mobx-react";
 
 import { Box, Text } from "../../components";
 import type {
@@ -14,7 +14,7 @@ interface VariantGroupsProps {
   item: ItemType;
 }
 
-const VariantGroups = observer(({ item }: VariantGroupsProps) => {
+const Variants = observer(({ item }: VariantGroupsProps) => {
   const cartable: Cartable = item.cartable;
   const variantGroups: CartableVariantGroup[] = cartable.cartableVariantGroups;
 
@@ -45,4 +45,4 @@ const VariantGroups = observer(({ item }: VariantGroupsProps) => {
   );
 });
 
-export default VariantGroups;
+export default Variants;

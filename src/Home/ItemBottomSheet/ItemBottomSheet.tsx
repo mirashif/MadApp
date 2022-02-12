@@ -9,18 +9,11 @@ import { observer } from "mobx-react";
 
 import type { ItemStore } from "../../state/store/ItemStore";
 import type { Theme } from "../../components";
-import {
-  Box,
-  Button,
-  CircularIcon,
-  Icon,
-  makeStyles,
-  Text,
-} from "../../components";
+import { Button, CircularIcon, Icon, makeStyles, Text } from "../../components";
 import { useAppState } from "../../state/StateContext";
 
-import AddonsItem from "./AddonsItem";
-import VariantGroups from "./VariantGroups";
+import Variants from "./Variants";
+import Addons from "./Addons";
 
 const FOOTER_SHEET_HEIGHT = 144;
 
@@ -112,21 +105,8 @@ const ItemBottomSheet = observer(
               <Text style={styles.itemDescription}>
                 {item.data.description}
               </Text>
-
-              <VariantGroups {...{ item }} />
-
-              {item.addons.length > 0 && (
-                <View style={{ marginTop: 14 }}>
-                  <Text variant="modalSectionTitle">Add-ons</Text>
-                  <Text variant="modalSectionSubtitle">Select one</Text>
-
-                  <Box>
-                    {item.addons.map((addon) => (
-                      <AddonsItem key={addon.data.id} {...{ addon }} />
-                    ))}
-                  </Box>
-                </View>
-              )}
+              <Variants {...{ item }} />
+              <Addons {...{ item }} />
             </View>
           </BottomSheetScrollView>
         </BottomSheetModal>

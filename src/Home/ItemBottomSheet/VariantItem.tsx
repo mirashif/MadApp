@@ -20,7 +20,7 @@ const VariantItem = observer(({ variant }: VariationItemProps) => {
         flexDirection="row"
         alignItems="center"
         justifyContent="space-between"
-        style={{ marginBottom: 16 }}
+        style={{ marginVertical: 7.5 }}
       >
         <Box flexDirection="row" alignItems="center">
           <Box
