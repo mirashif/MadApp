@@ -14,7 +14,7 @@ import { SafeArea } from "../../components";
 import { useAppState } from "../../state/StateContext";
 import type { Item } from "../../state/store/ItemStore";
 import type { RestaurantStore } from "../../state/store/RestaurantStore";
-import ItemBottomSheet from "../ItemBottomSheet";
+import ItemBottomSheet from "../ItemBottomSheet/ItemBottomSheet";
 
 import Content from "./Content";
 import HeaderImage from "./HeaderImage";

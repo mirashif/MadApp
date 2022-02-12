@@ -18,7 +18,7 @@ import AuthSheet from "./AuthSheet";
 import BannerCarousel from "./BannerCarousel";
 import FloatingCart from "./FloatingCart";
 import HomeRestaurant from "./HomeRestaurant";
-import ItemBottomSheet from "./ItemBottomSheet";
+import ItemBottomSheet from "./ItemBottomSheet/ItemBottomSheet";
 import LocationBar from "./LocationBar";
 import Stories from "./Stories";
 

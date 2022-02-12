@@ -1,7 +1,7 @@
 import React from "react";
 
-import { Box, CircularIcon, Text } from "../components";
-import type { Addon } from "../state/store/ItemStore";
+import { Box, CircularIcon, Text } from "../../components";
+import type { Addon } from "../../state/store/ItemStore";
 
 interface AddonsItemProps {
   addon: Addon;

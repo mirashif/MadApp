@@ -6,8 +6,8 @@ import {
 import React, { useCallback, useEffect, useRef } from "react";
 import { ImageBackground, TouchableWithoutFeedback, View } from "react-native";
 
-import type { Item } from "../state/store/ItemStore";
-import type { Theme } from "../components";
+import type { Item } from "../../state/store/ItemStore";
+import type { Theme } from "../../components";
 import {
   Box,
   Button,
@@ -15,10 +15,10 @@ import {
   Icon,
   makeStyles,
   Text,
-  useTheme,
-} from "../components";
+} from "../../components";
 
 import AddonsItem from "./AddonsItem";
+import VariantGroups from "./VariantGroups";
 
 const FOOTER_SHEET_HEIGHT = 144;
 
@@ -28,11 +28,10 @@ interface ItemBottomSheetProps {
 }
 
 const ItemBottomSheet = ({
-  bottomSheetItem,
+  bottomSheetItem: item,
   setBottomSheetItem,
 }: ItemBottomSheetProps) => {
   const styles = useStyles();
-  const theme = useTheme();
 
   const itemSheetRef = useRef<BottomSheetModal>(null);
   const itemFooterSheetRef = useRef<BottomSheetModal>(null);
@@ -59,11 +58,10 @@ const ItemBottomSheet = ({
   );
 
   useEffect(() => {
-    if (!bottomSheetItem) return;
-    itemSheetRef.current?.present();
-  }, [bottomSheetItem]);
+    if (item) itemSheetRef.current?.present();
+  }, [item]);
 
-  if (!bottomSheetItem) return null;
+  if (!item) return null;
   return (
     <>
       {/* ItemSheet */}
@@ -81,98 +79,37 @@ const ItemBottomSheet = ({
         >
           {/* Header */}
           <ImageBackground
-            style={{
-              height: 272,
-            }}
-            imageStyle={{
-              borderTopLeftRadius: 12,
-              borderTopRightRadius: 12,
-              backgroundColor: theme.colors.gray,
-            }}
-            source={{ uri: bottomSheetItem?.data.pictureURI }}
+            style={styles.headerImageContainer}
+            imageStyle={styles.headerImage}
+            source={{ uri: item.data.pictureURI }}
           >
             {/* CLOSE ICON */}
             <TouchableWithoutFeedback onPress={handleDismiss}>
-              <View
-                style={{
-                  position: "absolute",
-                  top: 13,
-                  left: 13,
-                }}
-              >
+              <View style={styles.closeIcon}>
                 <Icon name="x" size={24} color="white" />
               </View>
             </TouchableWithoutFeedback>
 
             {/* Handle Bar */}
-            <View
-              style={{
-                alignItems: "center",
-              }}
-            >
-              <View
-                style={{
-                  backgroundColor: "rgba(255, 255, 255, 0.7)",
-                  width: 100,
-                  height: 2,
-                  position: "absolute",
-                  top: 13,
-                }}
-              />
+            <View style={styles.handleBarContainer}>
+              <View style={styles.handleBar} />
             </View>
           </ImageBackground>
 
           {/* Main Scrollable */}
-          <View
-            style={{
-              marginVertical: 25,
-              marginHorizontal: 30,
-            }}
-          >
-            <Text
-              style={{
-                fontFamily: "Normal",
-                fontSize: 28,
-                color: "black",
-                marginBottom: 16,
-              }}
-            >
-              {bottomSheetItem?.data.name}
-            </Text>
-            <Text
-              style={{
-                fontFamily: "Normal",
-                fontSize: 14,
-                color: "#8A8A8A",
-              }}
-            >
-              {bottomSheetItem?.data.description}
-            </Text>
+          <View style={styles.mainScrollableContainer}>
+            <Text style={styles.itemName}>{item.data.name}</Text>
+            <Text style={styles.itemDescription}>{item.data.description}</Text>
 
-            <View style={{ marginTop: 24 }}>
-              <Text style={styles.modalSectionTitle}>Variation</Text>
-              <Text style={styles.modalSectionSubtitle}>Select one</Text>
+            <VariantGroups {...{ item }} />
 
-              <Box>
-                {/* {variations.map((variation) => (
-                  <VariationItem
-                    key={variation.id}
-                    name={variation.name}
-                    price={variation.price}
-                    selected={variation.id === selectedVariationID}
-                    onPress={() => setSelectedVariationID(variation.id)}
-                  />
-                ))} */}
-              </Box>
-            </View>
-
-            {bottomSheetItem && bottomSheetItem.addons.length > 0 && (
+            {item.addons.length > 0 && (
               <View style={{ marginTop: 14 }}>
-                <Text style={styles.modalSectionTitle}>Add-ons</Text>
-                <Text style={styles.modalSectionSubtitle}>Select one</Text>
+                <Text variant="modalSectionTitle">Add-ons</Text>
+                <Text variant="modalSectionSubtitle">Select one</Text>
 
                 <Box>
-                  {bottomSheetItem.addons.map((addon) => (
+                  {item.addons.map((addon) => (
                     <AddonsItem key={addon.data.id} {...{ addon }} />
                   ))}
                 </Box>
@@ -208,7 +145,7 @@ const ItemBottomSheet = ({
                 color: "black",
               }}
             >
-              ৳{bottomSheetItem?.data.price}
+              ৳{item?.data.price}
             </Text>
           </View>
 
@@ -258,37 +195,42 @@ const ItemBottomSheet = ({
 export default ItemBottomSheet;
 
 const useStyles = makeStyles((theme: Theme) => ({
-  verticalBanner: {
-    height: 158,
-    width: 84,
-    marginRight: theme.spacing.m,
-    borderRadius: theme.borderRadii.l,
-    overflow: "hidden",
+  headerImageContainer: {
+    height: 272,
   },
-  verticalBannerImage: {
-    flex: 1,
-    resizeMode: "cover",
-    justifyContent: "center",
+  headerImage: {
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    backgroundColor: theme.colors.gray,
   },
-  restaurantItem: {
-    marginRight: theme.spacing.xl,
+  closeIcon: {
+    position: "absolute",
+    top: 13,
+    left: 13,
   },
-  logo: {
-    marginRight: theme.spacing.l,
-    justifyContent: "center",
+  handleBarContainer: {
     alignItems: "center",
   },
-  logoStyle: {
-    width: 38,
-    height: 65,
-    resizeMode: "contain",
-    marginBottom: theme.spacing.s,
+  handleBar: {
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
+    width: 100,
+    height: 2,
+    position: "absolute",
+    top: 13,
   },
-  modalSectionTitle: {
-    fontSize: 20,
-    marginBottom: 5,
+  mainScrollableContainer: {
+    marginVertical: 25,
+    marginHorizontal: 30,
   },
-  modalSectionSubtitle: {
+  itemName: {
+    fontFamily: "Normal",
+    fontSize: 28,
+    color: "black",
+    marginBottom: 16,
+  },
+  itemDescription: {
+    fontFamily: "Normal",
+    fontSize: 14,
     color: "#8A8A8A",
   },
 }));

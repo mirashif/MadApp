@@ -58,6 +58,13 @@ const theme = {
       fontFamily: "Medium",
       fontSize: 16,
     },
+    modalSectionTitle: {
+      fontSize: 20,
+      marginBottom: 5,
+    },
+    modalSectionSubtitle: {
+      color: "#8A8A8A",
+    },
   },
 };
 
