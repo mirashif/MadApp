@@ -2,20 +2,29 @@ import React from "react";
 import { TouchableWithoutFeedback } from "react-native";
 
 import { Box, Text } from "../../components";
+import type { CartableVariant } from "../../state/store/Cartable";
 
 interface VariationItemProps {
-  selected?: boolean;
-  name: string;
-  price: number;
-  onPress: () => void;
+  variant: CartableVariant;
 }
 
-const VariationItem = ({
-  selected = false,
-  onPress,
-  name,
-  price,
-}: VariationItemProps) => {
+const VariantItem = ({ variant }: VariationItemProps) => {
+  const variants: CartableVariant[] = variantGroup.variants;
+
+  // const variant: CartableVariant = variants[i];
+
+  // const variantImageURI?: string = variant.variant.data.imageURI;
+  // const variantName: string = variant.variant.data.name;
+  // const variantDescription: string = variant.variant.data.description;
+  // const variantPrice: string = variant.variant.data.price;
+
+  // Selection State
+  // // // To select a variant.
+  // variant.select();
+
+  // // // To know is a variant is selected.
+  // const isVariantSelected = variant.isSelected;
+
   return (
     <TouchableWithoutFeedback {...{ onPress }}>
       <Box
@@ -44,4 +53,4 @@ const VariationItem = ({
   );
 };
 
-export default VariationItem;
+export default VariantItem;
