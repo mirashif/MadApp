@@ -2,23 +2,19 @@ import React from "react";
 import { observer } from "mobx-react";
 
 import { Box, Text } from "../../components";
-import type {
-  Cartable,
-  CartableVariantGroup,
-} from "../../state/store/Cartable";
 import type { Item as ItemType } from "../../state/store/ItemStore";
 
 import VariantItem from "./VariantItem";
 
 interface VariantGroupsProps {
-  item: ItemType;
+  item: ItemType | null;
 }
 
 const Variants = observer(({ item }: VariantGroupsProps) => {
-  const cartable: Cartable = item.cartable;
-  const variantGroups: CartableVariantGroup[] = cartable.cartableVariantGroups;
+  const cartable = item?.cartable;
+  const variantGroups = cartable?.cartableVariantGroups;
 
-  if (!variantGroups.length) return null;
+  if (!variantGroups?.length) return null;
   return (
     <>
       {variantGroups.map((variantGroup) => {

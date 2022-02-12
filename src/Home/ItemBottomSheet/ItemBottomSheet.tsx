@@ -1,13 +1,15 @@
 import {
   BottomSheetBackdrop,
+  BottomSheetFooter,
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { ImageBackground, TouchableWithoutFeedback, View } from "react-native";
 import { observer } from "mobx-react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import type { ItemStore } from "../../state/store/ItemStore";
+import type { Item, ItemStore } from "../../state/store/ItemStore";
 import type { Theme } from "../../components";
 import { Button, CircularIcon, Icon, makeStyles, Text } from "../../components";
 import { useAppState } from "../../state/StateContext";
@@ -15,7 +17,7 @@ import { useAppState } from "../../state/StateContext";
 import Variants from "./Variants";
 import Addons from "./Addons";
 
-const FOOTER_SHEET_HEIGHT = 144;
+const FOOTER_HEIGHT = 144;
 
 interface ItemBottomSheetProps {
   bottomSheetItemId: string | null;
@@ -27,23 +29,17 @@ const ItemBottomSheet = observer(
     const styles = useStyles();
 
     const items: ItemStore = useAppState("items");
-    const item = useMemo(() => {
-      return bottomSheetItemId ? items.get(bottomSheetItemId) : null;
-    }, [bottomSheetItemId, items]);
+    const item = items.get(bottomSheetItemId || "");
+    const itemName = item?.data.name;
+    const itemDescription = item?.data.description;
+    const itemImageURI = item?.data.pictureURI;
 
     const itemSheetRef = useRef<BottomSheetModal>(null);
-    const itemFooterSheetRef = useRef<BottomSheetModal>(null);
-
-    const handleItemSheetChange = (index: number) => {
-      if (index > -1) itemFooterSheetRef.current?.present();
-    };
-
+    const snapPoints = useMemo(() => ["60%", "90%"], []);
     const handleDismiss = useCallback(() => {
       itemSheetRef.current?.close();
-      itemFooterSheetRef.current?.close();
       setBottomSheetItemId(null);
     }, [setBottomSheetItemId]);
-
     const renderBackdrop = useCallback(
       (props) => (
         <BottomSheetBackdrop
@@ -54,138 +50,132 @@ const ItemBottomSheet = observer(
       ),
       []
     );
+    const renderFooter = useCallback(
+      (props) => (
+        <BottomSheetFooter {...props}>
+          <ItemFooter {...{ item, handleDismiss }} />
+        </BottomSheetFooter>
+      ),
+      [handleDismiss, item]
+    );
 
     useEffect(() => {
-      if (!item) return;
-      itemSheetRef.current?.present();
+      if (!bottomSheetItemId || !item) {
+        return itemSheetRef.current?.close();
+      } else {
+        return itemSheetRef.current?.present();
+      }
+    }, [bottomSheetItemId, item]);
 
-      return () => {
-        handleDismiss();
-      };
-    }, [handleDismiss, item]);
-
-    if (!item) return null;
     return (
-      <>
-        {/* ItemSheet */}
-        <BottomSheetModal
-          ref={itemSheetRef}
-          snapPoints={["60%", "90%"]}
-          handleComponent={null}
-          onDismiss={handleDismiss}
-          onChange={handleItemSheetChange}
-          backdropComponent={renderBackdrop}
+      <BottomSheetModal
+        ref={itemSheetRef}
+        snapPoints={snapPoints}
+        handleComponent={null}
+        onDismiss={handleDismiss}
+        backdropComponent={renderBackdrop}
+        footerComponent={renderFooter}
+      >
+        <BottomSheetScrollView
+          showsVerticalScrollIndicator={false}
+          scrollToOverflowEnabled={true}
         >
-          <BottomSheetScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: FOOTER_SHEET_HEIGHT }}
+          {/* Header */}
+          <ImageBackground
+            style={styles.headerImageContainer}
+            imageStyle={styles.headerImage}
+            source={{ uri: itemImageURI }}
           >
-            {/* Header */}
-            <ImageBackground
-              style={styles.headerImageContainer}
-              imageStyle={styles.headerImage}
-              source={{ uri: item.data.pictureURI }}
-            >
-              {/* CLOSE ICON */}
-              <TouchableWithoutFeedback onPress={handleDismiss}>
-                <View style={styles.closeIcon}>
-                  <Icon name="x" size={24} color="white" />
-                </View>
-              </TouchableWithoutFeedback>
-
-              {/* Handle Bar */}
-              <View style={styles.handleBarContainer}>
-                <View style={styles.handleBar} />
+            {/* CLOSE ICON */}
+            <TouchableWithoutFeedback onPress={handleDismiss}>
+              <View style={styles.closeIcon}>
+                <Icon name="x" size={24} color="white" />
               </View>
-            </ImageBackground>
-
-            {/* Main Scrollable */}
-            <View style={styles.mainScrollableContainer}>
-              <Text style={styles.itemName}>{item.data.name}</Text>
-              <Text style={styles.itemDescription}>
-                {item.data.description}
-              </Text>
-              <Variants {...{ item }} />
-              <Addons {...{ item }} />
+            </TouchableWithoutFeedback>
+            {/* Handle Bar */}
+            <View style={styles.handleBarContainer}>
+              <View style={styles.handleBar} />
             </View>
-          </BottomSheetScrollView>
-        </BottomSheetModal>
+          </ImageBackground>
 
-        {/* ItemFooter */}
-        <BottomSheetModal
-          ref={itemFooterSheetRef}
-          snapPoints={[FOOTER_SHEET_HEIGHT]}
-          handleComponent={null}
-          stackBehavior="push"
-        >
-          <View
-            style={{
-              height: FOOTER_SHEET_HEIGHT,
-              paddingTop: 20,
-              paddingBottom: 28,
-            }}
-          >
-            <View
-              style={{
-                marginHorizontal: 30,
-              }}
-            >
-              <Text
-                style={{
-                  fontFamily: "Normal",
-                  fontSize: 28,
-                  color: "black",
-                }}
-              >
-                ৳ {item.data.price}
-              </Text>
-            </View>
-
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-                marginHorizontal: 30,
-              }}
-            >
-              <CircularIcon
-                color="#8A8A8A"
-                backgroundColor="#F8F8F8"
-                name="minus"
-                size={40}
-              />
-              <View
-                style={{
-                  width: 35,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Text
-                  style={{
-                    fontFamily: "Normal",
-                    fontSize: 17,
-                    color: "#8A8A8A",
-                  }}
-                >
-                  {/* TODO: Add cart */}1
-                </Text>
-              </View>
-              <CircularIcon name="plus" size={40} />
-
-              <Button size="xl" onPress={() => console.log("ADD TO CART")}>
-                ADD TO CART
-              </Button>
-            </View>
+          {/* Main Scrollable */}
+          <View style={styles.main}>
+            <Text style={styles.itemName}>{itemName}</Text>
+            <Text style={styles.itemDescription}>{itemDescription}</Text>
+            <Variants {...{ item }} />
+            <Addons {...{ item }} />
           </View>
-        </BottomSheetModal>
-      </>
+        </BottomSheetScrollView>
+      </BottomSheetModal>
     );
   }
 );
 
 export default ItemBottomSheet;
+
+const ItemFooter = observer(
+  ({
+    item,
+    handleDismiss,
+  }: {
+    item: Item | null;
+    handleDismiss: () => void;
+  }) => {
+    const styles = useStyles();
+    const insets = useSafeAreaInsets();
+
+    const cartable = item?.cartable;
+    const count = cartable?.count;
+    const price = cartable?.price;
+    const originalPrice = cartable?.originalPrice;
+    const isDealApplided = cartable?.isDealApplied;
+
+    return (
+      <View
+        style={[
+          styles.footerContainer,
+          {
+            paddingBottom: insets.bottom + 28,
+          },
+        ]}
+      >
+        <View style={styles.priceContainer}>
+          <Text style={styles.price}>৳{price}</Text>
+          {isDealApplided && (
+            <Text style={styles.originalPrice}>৳{originalPrice}</Text>
+          )}
+        </View>
+
+        <View style={styles.cartContainer}>
+          <TouchableWithoutFeedback onPress={() => cartable?.decrement()}>
+            <CircularIcon
+              color="#8A8A8A"
+              backgroundColor="#F8F8F8"
+              name="minus"
+              size={40}
+            />
+          </TouchableWithoutFeedback>
+          <View style={styles.cartCountContainer}>
+            <Text style={styles.cartCount}>{count}</Text>
+          </View>
+          <TouchableWithoutFeedback onPress={() => cartable?.increment()}>
+            <CircularIcon name="plus" size={40} />
+          </TouchableWithoutFeedback>
+
+          <Button
+            size="xl"
+            onPress={() => {
+              cartable?.addToCart();
+              handleDismiss();
+            }}
+          >
+            ADD TO CART
+          </Button>
+        </View>
+      </View>
+    );
+  }
+);
 
 const useStyles = makeStyles((theme: Theme) => ({
   headerImageContainer: {
@@ -211,9 +201,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     position: "absolute",
     top: 13,
   },
-  mainScrollableContainer: {
+  main: {
     marginVertical: 25,
     marginHorizontal: 30,
+    paddingBottom: FOOTER_HEIGHT,
   },
   itemName: {
     fontFamily: "Normal",
@@ -226,5 +217,44 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: 14,
     color: "#8A8A8A",
     marginBottom: 24,
+  },
+  // Footer Sheet
+  footerContainer: {
+    height: FOOTER_HEIGHT,
+    paddingTop: 20,
+    backgroundColor: "#fff",
+  },
+  priceContainer: {
+    marginHorizontal: 30,
+    flexDirection: "row",
+    alignItems: "baseline",
+  },
+  price: {
+    fontFamily: "Normal",
+    fontSize: 28,
+    color: "black",
+  },
+  originalPrice: {
+    fontFamily: "Normal",
+    fontSize: 14,
+    color: "#bebebe",
+    marginLeft: 10,
+    textDecorationLine: "line-through",
+  },
+  cartContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginHorizontal: 30,
+  },
+  cartCountContainer: {
+    width: 35,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  cartCount: {
+    fontFamily: "Normal",
+    fontSize: 17,
+    color: "#8A8A8A",
   },
 }));

@@ -2,20 +2,19 @@ import React from "react";
 import { observer } from "mobx-react";
 
 import { Box, Text } from "../../components";
-import type { Cartable, CartableAddon } from "../../state/store/Cartable";
 import type { Item as ItemType } from "../../state/store/ItemStore";
 
 import AddonItem from "./AddonItem";
 
 interface AddonsProps {
-  item: ItemType;
+  item: ItemType | null;
 }
 
 const Addons = observer(({ item }: AddonsProps) => {
-  const cartable: Cartable = item.cartable;
-  const addons: CartableAddon[] = cartable.cartableAddons;
+  const cartable = item?.cartable;
+  const addons = cartable?.cartableAddons;
 
-  if (!addons.length) return null;
+  if (!addons?.length) return null;
   return (
     <Box style={{ marginBottom: 64 }}>
       <Text variant="modalSectionTitle">Add-ons</Text>
