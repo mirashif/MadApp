@@ -1,55 +1,58 @@
 import React from "react";
-import { View, Image } from "react-native";
+import { Image, TouchableWithoutFeedback } from "react-native";
 
-import { useTheme, Text } from "../../components";
-import type { Item as TItem } from "../../state/store/ItemStore";
+import { useTheme, Text, Box } from "../../components";
+import type { Item as ItemType } from "../../state/store/ItemStore";
 
 interface ItemProps {
-  item: TItem;
+  item: ItemType;
+  onItemPress: (item: ItemType) => void;
 }
 
-const Item = ({ item }: ItemProps) => {
+const Item = ({ item, onItemPress }: ItemProps) => {
   const theme = useTheme();
 
   const { thumbnailURI, name, price } = item.data;
 
   return (
-    <View
-      style={{
-        margin: 8,
-      }}
-    >
-      <Image
+    <TouchableWithoutFeedback onPress={() => onItemPress(item)}>
+      <Box
         style={{
-          height: 150,
-          width: 150,
-          borderRadius: 12,
-          marginBottom: 7,
-          backgroundColor: theme.colors.gray,
-        }}
-        source={{ uri: thumbnailURI }}
-      />
-      <Text
-        numberOfLines={1}
-        style={{
-          fontFamily: "Bold",
-          fontSize: 11,
-          color: theme.colors.foreground,
+          margin: 8,
         }}
       >
-        {name}
-      </Text>
-      <Text
-        numberOfLines={1}
-        style={{
-          fontFamily: "Normal",
-          fontSize: 11,
-          color: theme.colors.darkGray,
-        }}
-      >
-        {price}
-      </Text>
-    </View>
+        <Image
+          style={{
+            height: 150,
+            width: 150,
+            borderRadius: 12,
+            marginBottom: 7,
+            backgroundColor: theme.colors.gray,
+          }}
+          source={{ uri: thumbnailURI }}
+        />
+        <Text
+          numberOfLines={1}
+          style={{
+            fontFamily: "Bold",
+            fontSize: 11,
+            color: theme.colors.foreground,
+          }}
+        >
+          {name}
+        </Text>
+        <Text
+          numberOfLines={1}
+          style={{
+            fontFamily: "Normal",
+            fontSize: 11,
+            color: theme.colors.darkGray,
+          }}
+        >
+          {price}
+        </Text>
+      </Box>
+    </TouchableWithoutFeedback>
   );
 };
 

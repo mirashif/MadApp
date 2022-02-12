@@ -35,10 +35,6 @@ const Home = observer(() => {
   const [bottomSheetItem, setBottomSheetItem] = useState<Item | null>(null);
   const [addressListModalVisible, setAddressListModalVisible] = useState(false);
 
-  const handleItemPress = (item: Item) => {
-    setBottomSheetItem(item);
-  };
-
   return (
     <SafeArea>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -58,7 +54,9 @@ const Home = observer(() => {
               <HomeRestaurant
                 key={restaurant.id}
                 restaurant={restaurant.data}
-                onItemPress={handleItemPress}
+                onItemPress={(item) => {
+                  setBottomSheetItem(item);
+                }}
                 items={restaurant.popularItems}
               />
             ))}

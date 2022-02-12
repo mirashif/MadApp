@@ -12,7 +12,9 @@ import {
 import type { HomeStackProps } from "..";
 import { SafeArea } from "../../components";
 import { useAppState } from "../../state/StateContext";
+import type { Item } from "../../state/store/ItemStore";
 import type { RestaurantStore } from "../../state/store/RestaurantStore";
+import ItemBottomSheet from "../ItemBottomSheet";
 
 import Content from "./Content";
 import HeaderImage from "./HeaderImage";
@@ -65,6 +67,8 @@ const RestaurantMenu = observer(
     const restaurants: RestaurantStore = useAppState("restaurants");
     const restaurant = restaurants.get(restaurantId);
 
+    const [bottomSheetItem, setBottomSheetItem] = useState<Item | null>(null);
+
     if (!restaurant) return null;
     return (
       <SafeArea>
@@ -116,8 +120,13 @@ const RestaurantMenu = observer(
             }}
             onScroll={scrollHandler}
             categories={restaurant.categories}
+            onItemPress={(item) => {
+              setBottomSheetItem(item);
+            }}
           />
         )}
+
+        <ItemBottomSheet {...{ bottomSheetItem, setBottomSheetItem }} />
       </SafeArea>
     );
   }

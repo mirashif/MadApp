@@ -1,10 +1,11 @@
 import React from "react";
 import type { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
-import { Dimensions, View } from "react-native";
+import { View } from "react-native";
 import Animated from "react-native-reanimated";
 
 import { Text, useTheme } from "../../components";
 import type { Category } from "../../state/store/CategoryStore";
+import type { Item as ItemType } from "../../state/store/ItemStore";
 
 import Item from "./Item";
 
@@ -18,6 +19,7 @@ interface ContentProps {
   scrollViewRef: any;
   onMeasurement: (index: number, length: number) => void;
   categories: Category[];
+  onItemPress: (item: ItemType) => void;
 }
 
 const Content = ({
@@ -25,9 +27,9 @@ const Content = ({
   onMeasurement,
   scrollViewRef,
   categories,
+  onItemPress,
 }: ContentProps) => {
   const theme = useTheme();
-  const { height: sHeight } = Dimensions.get("screen");
 
   return (
     <Animated.ScrollView
@@ -35,15 +37,12 @@ const Content = ({
       showsVerticalScrollIndicator={false}
       scrollEventThrottle={16}
       onScroll={onScroll}
-      // contentContainerStyle={{
-      //   paddingBottom: sHeight,
-      // }}
       scrollToOverflowEnabled={true}
     >
       {categories.map(({ data, items }, index) => (
         // menu container
         <View
-          key={index}
+          key={data.id}
           onLayout={({
             nativeEvent: {
               layout: { y: length },
@@ -74,8 +73,8 @@ const Content = ({
               flexWrap: "wrap",
             }}
           >
-            {items.map((item, j) => (
-              <Item key={j} item={item} />
+            {items.map((item) => (
+              <Item key={item.id} item={item} onItemPress={onItemPress} />
             ))}
           </View>
         </View>
