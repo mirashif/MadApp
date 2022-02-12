@@ -12,7 +12,7 @@ import Item from "./Item";
 interface HomeRestaurantProps {
   restaurant: RestaurantType;
   items: IItem[];
-  onItemPress: (item: IItem) => void;
+  onItemPress: (itemId: string) => void;
 }
 
 const HomeRestaurant = ({

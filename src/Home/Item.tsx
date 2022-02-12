@@ -7,7 +7,7 @@ import type { Item as IItem } from "../state/store/ItemStore";
 
 interface ItemProps {
   item: IItem;
-  onItemPress: (item: IItem) => void;
+  onItemPress: (itemId: string) => void;
 }
 
 const Item = ({ item, onItemPress }: ItemProps) => {
@@ -28,7 +28,7 @@ const Item = ({ item, onItemPress }: ItemProps) => {
   }, [tags]);
 
   return (
-    <TouchableWithoutFeedback onPress={() => onItemPress(item)}>
+    <TouchableWithoutFeedback onPress={() => onItemPress(item.id)}>
       <Box>
         <ImageBackground
           style={styles.imageView}

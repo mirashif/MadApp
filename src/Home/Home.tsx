@@ -7,7 +7,6 @@ import { SafeArea, Text } from "../components";
 import { useCart } from "../state/hooks/useCart";
 import { useAppState } from "../state/StateContext";
 import type { AuthStore } from "../state/store/AuthStore";
-import type { Item } from "../state/store/ItemStore";
 import type {
   Restaurant,
   RestaurantStore,
@@ -32,7 +31,9 @@ const Home = observer(() => {
   const restaurantList: Restaurant[] = restaurants.all;
   const { length: cartItemCount } = useCart();
 
-  const [bottomSheetItem, setBottomSheetItem] = useState<Item | null>(null);
+  const [bottomSheetItemId, setBottomSheetItemId] = useState<string | null>(
+    null
+  );
   const [addressListModalVisible, setAddressListModalVisible] = useState(false);
 
   return (
@@ -54,8 +55,8 @@ const Home = observer(() => {
               <HomeRestaurant
                 key={restaurant.id}
                 restaurant={restaurant.data}
-                onItemPress={(item) => {
-                  setBottomSheetItem(item);
+                onItemPress={(itemId) => {
+                  setBottomSheetItemId(itemId);
                 }}
                 items={restaurant.popularItems}
               />
@@ -73,7 +74,12 @@ const Home = observer(() => {
         onClose={() => setAddressListModalVisible(false)}
       />
 
-      <ItemBottomSheet {...{ bottomSheetItem, setBottomSheetItem }} />
+      <ItemBottomSheet
+        {...{
+          bottomSheetItemId,
+          setBottomSheetItemId,
+        }}
+      />
     </SafeArea>
   );
 });

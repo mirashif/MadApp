@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 import React from "react";
 import { TouchableWithoutFeedback } from "react-native";
 
@@ -8,25 +9,15 @@ interface VariationItemProps {
   variant: CartableVariant;
 }
 
-const VariantItem = ({ variant }: VariationItemProps) => {
-  const variants: CartableVariant[] = variantGroup.variants;
-
-  // const variant: CartableVariant = variants[i];
-
-  // const variantImageURI?: string = variant.variant.data.imageURI;
-  // const variantName: string = variant.variant.data.name;
-  // const variantDescription: string = variant.variant.data.description;
-  // const variantPrice: string = variant.variant.data.price;
-
-  // Selection State
-  // // // To select a variant.
-  // variant.select();
-
-  // // // To know is a variant is selected.
-  // const isVariantSelected = variant.isSelected;
+const VariantItem = observer(({ variant }: VariationItemProps) => {
+  const variantImageURI = variant.variant.data.imageURI;
+  const variantName = variant.variant.data.name;
+  const variantDescription = variant.variant.data.description;
+  const variantPrice = variant.variant.data.price;
+  const isVariantSelected = variant.isSelected;
 
   return (
-    <TouchableWithoutFeedback {...{ onPress }}>
+    <TouchableWithoutFeedback onPress={() => variant.select()}>
       <Box
         flexDirection="row"
         alignItems="center"
@@ -40,17 +31,17 @@ const VariantItem = ({ variant }: VariationItemProps) => {
             borderWidth={2}
             borderColor="primary"
             borderRadius="xl"
-            backgroundColor={selected ? "primary" : "background"}
+            backgroundColor={isVariantSelected ? "primary" : "background"}
           />
           <Text ml="m" fontSize={18}>
-            {name}
+            {variantName}
           </Text>
         </Box>
 
-        <Text fontSize={18}>৳ {price}</Text>
+        <Text fontSize={18}>৳ {variantPrice}</Text>
       </Box>
     </TouchableWithoutFeedback>
   );
-};
+});
 
 export default VariantItem;
