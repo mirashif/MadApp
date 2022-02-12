@@ -45,11 +45,11 @@ const ItemBottomSheet = observer(
       if (index > -1) itemFooterSheetRef.current?.present();
     };
 
-    const handleDismiss = () => {
+    const handleDismiss = useCallback(() => {
       itemSheetRef.current?.close();
       itemFooterSheetRef.current?.close();
       setBottomSheetItemId(null);
-    };
+    }, [setBottomSheetItemId]);
 
     const renderBackdrop = useCallback(
       (props) => (
@@ -65,7 +65,11 @@ const ItemBottomSheet = observer(
     useEffect(() => {
       if (!item) return;
       itemSheetRef.current?.present();
-    }, [item]);
+
+      return () => {
+        handleDismiss();
+      };
+    }, [handleDismiss, item]);
 
     if (!item) return null;
     return (
@@ -109,7 +113,7 @@ const ItemBottomSheet = observer(
                 {item.data.description}
               </Text>
 
-              {/* <VariantGroups {...{ item }} /> */}
+              <VariantGroups {...{ item }} />
 
               {item.addons.length > 0 && (
                 <View style={{ marginTop: 14 }}>
