@@ -1,7 +1,6 @@
-import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useIsFocused } from "@react-navigation/native";
 import { observer } from "mobx-react";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { ScrollView } from "react-native";
 
 import { SafeArea, Text } from "../components";
@@ -33,15 +32,11 @@ const Home = observer(() => {
   const restaurantList: Restaurant[] = restaurants.all;
   const { length: cartItemCount } = useCart();
 
-  const itemSheetRef = useRef<BottomSheetModal>(null);
-  const itemFooterSheetRef = useRef<BottomSheetModal>(null);
-
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  const [bottomSheetItem, setBottomSheetItem] = useState<Item | null>(null);
   const [addressListModalVisible, setAddressListModalVisible] = useState(false);
 
   const handleItemPress = (item: Item) => {
-    setSelectedItem(item);
-    itemSheetRef.current?.present();
+    setBottomSheetItem(item);
   };
 
   return (
@@ -80,11 +75,7 @@ const Home = observer(() => {
         onClose={() => setAddressListModalVisible(false)}
       />
 
-      <ItemBottomSheet
-        itemSheetRef={itemSheetRef}
-        itemFooterSheetRef={itemFooterSheetRef}
-        selectedItem={selectedItem}
-      />
+      <ItemBottomSheet {...{ bottomSheetItem, setBottomSheetItem }} />
     </SafeArea>
   );
 });

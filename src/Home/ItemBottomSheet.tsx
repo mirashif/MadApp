@@ -3,7 +3,7 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { ImageBackground, TouchableWithoutFeedback, View } from "react-native";
 
 import type { Item } from "../state/store/ItemStore";
@@ -23,18 +23,19 @@ import AddonsItem from "./AddonsItem";
 const FOOTER_SHEET_HEIGHT = 144;
 
 interface ItemBottomSheetProps {
-  itemSheetRef: React.RefObject<BottomSheetModal>;
-  itemFooterSheetRef: React.RefObject<BottomSheetModal>;
-  selectedItem: Item | null;
+  bottomSheetItem: Item | null;
+  setBottomSheetItem: React.Dispatch<React.SetStateAction<Item | null>>;
 }
 
 const ItemBottomSheet = ({
-  itemSheetRef,
-  itemFooterSheetRef,
-  selectedItem,
+  bottomSheetItem,
+  setBottomSheetItem,
 }: ItemBottomSheetProps) => {
   const styles = useStyles();
   const theme = useTheme();
+
+  const itemSheetRef = useRef<BottomSheetModal>(null);
+  const itemFooterSheetRef = useRef<BottomSheetModal>(null);
 
   const handleItemSheetChange = (index: number) => {
     if (index > -1) itemFooterSheetRef.current?.present();
@@ -43,6 +44,7 @@ const ItemBottomSheet = ({
   const handleDismiss = () => {
     itemSheetRef.current?.close();
     itemFooterSheetRef.current?.close();
+    setBottomSheetItem(null);
   };
 
   const renderBackdrop = useCallback(
@@ -56,7 +58,12 @@ const ItemBottomSheet = ({
     []
   );
 
-  if (!selectedItem) return null;
+  useEffect(() => {
+    if (!bottomSheetItem) return;
+    itemSheetRef.current?.present();
+  }, [bottomSheetItem]);
+
+  if (!bottomSheetItem) return null;
   return (
     <>
       {/* ItemSheet */}
@@ -82,7 +89,7 @@ const ItemBottomSheet = ({
               borderTopRightRadius: 12,
               backgroundColor: theme.colors.gray,
             }}
-            source={{ uri: selectedItem?.data.pictureURI }}
+            source={{ uri: bottomSheetItem?.data.pictureURI }}
           >
             {/* CLOSE ICON */}
             <TouchableWithoutFeedback onPress={handleDismiss}>
@@ -130,7 +137,7 @@ const ItemBottomSheet = ({
                 marginBottom: 16,
               }}
             >
-              {selectedItem?.data.name}
+              {bottomSheetItem?.data.name}
             </Text>
             <Text
               style={{
@@ -139,7 +146,7 @@ const ItemBottomSheet = ({
                 color: "#8A8A8A",
               }}
             >
-              {selectedItem?.data.description}
+              {bottomSheetItem?.data.description}
             </Text>
 
             <View style={{ marginTop: 24 }}>
@@ -159,13 +166,13 @@ const ItemBottomSheet = ({
               </Box>
             </View>
 
-            {selectedItem && selectedItem.addons.length > 0 && (
+            {bottomSheetItem && bottomSheetItem.addons.length > 0 && (
               <View style={{ marginTop: 14 }}>
                 <Text style={styles.modalSectionTitle}>Add-ons</Text>
                 <Text style={styles.modalSectionSubtitle}>Select one</Text>
 
                 <Box>
-                  {selectedItem.addons.map((addon) => (
+                  {bottomSheetItem.addons.map((addon) => (
                     <AddonsItem key={addon.data.id} {...{ addon }} />
                   ))}
                 </Box>
@@ -201,7 +208,7 @@ const ItemBottomSheet = ({
                 color: "black",
               }}
             >
-              ৳{selectedItem?.data.price}
+              ৳{bottomSheetItem?.data.price}
             </Text>
           </View>
 
