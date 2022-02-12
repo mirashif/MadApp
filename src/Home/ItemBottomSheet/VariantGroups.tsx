@@ -28,12 +28,11 @@ const VariantGroups = observer(({ item }: VariantGroupsProps) => {
           variantGroup.variantGroup.data.description;
         const variants = variantGroup.variants;
         return (
-          <Box key={variantGroupId} style={{ marginTop: 24 }}>
+          <Box key={variantGroupId} style={{ marginBottom: 64 }}>
             <Text variant="modalSectionTitle">{variantGroupName}</Text>
             <Text variant="modalSectionSubtitle">
               {variantGroupDescription}
             </Text>
-
             <Box>
               {variants.map((variant) => (
                 <VariantItem key={variant.variant.data.id} {...{ variant }} />

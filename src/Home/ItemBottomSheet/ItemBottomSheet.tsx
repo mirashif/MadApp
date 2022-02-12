@@ -245,5 +245,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontFamily: "Normal",
     fontSize: 14,
     color: "#8A8A8A",
+    marginBottom: 24,
   },
 }));

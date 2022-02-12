@@ -67,6 +67,7 @@ const theme = {
     },
     modalSectionSubtitle: {
       color: "sectionSubtitle",
+      marginBottom: "xl",
     },
   },
 };
