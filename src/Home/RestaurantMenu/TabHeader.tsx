@@ -1,6 +1,6 @@
 import React from "react";
 import { ScrollView, TouchableWithoutFeedback, View } from "react-native";
-import Animated, { FadeIn } from "react-native-reanimated";
+import Animated, { FadeInUp } from "react-native-reanimated";
 
 import { makeStyles, Text } from "../../components";
 import type { Category } from "../../state/store/CategoryStore";
@@ -24,9 +24,9 @@ const TabHeader = ({
   tabRef,
 }: TabHeaderProps) => {
   const styles = useStyles();
-  if (!categories?.length) return null;
+  if (!categories?.length || !activeTabId) return null;
   return (
-    <Animated.View entering={FadeIn} style={{ height: HEADER_HEIGHT }}>
+    <Animated.View entering={FadeInUp} style={{ height: HEADER_HEIGHT }}>
       <ScrollView
         ref={tabRef}
         horizontal
