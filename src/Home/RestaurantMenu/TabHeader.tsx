@@ -1,6 +1,5 @@
 import React from "react";
-import { TouchableWithoutFeedback, View } from "react-native";
-import Animated from "react-native-reanimated";
+import { ScrollView, TouchableWithoutFeedback, View } from "react-native";
 
 import { makeStyles, Text } from "../../components";
 import type { Category } from "../../state/store/CategoryStore";
@@ -8,53 +7,52 @@ import type { Category } from "../../state/store/CategoryStore";
 import { HEADER_HEIGHT } from "./constants";
 
 interface TabHeaderProps {
-  onMeasurement: (index: number, length: number) => void;
-  onTabPress: (index: number) => void;
-  activeIndex: number;
-  scrollViewRefX: any;
+  activeId: string;
   categories: Category[];
+  onMeasurement: (categoryId: string, x: number) => void;
+  onTabPress: (categoryId: string) => void;
+  tabRef: React.RefObject<ScrollView>;
 }
 
 const TabHeader = ({
+  activeId,
+  categories,
   onMeasurement,
   onTabPress,
-  activeIndex,
-  scrollViewRefX,
-  categories,
+  tabRef,
 }: TabHeaderProps) => {
   const styles = useStyles();
 
   return (
-    <View
-      style={{
+    <ScrollView
+      ref={tabRef}
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      scrollEventThrottle={16}
+      contentContainerStyle={{
+        paddingHorizontal: 8,
         height: HEADER_HEIGHT,
       }}
     >
-      <Animated.ScrollView
-        ref={scrollViewRefX}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingHorizontal: 8,
-        }}
-      >
-        {categories.map(({ data }, index) => (
+      {categories.map(({ data: category }) => {
+        const isActive = activeId === category.id;
+        return (
           <TouchableWithoutFeedback
-            onPress={() => onTabPress(index)}
-            key={data.id}
+            onPress={() => onTabPress(category.id)}
+            key={category.id}
           >
             <View
               onLayout={({
                 nativeEvent: {
-                  layout: { x: length },
+                  layout: { x },
                 },
-              }) => onMeasurement(index, length)}
+              }) => onMeasurement(category.id, x)}
               style={styles.tab}
             >
               <Text
                 style={[
                   styles.tabLabel,
-                  { color: activeIndex === index ? "#FFB81B" : "black" },
+                  { color: isActive ? "#FFB81B" : "black" },
                 ]}
               >
                 •
@@ -62,16 +60,16 @@ const TabHeader = ({
               <Text
                 style={[
                   styles.tabLabel,
-                  { color: activeIndex === index ? "#FFB81B" : "black" },
+                  { color: isActive ? "#FFB81B" : "black" },
                 ]}
               >
-                {data.name}
+                {category.name}
               </Text>
             </View>
           </TouchableWithoutFeedback>
-        ))}
-      </Animated.ScrollView>
-    </View>
+        );
+      })}
+    </ScrollView>
   );
 };
 
@@ -87,6 +85,5 @@ const useStyles = makeStyles(() => ({
     fontFamily: "Bold",
     fontSize: 18,
     paddingHorizontal: 8,
-    color: "#FFB81B",
   },
 }));
