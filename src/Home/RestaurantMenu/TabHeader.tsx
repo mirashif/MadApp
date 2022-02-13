@@ -8,7 +8,7 @@ import type { IMeasurement } from "./constants";
 import { HEADER_HEIGHT } from "./constants";
 
 interface TabHeaderProps {
-  activeId: string | undefined;
+  activeTabId: string | undefined;
   categories: Category[] | undefined;
   onMeasurement: (props: IMeasurement) => void;
   onTabPress: (categoryId: string) => void;
@@ -16,7 +16,7 @@ interface TabHeaderProps {
 }
 
 const TabHeader = ({
-  activeId,
+  activeTabId,
   categories,
   onMeasurement,
   onTabPress,
@@ -39,7 +39,7 @@ const TabHeader = ({
         }}
       >
         {categories.map(({ data: category }) => {
-          const isActive = activeId === category.id;
+          const isActive = activeTabId === category.id;
           return (
             <TouchableWithoutFeedback
               onPress={() => onTabPress(category.id)}

@@ -5,7 +5,12 @@ import type {
   ScrollView,
 } from "react-native";
 import { View } from "react-native";
-import { useAnimatedRef, useSharedValue } from "react-native-reanimated";
+import {
+  runOnJS,
+  useAnimatedRef,
+  useDerivedValue,
+  useSharedValue,
+} from "react-native-reanimated";
 
 import type { HomeStackProps } from "..";
 import { SafeArea } from "../../components";
@@ -41,7 +46,7 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
   const [bottomSheetItemId, setBottomSheetItemId] = useState<string | null>(
     null
   );
-  const [activeId, setActiveId] = useState<string | undefined>(
+  const [activeTabId, setActiveTabId] = useState<string | undefined>(
     categories?.[0]?.id
   );
 
@@ -67,7 +72,7 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
       if (y !== undefined) {
         setY((prev) =>
           prev.indexOf({ categoryId, y }) === -1
-            ? [...prev, { categoryId, y }]
+            ? [...prev, { categoryId, y }].sort((a, b) => a.y - b.y)
             : prev
         );
       }
@@ -81,7 +86,7 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
 
   const handleTabPress = useCallback(
     (categoryId: string) => {
-      setActiveId(categoryId);
+      setActiveTabId(categoryId);
       const found = Y.find((item) => item.categoryId === categoryId);
       if (found)
         contentRef.current?.scrollTo({
@@ -99,14 +104,40 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
 
   // handling tabheader scroll
   useEffect(() => {
-    const found = X.find((item) => item.categoryId === activeId);
+    const found = X.find((item) => item.categoryId === activeTabId);
     if (found)
       tabRef.current?.scrollTo({
         x: found.x,
         y: 0,
         animated: true,
       });
-  }, [activeId, tabRef, X]);
+  }, [activeTabId, tabRef, X]);
+
+  /* 
+    handling active tab id
+    based on content scroll
+  */
+  const handleActiveTabId = useCallback(
+    (_scroll: number) => {
+      const scroll = _scroll + 1;
+      Y.forEach((_, i) => {
+        // first tab
+        if (Y[1] && scroll < Y[1].y) return setActiveTabId(Y[0].categoryId);
+        // middle tabs
+        else if (Y[i + 1] && scroll > Y[i].y && scroll < Y[i + 1].y)
+          return setActiveTabId(Y[i].categoryId);
+        // last tab
+        else if (scroll > Y[Y.length - 1].y)
+          return setActiveTabId(Y[Y.length - 1].categoryId);
+        else return;
+      });
+    },
+    [Y]
+  );
+
+  useDerivedValue(() => {
+    runOnJS(handleActiveTabId)(contentScroll.value);
+  });
 
   const scrollToItem = useCallback(
     (itemId: string) => {
@@ -146,7 +177,7 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
       <TabHeader
         onMeasurement={handleMeasurement}
         onTabPress={handleTabPress}
-        {...{ activeId, categories, tabRef }}
+        {...{ activeTabId, categories, tabRef }}
       />
       <Content
         onMeasurement={handleMeasurement}
