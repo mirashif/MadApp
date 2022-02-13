@@ -37,7 +37,7 @@ const Story = ({ route, navigation }: HomeStackProps<"Story">) => {
   const restaurantLogoURI = restaurant?.data.logoImageURI;
 
   const handleSwipeUp = () => {
-    if (!target) return navigation.goBack();
+    if (!target) return;
     navigation.navigate("RestaurantMenu", {
       restaurantId,
       target,

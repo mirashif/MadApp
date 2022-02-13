@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import type {
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -20,9 +20,11 @@ import Offer from "./Offer";
 import TabHeader from "./TabHeader";
 
 const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
-  const { restaurantId } = route.params;
+  const { restaurantId, target } = route.params;
+
   const restaurants: RestaurantStore = useAppState("restaurants");
   const restaurant = restaurants.get(restaurantId);
+
   const restaurantName = restaurant?.data.name;
   const imageURI = restaurant?.data.bannerImageURI;
   const title = restaurant?.bannerTitle;
@@ -77,16 +79,19 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
     }
   };
 
-  const handleTabPress = (categoryId: string) => {
-    setActiveId(categoryId);
-    const found = Y.find((m) => m.categoryId === categoryId);
-    if (found)
-      contentRef.current?.scrollTo({
-        x: 0,
-        y: found.y,
-        animated: true,
-      });
-  };
+  const handleTabPress = useCallback(
+    (categoryId: string) => {
+      setActiveId(categoryId);
+      const found = Y.find((item) => item.categoryId === categoryId);
+      if (found)
+        contentRef.current?.scrollTo({
+          x: 0,
+          y: found.y,
+          animated: true,
+        });
+    },
+    [Y, contentRef]
+  );
 
   const handleItemPress = (itemId: string) => {
     setBottomSheetItemId(itemId);
@@ -94,7 +99,7 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
 
   // handling tabheader scroll
   useEffect(() => {
-    const found = X.find((m) => m.categoryId === activeId);
+    const found = X.find((item) => item.categoryId === activeId);
     if (found)
       tabRef.current?.scrollTo({
         x: found.x,
@@ -103,18 +108,33 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
       });
   }, [activeId, tabRef, X]);
 
-  // TODO: add story scroll
+  const scrollToItem = useCallback(
+    (itemId: string) => {
+      const found = itemY.find((item) => item.itemId === itemId);
+      if (found)
+        contentRef.current?.scrollTo({
+          x: 0,
+          y: found.y,
+          animated: true,
+        });
+    },
+    [contentRef, itemY]
+  );
+
+  // handling story swipe gestures
   useEffect(() => {
-    const found = itemY.find(
-      (m) => m.itemId === "fc6bb81a-fb09-4e6c-9454-d725f55cb1d8"
-    );
-    if (found)
-      contentRef.current?.scrollTo({
-        x: 0,
-        y: found.y,
-        animated: true,
-      });
-  }, [contentRef, itemY]);
+    if (!target) return;
+    else if (target.type === "category") {
+      handleTabPress(target.categoryID);
+    } else if (target.type === "item") {
+      scrollToItem(target.itemID);
+    } else if (target.type === "item-builder") {
+      scrollToItem(target.itemID);
+      setBottomSheetItemId(target.itemID);
+    } else {
+      return;
+    }
+  }, [contentRef, handleTabPress, itemY, scrollToItem, target]);
 
   if (!restaurant) return null;
   return (
