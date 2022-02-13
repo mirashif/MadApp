@@ -24,51 +24,56 @@ const TabHeader = ({
   const styles = useStyles();
   if (!categories?.length) return null;
   return (
-    <ScrollView
-      ref={tabRef}
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{
-        paddingHorizontal: 8,
+    <View
+      style={{
         height: HEADER_HEIGHT,
       }}
     >
-      {categories.map(({ data: category }) => {
-        const isActive = activeId === category.id;
-        return (
-          <TouchableWithoutFeedback
-            onPress={() => onTabPress(category.id)}
-            key={category.id}
-          >
-            <View
-              onLayout={({
-                nativeEvent: {
-                  layout: { x },
-                },
-              }) => onMeasurement(category.id, x)}
-              style={styles.tab}
+      <ScrollView
+        ref={tabRef}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: 8,
+        }}
+      >
+        {categories.map(({ data: category }) => {
+          const isActive = activeId === category.id;
+          return (
+            <TouchableWithoutFeedback
+              onPress={() => onTabPress(category.id)}
+              key={category.id}
             >
-              <Text
-                style={[
-                  styles.tabLabel,
-                  { color: isActive ? "#FFB81B" : "black" },
-                ]}
+              <View
+                onLayout={({
+                  nativeEvent: {
+                    layout: { x },
+                  },
+                }) => onMeasurement(category.id, x)}
+                style={styles.tab}
               >
-                •
-              </Text>
-              <Text
-                style={[
-                  styles.tabLabel,
-                  { color: isActive ? "#FFB81B" : "black" },
-                ]}
-              >
-                {category.name}
-              </Text>
-            </View>
-          </TouchableWithoutFeedback>
-        );
-      })}
-    </ScrollView>
+                <Text
+                  style={[
+                    styles.tabLabel,
+                    { color: isActive ? "#FFB81B" : "black" },
+                  ]}
+                >
+                  •
+                </Text>
+                <Text
+                  style={[
+                    styles.tabLabel,
+                    { color: isActive ? "#FFB81B" : "black" },
+                  ]}
+                >
+                  {category.name}
+                </Text>
+              </View>
+            </TouchableWithoutFeedback>
+          );
+        })}
+      </ScrollView>
+    </View>
   );
 };
 
