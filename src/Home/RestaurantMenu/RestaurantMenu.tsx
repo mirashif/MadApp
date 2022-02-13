@@ -46,9 +46,7 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
   const [bottomSheetItemId, setBottomSheetItemId] = useState<string | null>(
     null
   );
-  const [activeTabId, setActiveTabId] = useState<string | undefined>(
-    categories?.[0]?.id
-  );
+  const [activeTabId, setActiveTabId] = useState<string>();
 
   // x, y scroll measurements
   const [X, setX] = useState<{ categoryId: string; x: number }[]>([]);
@@ -86,7 +84,6 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
 
   const handleTabPress = useCallback(
     (categoryId: string) => {
-      setActiveTabId(categoryId);
       const found = Y.find((item) => item.categoryId === categoryId);
       if (found)
         contentRef.current?.scrollTo({
@@ -118,18 +115,20 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
     based on content scroll
   */
   const handleActiveTabId = useCallback(
-    (_scroll: number) => {
-      const scroll = _scroll + 1;
-      Y.forEach((_, i) => {
+    (scroll: number) => {
+      Y.find((_, i) => {
         // first tab
-        if (Y[1] && scroll < Y[1].y) return setActiveTabId(Y[0].categoryId);
+        if (Y[1] && scroll < Y[1].y) {
+          return setActiveTabId(Y[0].categoryId);
+        }
         // middle tabs
-        else if (Y[i + 1] && scroll > Y[i].y && scroll < Y[i + 1].y)
+        else if (Y[i + 1] && scroll >= Y[i].y && scroll < Y[i + 1].y) {
           return setActiveTabId(Y[i].categoryId);
+        }
         // last tab
-        else if (scroll > Y[Y.length - 1].y)
+        else if (scroll >= Y[Y.length - 1].y) {
           return setActiveTabId(Y[Y.length - 1].categoryId);
-        else return;
+        }
       });
     },
     [Y]
@@ -167,7 +166,7 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
     }
   }, [contentRef, handleTabPress, itemY, scrollToItem, target]);
 
-  if (!restaurant) return null;
+  if (!restaurant || !categories?.length) return null;
   return (
     <SafeArea>
       <View>
@@ -177,7 +176,11 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
       <TabHeader
         onMeasurement={handleMeasurement}
         onTabPress={handleTabPress}
-        {...{ activeTabId, categories, tabRef }}
+        {...{
+          activeTabId,
+          categories,
+          tabRef,
+        }}
       />
       <Content
         onMeasurement={handleMeasurement}

@@ -25,18 +25,12 @@ const TabHeader = ({
   const styles = useStyles();
   if (!categories?.length) return null;
   return (
-    <View
-      style={{
-        height: HEADER_HEIGHT,
-      }}
-    >
+    <View style={{ height: HEADER_HEIGHT }}>
       <ScrollView
         ref={tabRef}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingHorizontal: 8,
-        }}
+        contentContainerStyle={{ paddingHorizontal: 8 }}
       >
         {categories.map(({ data: category }) => {
           const isActive = activeTabId === category.id;
@@ -50,7 +44,7 @@ const TabHeader = ({
                   nativeEvent: {
                     layout: { x },
                   },
-                }) => onMeasurement({ categoryId: category.id, x })}
+                }) => onMeasurement({ categoryId: category.id, x: x - 8 })}
                 style={styles.tab}
               >
                 <Text
