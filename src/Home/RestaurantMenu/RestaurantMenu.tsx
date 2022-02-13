@@ -42,18 +42,8 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
   const [activeId, setActiveId] = useState<string | undefined>(
     categories?.[0]?.id
   );
-  const [tabMeasurements, setTabMeasurements] = useState<
-    {
-      categoryId: string;
-      x: number;
-    }[]
-  >([]);
-  const [contentMeasurements, setContentMeasurements] = useState<
-    {
-      categoryId: string;
-      y: number;
-    }[]
-  >([]);
+  const [X, setX] = useState<{ categoryId: string; x: number }[]>([]);
+  const [Y, setY] = useState<{ categoryId: string; y: number }[]>([]);
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { contentOffset } = event.nativeEvent;
@@ -62,14 +52,14 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
 
   const handleMeasurement = ({ categoryId, x, y }: IMeasurement) => {
     if (x !== undefined) {
-      setTabMeasurements((prev) =>
+      setX((prev) =>
         prev.indexOf({ categoryId, x }) === -1
           ? [...prev, { categoryId, x }]
           : prev
       );
     }
     if (y !== undefined) {
-      setContentMeasurements((prev) =>
+      setY((prev) =>
         prev.indexOf({ categoryId, y }) === -1
           ? [...prev, { categoryId, y }]
           : prev
@@ -79,16 +69,13 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
 
   const handleTabPress = (categoryId: string) => {
     setActiveId(categoryId);
-    const found = contentMeasurements.find((c) => c.categoryId === categoryId);
+    const found = Y.find((m) => m.categoryId === categoryId);
     if (found)
       contentRef.current?.scrollTo({
         x: 0,
         y: found.y,
         animated: true,
       });
-    console.log(found);
-    console.log(categoryId);
-    console.log(contentMeasurements);
   };
 
   const handleItemPress = (itemId: string) => {
@@ -96,14 +83,14 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
   };
 
   useEffect(() => {
-    const found = tabMeasurements.find((t) => t.categoryId === activeId);
+    const found = X.find((m) => m.categoryId === activeId);
     if (found)
       tabRef.current?.scrollTo({
         x: found.x,
         y: 0,
         animated: true,
       });
-  }, [activeId, tabRef, tabMeasurements]);
+  }, [activeId, tabRef, X]);
 
   if (!restaurant) return null;
   return (
