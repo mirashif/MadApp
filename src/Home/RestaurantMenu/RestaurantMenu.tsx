@@ -44,25 +44,33 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
   );
   const [X, setX] = useState<{ categoryId: string; x: number }[]>([]);
   const [Y, setY] = useState<{ categoryId: string; y: number }[]>([]);
+  const [itemY, setItemY] = useState<{ itemId: string; y: number }[]>([]);
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { contentOffset } = event.nativeEvent;
-    contentScroll.value = contentOffset.x;
+    contentScroll.value = contentOffset.y;
   };
 
-  const handleMeasurement = ({ categoryId, x, y }: IMeasurement) => {
-    if (x !== undefined) {
-      setX((prev) =>
-        prev.indexOf({ categoryId, x }) === -1
-          ? [...prev, { categoryId, x }]
-          : prev
-      );
+  const handleMeasurement = ({ categoryId, x, y, itemId }: IMeasurement) => {
+    if (categoryId) {
+      if (x !== undefined) {
+        setX((prev) =>
+          prev.indexOf({ categoryId, x }) === -1
+            ? [...prev, { categoryId, x }]
+            : prev
+        );
+      }
+      if (y !== undefined) {
+        setY((prev) =>
+          prev.indexOf({ categoryId, y }) === -1
+            ? [...prev, { categoryId, y }]
+            : prev
+        );
+      }
     }
-    if (y !== undefined) {
-      setY((prev) =>
-        prev.indexOf({ categoryId, y }) === -1
-          ? [...prev, { categoryId, y }]
-          : prev
+    if (itemId && y !== undefined) {
+      setItemY((prev) =>
+        prev.indexOf({ itemId, y }) === -1 ? [...prev, { itemId, y }] : prev
       );
     }
   };
@@ -91,6 +99,19 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
         animated: true,
       });
   }, [activeId, tabRef, X]);
+
+  // TODO: add story scroll
+  useEffect(() => {
+    const found = itemY.find(
+      (m) => m.itemId === "fc6bb81a-fb09-4e6c-9454-d725f55cb1d8"
+    );
+    if (found)
+      contentRef.current?.scrollTo({
+        x: 0,
+        y: found.y,
+        animated: true,
+      });
+  }, [contentRef, itemY]);
 
   if (!restaurant) return null;
   return (

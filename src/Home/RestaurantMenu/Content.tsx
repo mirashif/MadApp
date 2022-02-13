@@ -47,7 +47,7 @@ const Content = ({
           <Text style={styles.categoryName}>{category.name}</Text>
           <View style={styles.itemsContainer}>
             {items.map((item) => (
-              <Item key={item.id} item={item} onItemPress={onItemPress} />
+              <Item key={item.id} {...{ item, onItemPress, onMeasurement }} />
             ))}
           </View>
         </View>
