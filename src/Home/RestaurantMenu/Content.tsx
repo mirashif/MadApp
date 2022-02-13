@@ -5,7 +5,6 @@ import Animated from "react-native-reanimated";
 
 import { Text, useTheme } from "../../components";
 import type { Category } from "../../state/store/CategoryStore";
-import type { Item as ItemType } from "../../state/store/ItemStore";
 
 import Item from "./Item";
 
@@ -19,7 +18,7 @@ interface ContentProps {
   scrollViewRef: any;
   onMeasurement: (index: number, length: number) => void;
   categories: Category[];
-  onItemPress: (item: ItemType) => void;
+  onItemPress: (itemId: string) => void;
 }
 
 const Content = ({

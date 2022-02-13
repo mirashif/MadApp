@@ -6,7 +6,7 @@ import type { Item as ItemType } from "../../state/store/ItemStore";
 
 interface ItemProps {
   item: ItemType;
-  onItemPress: (item: ItemType) => void;
+  onItemPress: (itemId: string) => void;
 }
 
 const Item = ({ item, onItemPress }: ItemProps) => {
@@ -15,7 +15,7 @@ const Item = ({ item, onItemPress }: ItemProps) => {
   const { thumbnailURI, name, price } = item.data;
 
   return (
-    <TouchableWithoutFeedback onPress={() => onItemPress(item)}>
+    <TouchableWithoutFeedback onPress={() => onItemPress(item.id)}>
       <Box
         style={{
           margin: 8,
