@@ -8,11 +8,12 @@ import { View } from "react-native";
 import { useAnimatedRef, useSharedValue } from "react-native-reanimated";
 
 import type { HomeStackProps } from "..";
-import { SafeArea, Text } from "../../components";
+import { SafeArea } from "../../components";
 import { useAppState } from "../../state/StateContext";
 import type { RestaurantStore } from "../../state/store/RestaurantStore";
 import ItemBottomSheet from "../ItemBottomSheet/ItemBottomSheet";
 
+import type { IMeasurement } from "./constants";
 import Content from "./Content";
 import HeaderImage from "./HeaderImage";
 import Offer from "./Offer";
@@ -59,23 +60,35 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
     contentScroll.value = contentOffset.x;
   };
 
-  const handleMeasurement = (categoryId: string, x?: number, y?: number) => {
-    if (x)
+  const handleMeasurement = ({ categoryId, x, y }: IMeasurement) => {
+    if (x !== undefined) {
       setTabMeasurements((prev) =>
         prev.indexOf({ categoryId, x }) === -1
           ? [...prev, { categoryId, x }]
           : prev
       );
-    if (y)
+    }
+    if (y !== undefined) {
       setContentMeasurements((prev) =>
         prev.indexOf({ categoryId, y }) === -1
           ? [...prev, { categoryId, y }]
           : prev
       );
+    }
   };
 
   const handleTabPress = (categoryId: string) => {
     setActiveId(categoryId);
+    const found = contentMeasurements.find((c) => c.categoryId === categoryId);
+    if (found)
+      contentRef.current?.scrollTo({
+        x: 0,
+        y: found.y,
+        animated: true,
+      });
+    console.log(found);
+    console.log(categoryId);
+    console.log(contentMeasurements);
   };
 
   const handleItemPress = (itemId: string) => {
@@ -83,7 +96,7 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
   };
 
   useEffect(() => {
-    const found = tabMeasurements.find((tab) => tab.categoryId === activeId);
+    const found = tabMeasurements.find((t) => t.categoryId === activeId);
     if (found)
       tabRef.current?.scrollTo({
         x: found.x,

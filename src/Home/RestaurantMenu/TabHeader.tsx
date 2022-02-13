@@ -4,12 +4,13 @@ import { ScrollView, TouchableWithoutFeedback, View } from "react-native";
 import { makeStyles, Text } from "../../components";
 import type { Category } from "../../state/store/CategoryStore";
 
+import type { IMeasurement } from "./constants";
 import { HEADER_HEIGHT } from "./constants";
 
 interface TabHeaderProps {
   activeId: string | undefined;
   categories: Category[] | undefined;
-  onMeasurement: (categoryId: string, x: number) => void;
+  onMeasurement: (props: IMeasurement) => void;
   onTabPress: (categoryId: string) => void;
   tabRef: React.RefObject<ScrollView>;
 }
@@ -49,7 +50,7 @@ const TabHeader = ({
                   nativeEvent: {
                     layout: { x },
                   },
-                }) => onMeasurement(category.id, x)}
+                }) => onMeasurement({ categoryId: category.id, x })}
                 style={styles.tab}
               >
                 <Text

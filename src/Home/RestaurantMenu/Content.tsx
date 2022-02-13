@@ -6,13 +6,14 @@ import type { Theme } from "../../components";
 import { makeStyles, Text } from "../../components";
 import type { Category } from "../../state/store/CategoryStore";
 
+import type { IMeasurement } from "./constants";
 import Item from "./Item";
 
 interface ContentProps {
   categories: Category[] | undefined;
   contentRef: React.RefObject<ScrollView>;
   onItemPress: (itemId: string) => void;
-  onMeasurement: (categoryId: string, y: number) => void;
+  onMeasurement: (props: IMeasurement) => void;
   onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
 }
 
@@ -40,7 +41,7 @@ const Content = ({
             nativeEvent: {
               layout: { y },
             },
-          }) => onMeasurement(category.id, y)}
+          }) => onMeasurement({ categoryId: category.id, y })}
           style={styles.categoryContainer}
         >
           <Text style={styles.categoryName}>{category.name}</Text>
