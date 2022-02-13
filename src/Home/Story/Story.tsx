@@ -27,16 +27,25 @@ const Story = ({ route, navigation }: HomeStackProps<"Story">) => {
   const stories: StoryStore = useAppState("stories");
 
   const story = stories.get(id);
-  const restaurant = restaurants.get(story?.data.restaurantID || "");
+  const restaurantId = story?.data.restaurantID;
+  const caption = story?.data.caption;
+  const target = story?.data.target;
+  const storyImageURI = story?.data.imageURI;
+
+  const restaurant = restaurants.get(restaurantId as string);
+  const restaurantName = restaurant?.data.name;
+  const restaurantLogoURI = restaurant?.data.logoImageURI;
+
+  const handleSwipeUp = () => {
+    if (!target) return navigation.goBack();
+  };
 
   if (!story || !restaurant) return null;
-
-  // TODO: Add swipe navigation to restaurant?
   return (
     <SafeArea>
       <Box flex={1}>
         <ImageBackground
-          source={{ uri: story.data.imageURI }}
+          source={{ uri: storyImageURI }}
           resizeMode="cover"
           style={styles.image}
         >
@@ -50,77 +59,44 @@ const Story = ({ route, navigation }: HomeStackProps<"Story">) => {
             <TouchableWithoutFeedback onPress={() => navigation.goBack()}>
               <Icon name="x" size={24} color="white" />
             </TouchableWithoutFeedback>
-
-            {/* TODO: Add avatar from new design */}
-            <Image
-              source={{ uri: restaurant.data.logoImageURI }}
-              style={styles.avatar}
-            />
-
+            <Image source={{ uri: restaurantLogoURI }} style={styles.avatar} />
             <Box px="l" flexDirection="column" alignItems="flex-start">
-              <Text
-                style={{ fontSize: 15, fontFamily: "Bold", color: "white" }}
-              >
-                {restaurant.data.name}
-              </Text>
-              <Text
-                style={{ fontSize: 11, fontFamily: "Normal", color: "white" }}
-              >
-                NO DOC:30 mins
-              </Text>
+              <Text style={styles.restaurantName}>{restaurantName}</Text>
             </Box>
           </Box>
 
           <GestureRecognizer
-            onSwipeUp={
-              () => navigation.goBack()
-              // navigation.navigate("RestaurantMenu", {
-              //   restaurantId: "44f9bb5d-b5c5-4d55-9a1a-a91912d45f2f",
-              // })
-            }
-            style={{
-              flex: 1,
-              flexDirection: "column",
-              justifyContent: "flex-end",
-              alignItems: "center",
-              marginBottom: insets.bottom,
-              marginTop: height * 0.2,
-            }}
+            onSwipeUp={handleSwipeUp}
+            style={[
+              styles.gestureContainer,
+              {
+                marginBottom: insets.bottom,
+                marginTop: height * 0.2,
+              },
+            ]}
           >
-            {story.data.caption && (
-              <Box
-                style={{
-                  marginHorizontal: 70,
-                  marginBottom: 30,
-                }}
-              >
+            {caption && (
+              <Box style={styles.captionContainer}>
                 <Markdown
                   style={{
                     body: { color: "white", fontWeight: "bold", fontSize: 12 },
                   }}
                 >
-                  {story.data.caption}
+                  {caption}
                 </Markdown>
               </Box>
             )}
-
-            <Box
-              flexDirection="column"
-              justifyContent="center"
-              alignItems="center"
-              my="l"
-            >
-              <Icon name="chevron-up" size={24} color="white" />
-              <Text
-                style={{
-                  fontSize: 15,
-                  fontFamily: "Bold",
-                  color: "white",
-                }}
+            {target && (
+              <Box
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+                my="l"
               >
-                Swipe up to browse
-              </Text>
-            </Box>
+                <Icon name="chevron-up" size={24} color="white" />
+                <Text style={styles.swipeUpText}>Swipe up to browse</Text>
+              </Box>
+            )}
           </GestureRecognizer>
         </ImageBackground>
       </Box>
@@ -149,5 +125,25 @@ const useStyles = makeStyles((theme: Theme) => ({
     position: "absolute",
     width: "100%",
     top: 0,
+  },
+  restaurantName: {
+    fontSize: 15,
+    fontFamily: "Bold",
+    color: "white",
+  },
+  gestureContainer: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
+  captionContainer: {
+    marginHorizontal: 70,
+    marginBottom: 30,
+  },
+  swipeUpText: {
+    fontSize: 15,
+    fontFamily: "Bold",
+    color: "white",
   },
 }));

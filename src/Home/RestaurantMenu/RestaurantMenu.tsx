@@ -42,6 +42,8 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
   const [activeId, setActiveId] = useState<string | undefined>(
     categories?.[0]?.id
   );
+
+  // x, y scroll measurements
   const [X, setX] = useState<{ categoryId: string; x: number }[]>([]);
   const [Y, setY] = useState<{ categoryId: string; y: number }[]>([]);
   const [itemY, setItemY] = useState<{ itemId: string; y: number }[]>([]);
@@ -90,6 +92,7 @@ const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
     setBottomSheetItemId(itemId);
   };
 
+  // handling tabheader scroll
   useEffect(() => {
     const found = X.find((m) => m.categoryId === activeId);
     if (found)
