@@ -9,7 +9,7 @@ import type { Category } from "../../state/store/CategoryStore";
 import Item from "./Item";
 
 interface ContentProps {
-  categories: Category[];
+  categories: Category[] | undefined;
   contentRef: React.RefObject<ScrollView>;
   onItemPress: (itemId: string) => void;
   onMeasurement: (categoryId: string, y: number) => void;
@@ -24,6 +24,7 @@ const Content = ({
   onScroll,
 }: ContentProps) => {
   const styles = useStyles();
+  if (!categories?.length) return null;
   return (
     <ScrollView
       ref={contentRef}

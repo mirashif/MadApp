@@ -7,8 +7,8 @@ import type { Category } from "../../state/store/CategoryStore";
 import { HEADER_HEIGHT } from "./constants";
 
 interface TabHeaderProps {
-  activeId: string;
-  categories: Category[];
+  activeId: string | undefined;
+  categories: Category[] | undefined;
   onMeasurement: (categoryId: string, x: number) => void;
   onTabPress: (categoryId: string) => void;
   tabRef: React.RefObject<ScrollView>;
@@ -22,6 +22,7 @@ const TabHeader = ({
   tabRef,
 }: TabHeaderProps) => {
   const styles = useStyles();
+  if (!categories?.length) return null;
   return (
     <ScrollView
       ref={tabRef}
