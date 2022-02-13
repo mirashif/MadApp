@@ -18,6 +18,7 @@ export type HomeStackProps<RouteName extends keyof HomeStackParamList> = {
 export type HomeStackParamList = {
   RestaurantMenu: {
     restaurantId: string;
+    // target copied from Story documentation
     target:
       | null
       | {

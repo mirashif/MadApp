@@ -27,17 +27,21 @@ const Story = ({ route, navigation }: HomeStackProps<"Story">) => {
   const stories: StoryStore = useAppState("stories");
 
   const story = stories.get(id);
-  const restaurantId = story?.data.restaurantID;
+  const restaurantId = story?.data.restaurantID as string;
   const caption = story?.data.caption;
   const target = story?.data.target;
   const storyImageURI = story?.data.imageURI;
 
-  const restaurant = restaurants.get(restaurantId as string);
+  const restaurant = restaurants.get(restaurantId);
   const restaurantName = restaurant?.data.name;
   const restaurantLogoURI = restaurant?.data.logoImageURI;
 
   const handleSwipeUp = () => {
     if (!target) return navigation.goBack();
+    navigation.navigate("RestaurantMenu", {
+      restaurantId,
+      target,
+    });
   };
 
   if (!story || !restaurant) return null;
