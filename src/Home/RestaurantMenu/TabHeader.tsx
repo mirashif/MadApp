@@ -22,13 +22,11 @@ const TabHeader = ({
   tabRef,
 }: TabHeaderProps) => {
   const styles = useStyles();
-
   return (
     <ScrollView
       ref={tabRef}
       horizontal
       showsHorizontalScrollIndicator={false}
-      scrollEventThrottle={16}
       contentContainerStyle={{
         paddingHorizontal: 8,
         height: HEADER_HEIGHT,

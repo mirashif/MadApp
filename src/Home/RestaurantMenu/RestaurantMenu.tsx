@@ -1,141 +1,75 @@
-import { observer } from "mobx-react";
-import React, { useEffect, useRef, useState } from "react";
-import { View } from "react-native";
-import type Animated from "react-native-reanimated";
+import React from "react";
+import type { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
+import { Button, ScrollView, View } from "react-native";
 import {
-  runOnJS,
-  useAnimatedScrollHandler,
-  useDerivedValue,
+  useAnimatedRef,
   useSharedValue,
+  useDerivedValue,
+  scrollTo,
 } from "react-native-reanimated";
 
 import type { HomeStackProps } from "..";
-import { SafeArea } from "../../components";
-import { useAppState } from "../../state/StateContext";
-import type { RestaurantStore } from "../../state/store/RestaurantStore";
-import ItemBottomSheet from "../ItemBottomSheet/ItemBottomSheet";
+import { SafeArea, Text } from "../../components";
 
-import Content from "./Content";
-import HeaderImage from "./HeaderImage";
-import Offer from "./Offer";
-import TabHeader from "./TabHeader";
-/* 
-TODO: implement new scroll library
-https://github.com/slorber/react-native-scroll-into-view#readme
- */
-const RestaurantMenu = observer(
-  ({ route }: HomeStackProps<"RestaurantMenu">) => {
-    const y = useSharedValue(0);
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [anchorX, setAnchorX] = useState<number[]>([]);
-    const [anchorY, setAnchorY] = useState<number[]>([]);
-    const scrollViewRefX = useRef<Animated.ScrollView>(null);
-    const scrollViewRef = useRef<Animated.ScrollView>(null);
+const RestaurantMenu = ({ route }: HomeStackProps<"RestaurantMenu">) => {
+  const aref = useAnimatedRef<ScrollView>();
+  const scroll = useSharedValue(0);
 
-    const scrollHandler = useAnimatedScrollHandler((event) => {
-      y.value = event.contentOffset.y;
-    });
+  useDerivedValue(() => {
+    scrollTo(aref, 0, scroll.value, true);
+  });
 
-    const handleActiveIndex = (v: number) => {
-      anchorY.forEach((_, i) => {
-        if (v < Math.floor(anchorY[1])) setActiveIndex(0);
-        else if (v > Math.floor(anchorY[i]) && v < Math.floor(anchorY[i + 1]))
-          setActiveIndex(i);
-        else if (v >= Math.floor(anchorY[anchorY.length - 1]))
-          setActiveIndex(anchorY.length - 1);
-      });
-    };
+  const items = Array.from(Array(10).keys());
 
-    useDerivedValue(() => {
-      runOnJS(handleActiveIndex)(y.value);
-    });
+  const handleOnScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    scroll.value = event.nativeEvent.contentOffset.y;
+  };
 
-    useEffect(() => {
-      if (scrollViewRefX.current && scrollViewRefX.current.getNode) {
-        const node = scrollViewRefX.current.getNode();
-        if (node) {
-          node.scrollTo({
-            x: anchorX[activeIndex],
-            animated: true,
-          });
-        }
-      }
-    }, [activeIndex, anchorX]);
-
-    const { restaurantId } = route.params;
-    const restaurants: RestaurantStore = useAppState("restaurants");
-    const restaurant = restaurants.get(restaurantId);
-
-    const [bottomSheetItemId, setBottomSheetItemId] = useState<string | null>(
-      null
-    );
-
-    if (!restaurant) return null;
-    return (
-      <SafeArea>
-        <View>
-          <HeaderImage
-            y={y}
-            restaurantName={restaurant.data.name}
-            imageURI={restaurant.data.bannerImageURI}
-          />
-          <Offer
-            y={y}
-            title={restaurant.bannerTitle}
-            description={restaurant.bannerDescription}
-            phone={restaurant.data.phone}
-          />
-        </View>
-
-        {restaurant.categories && (
-          <TabHeader
-            scrollViewRefX={scrollViewRefX}
-            activeIndex={activeIndex}
-            onTabPress={(index: number) => {
-              if (scrollViewRef.current && scrollViewRef.current.getNode) {
-                const node = scrollViewRef.current.getNode();
-                if (node) {
-                  node.scrollTo({
-                    y: anchorY[index],
-                    animated: true,
-                  });
-                }
-              }
-            }}
-            onMeasurement={(index, length) => {
-              const _anchorX = anchorX;
-              _anchorX[index] = length;
-              setAnchorX(_anchorX);
-            }}
-            categories={restaurant.categories}
-          />
-        )}
-
-        {restaurant.categories && (
-          <Content
-            scrollViewRef={scrollViewRef}
-            onMeasurement={(index, length) => {
-              const _anchorY = anchorY;
-              _anchorY[index] = length;
-              setAnchorY(_anchorY);
-            }}
-            onScroll={scrollHandler}
-            categories={restaurant.categories}
-            onItemPress={(itemId) => {
-              setBottomSheetItemId(itemId);
-            }}
-          />
-        )}
-
-        <ItemBottomSheet
-          {...{
-            bottomSheetItemId,
-            setBottomSheetItemId,
-          }}
-        />
-      </SafeArea>
-    );
-  }
-);
+  return (
+    <SafeArea>
+      <Button
+        title={"" + scroll.value}
+        onPress={() => {
+          scroll.value = scroll.value + 120;
+        }}
+      />
+      <View style={{ backgroundColor: "green" }}>
+        <Child onScroll={handleOnScroll} {...{ items, aref }} />
+      </View>
+    </SafeArea>
+  );
+};
 
 export default RestaurantMenu;
+
+const Child = ({
+  items,
+  aref,
+  onScroll,
+}: {
+  items: number[];
+  aref: React.RefObject<ScrollView>;
+  onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
+}) => {
+  return (
+    <ScrollView
+      ref={aref}
+      onScroll={onScroll}
+      scrollToOverflowEnabled={true}
+      style={{ backgroundColor: "orange" }}
+    >
+      {items.map((_, i) => (
+        <View
+          key={i}
+          style={{
+            backgroundColor: "white",
+            height: 100,
+            margin: 10,
+          }}
+        >
+          <Text>INDEX {i}</Text>
+        </View>
+      ))}
+    </ScrollView>
+  );
+};
