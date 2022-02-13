@@ -1,85 +1,76 @@
 import React from "react";
 import type { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
-import { View } from "react-native";
-import Animated from "react-native-reanimated";
+import { ScrollView, View } from "react-native";
 
-import { Text, useTheme } from "../../components";
+import type { Theme } from "../../components";
+import { makeStyles, Text } from "../../components";
 import type { Category } from "../../state/store/CategoryStore";
 
 import Item from "./Item";
 
 interface ContentProps {
-  onScroll:
-    | ((event: NativeSyntheticEvent<NativeScrollEvent>) => void)
-    | Animated.Node<
-        ((event: NativeSyntheticEvent<NativeScrollEvent>) => void) | undefined
-      >
-    | undefined;
-  scrollViewRef: any;
-  onMeasurement: (index: number, length: number) => void;
   categories: Category[];
+  contentRef: React.RefObject<ScrollView>;
   onItemPress: (itemId: string) => void;
+  onMeasurement: (categoryId: string, y: number) => void;
+  onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
 }
 
 const Content = ({
-  onScroll,
-  onMeasurement,
-  scrollViewRef,
   categories,
+  contentRef,
   onItemPress,
+  onMeasurement,
+  onScroll,
 }: ContentProps) => {
-  const theme = useTheme();
-
+  const styles = useStyles();
   return (
-    <Animated.ScrollView
-      ref={scrollViewRef}
+    <ScrollView
+      ref={contentRef}
+      onScroll={onScroll}
       showsVerticalScrollIndicator={false}
       scrollEventThrottle={16}
-      onScroll={onScroll}
       scrollToOverflowEnabled={true}
     >
-      {categories.map(({ data, items }, index) => (
-        // menu container
+      {categories.map(({ data: category, items }) => (
         <View
-          key={data.id}
+          key={category.id}
           onLayout={({
             nativeEvent: {
-              layout: { y: length },
+              layout: { y },
             },
-          }) => onMeasurement(index, length)}
-          style={{
-            paddingHorizontal: theme.spacing.screen,
-            paddingVertical: 15,
-          }}
+          }) => onMeasurement(category.id, y)}
+          style={styles.categoryContainer}
         >
-          <Text
-            style={{
-              fontSize: 18,
-              fontFamily: "Normal",
-              color: theme.colors.foreground,
-              marginBottom: 4,
-              marginHorizontal: 8,
-            }}
-          >
-            {data.name}
-          </Text>
-
-          {/* items container */}
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              flexWrap: "wrap",
-            }}
-          >
+          <Text style={styles.categoryName}>{category.name}</Text>
+          <View style={styles.itemsContainer}>
             {items.map((item) => (
               <Item key={item.id} item={item} onItemPress={onItemPress} />
             ))}
           </View>
         </View>
       ))}
-    </Animated.ScrollView>
+    </ScrollView>
   );
 };
 
 export default Content;
+
+const useStyles = makeStyles((theme: Theme) => ({
+  categoryContainer: {
+    paddingHorizontal: theme.spacing.screen,
+    paddingVertical: 15,
+  },
+  categoryName: {
+    fontSize: 18,
+    fontFamily: "Normal",
+    color: theme.colors.foreground,
+    marginBottom: 4,
+    marginHorizontal: 8,
+  },
+  itemsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
+  },
+}));
