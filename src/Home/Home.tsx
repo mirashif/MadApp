@@ -16,7 +16,7 @@ import AddressListModal from "./AddressListModal";
 import AuthSheet from "./AuthSheet";
 import BannerCarousel from "./BannerCarousel";
 import FloatingCart from "./FloatingCart";
-import HomeRestaurant from "./HomeRestaurant";
+import RestaurantMenu from "./RestaurantMenu";
 import ItemBottomSheet from "./ItemBottomSheet/ItemBottomSheet";
 import LocationBar from "./LocationBar";
 import Stories from "./Stories";
@@ -52,7 +52,7 @@ const Home = observer(() => {
               🍴 Restaurants
             </Text>
             {restaurantList.map((restaurant) => (
-              <HomeRestaurant
+              <RestaurantMenu
                 key={restaurant.id}
                 restaurant={restaurant.data}
                 onItemPress={(itemId) => {

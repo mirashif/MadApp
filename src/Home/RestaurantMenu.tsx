@@ -4,6 +4,7 @@ import { ScrollView, Image, TouchableWithoutFeedback } from "react-native";
 
 import type { Theme } from "../components";
 import { Box, Icon, makeStyles, useTheme } from "../components";
+import type { RootStackProps } from "../components/AppNavigator";
 import type { Item as IItem } from "../state/store/ItemStore";
 import type { RestaurantType } from "../state/store/RestaurantStore";
 
@@ -15,15 +16,14 @@ interface HomeRestaurantProps {
   onItemPress: (itemId: string) => void;
 }
 
-const HomeRestaurant = ({
+const RestaurantMenu = ({
   items,
   restaurant,
   onItemPress,
 }: HomeRestaurantProps) => {
   const styles = useStyles();
   const theme = useTheme();
-  const navigation = useNavigation();
-
+  const navigation = useNavigation<RootStackProps<"HomeStack">["navigation"]>();
   return (
     <ScrollView
       contentContainerStyle={{
@@ -36,8 +36,8 @@ const HomeRestaurant = ({
       <TouchableWithoutFeedback
         onPress={() =>
           navigation.navigate("HomeStack", {
-            screen: "RestaurantMenu",
-            params: { restaurantId: restaurant.id },
+            screen: "Restaurant",
+            params: { restaurantId: restaurant.id, target: null },
           })
         }
       >
@@ -59,7 +59,7 @@ const HomeRestaurant = ({
   );
 };
 
-export default HomeRestaurant;
+export default RestaurantMenu;
 
 const useStyles = makeStyles((theme: Theme) => ({
   restaurantItem: {

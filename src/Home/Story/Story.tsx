@@ -38,7 +38,7 @@ const Story = ({ route, navigation }: HomeStackProps<"Story">) => {
 
   const handleSwipeUp = () => {
     if (!target) return;
-    navigation.navigate("RestaurantMenu", {
+    navigation.navigate("Restaurant", {
       restaurantId,
       target,
     });

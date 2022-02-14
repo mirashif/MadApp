@@ -3,7 +3,7 @@ import type { RouteProp } from "@react-navigation/native";
 import type { StackNavigationProp } from "@react-navigation/stack";
 import { createStackNavigator } from "@react-navigation/stack";
 
-import { RestaurantMenu } from "./RestaurantMenu";
+import { Restaurant } from "./Restaurant";
 import { Cart } from "./Cart";
 import { Checkout } from "./Checkout";
 import { Story } from "./Story";
@@ -16,7 +16,7 @@ export type HomeStackProps<RouteName extends keyof HomeStackParamList> = {
 };
 
 export type HomeStackParamList = {
-  RestaurantMenu: {
+  Restaurant: {
     restaurantId: string;
     // target copied from Story documentation
     target:
@@ -44,7 +44,7 @@ const HomeStack = createStackNavigator<HomeStackParamList>();
 
 export const HomeNavigator = () => (
   <HomeStack.Navigator headerMode="none">
-    <HomeStack.Screen name="RestaurantMenu" component={RestaurantMenu} />
+    <HomeStack.Screen name="Restaurant" component={Restaurant} />
     <HomeStack.Screen name="Cart" component={Cart} />
     <HomeStack.Screen name="Checkout" component={Checkout} />
     <HomeStack.Screen name="Story" component={Story} />
