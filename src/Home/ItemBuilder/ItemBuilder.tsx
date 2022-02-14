@@ -20,16 +20,16 @@ import Addons from "./Addons";
 const FOOTER_HEIGHT = 144;
 
 interface ItemBottomSheetProps {
-  bottomSheetItemId: string | null;
-  setBottomSheetItemId: React.Dispatch<React.SetStateAction<string | null>>;
+  itemBuilderId: string | null;
+  setItemBuilderId: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-const ItemBottomSheet = observer(
-  ({ bottomSheetItemId, setBottomSheetItemId }: ItemBottomSheetProps) => {
+const ItemBuilder = observer(
+  ({ itemBuilderId, setItemBuilderId }: ItemBottomSheetProps) => {
     const styles = useStyles();
 
     const items: ItemStore = useAppState("items");
-    const item = items.get(bottomSheetItemId || "");
+    const item = items.get(itemBuilderId || "");
     const itemName = item?.data.name;
     const itemDescription = item?.data.description;
     const itemImageURI = item?.data.pictureURI;
@@ -38,8 +38,8 @@ const ItemBottomSheet = observer(
     const snapPoints = useMemo(() => ["60%", "90%"], []);
     const handleDismiss = useCallback(() => {
       itemSheetRef.current?.close();
-      setBottomSheetItemId(null);
-    }, [setBottomSheetItemId]);
+      setItemBuilderId(null);
+    }, [setItemBuilderId]);
     const renderBackdrop = useCallback(
       (props) => (
         <BottomSheetBackdrop
@@ -60,12 +60,12 @@ const ItemBottomSheet = observer(
     );
 
     useEffect(() => {
-      if (!bottomSheetItemId || !item) {
+      if (!itemBuilderId || !item) {
         return itemSheetRef.current?.close();
       } else {
         return itemSheetRef.current?.present();
       }
-    }, [bottomSheetItemId, item]);
+    }, [itemBuilderId, item]);
 
     return (
       <BottomSheetModal
@@ -111,7 +111,7 @@ const ItemBottomSheet = observer(
   }
 );
 
-export default ItemBottomSheet;
+export default ItemBuilder;
 
 const ItemFooter = observer(
   ({

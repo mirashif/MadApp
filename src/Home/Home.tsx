@@ -17,7 +17,7 @@ import AuthSheet from "./AuthSheet";
 import BannerCarousel from "./BannerCarousel";
 import FloatingCart from "./FloatingCart";
 import RestaurantMenu from "./RestaurantMenu";
-import ItemBottomSheet from "./ItemBottomSheet/ItemBottomSheet";
+import { ItemBuilder } from "./ItemBuilder";
 import LocationBar from "./LocationBar";
 import Stories from "./Stories";
 
@@ -31,9 +31,7 @@ const Home = observer(() => {
   const restaurantList: Restaurant[] = restaurants.all;
   const { length: cartItemCount } = useCart();
 
-  const [bottomSheetItemId, setBottomSheetItemId] = useState<string | null>(
-    null
-  );
+  const [itemBuilderId, setItemBuilderId] = useState<string | null>(null);
   const [addressListModalVisible, setAddressListModalVisible] = useState(false);
 
   return (
@@ -56,7 +54,7 @@ const Home = observer(() => {
                 key={restaurant.id}
                 restaurant={restaurant.data}
                 onItemPress={(itemId) => {
-                  setBottomSheetItemId(itemId);
+                  setItemBuilderId(itemId);
                 }}
                 items={restaurant.popularItems}
               />
@@ -74,10 +72,10 @@ const Home = observer(() => {
         onClose={() => setAddressListModalVisible(false)}
       />
 
-      <ItemBottomSheet
+      <ItemBuilder
         {...{
-          bottomSheetItemId,
-          setBottomSheetItemId,
+          itemBuilderId,
+          setItemBuilderId,
         }}
       />
     </SafeArea>

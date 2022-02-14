@@ -17,7 +17,7 @@ import type { HomeStackProps } from "..";
 import { SafeArea } from "../../components";
 import { useAppState } from "../../state/StateContext";
 import type { RestaurantStore } from "../../state/store/RestaurantStore";
-import ItemBottomSheet from "../ItemBottomSheet/ItemBottomSheet";
+import { ItemBuilder } from "../ItemBuilder";
 
 import type { IMeasurement } from "./constants";
 import Content from "./Content";
@@ -47,9 +47,7 @@ const Restaurant = observer(({ route }: HomeStackProps<"Restaurant">) => {
   const contentRef = useAnimatedRef<ScrollView>();
 
   // react state values
-  const [bottomSheetItemId, setBottomSheetItemId] = useState<string | null>(
-    null
-  );
+  const [itemBuilderId, setItemBuilderId] = useState<string | null>(null);
   const [activeTabId, setActiveTabId] = useState<string>();
 
   // x, y scroll measurements
@@ -103,7 +101,7 @@ const Restaurant = observer(({ route }: HomeStackProps<"Restaurant">) => {
   );
 
   const handleItemPress = (itemId: string) => {
-    setBottomSheetItemId(itemId);
+    setItemBuilderId(itemId);
   };
 
   // handling tabheader scroll
@@ -167,7 +165,7 @@ const Restaurant = observer(({ route }: HomeStackProps<"Restaurant">) => {
       scrollToItem(target.itemID);
     } else if (target.type === "item-builder") {
       scrollToItem(target.itemID);
-      setBottomSheetItemId(target.itemID);
+      setItemBuilderId(target.itemID);
     } else {
       return;
     }
@@ -198,10 +196,10 @@ const Restaurant = observer(({ route }: HomeStackProps<"Restaurant">) => {
           contentRef,
         }}
       />
-      <ItemBottomSheet
+      <ItemBuilder
         {...{
-          bottomSheetItemId,
-          setBottomSheetItemId,
+          itemBuilderId,
+          setItemBuilderId,
         }}
       />
     </SafeArea>
