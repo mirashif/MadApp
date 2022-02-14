@@ -4,12 +4,15 @@ import { Image, TouchableWithoutFeedback } from "react-native";
 import { useTheme, Text, Box } from "../../components";
 import type { Item as ItemType } from "../../state/store/ItemStore";
 
+import type { IMeasurement } from "./constants";
+
 interface ItemProps {
   item: ItemType;
   onItemPress: (itemId: string) => void;
+  onMeasurement: (props: IMeasurement) => void;
 }
 
-const Item = ({ item, onItemPress }: ItemProps) => {
+const Item = ({ item, onItemPress, onMeasurement }: ItemProps) => {
   const theme = useTheme();
 
   const { thumbnailURI, name, price } = item.data;
@@ -17,6 +20,11 @@ const Item = ({ item, onItemPress }: ItemProps) => {
   return (
     <TouchableWithoutFeedback onPress={() => onItemPress(item.id)}>
       <Box
+        onLayout={({
+          nativeEvent: {
+            layout: { y },
+          },
+        }) => onMeasurement({ itemId: item.id, y })}
         style={{
           margin: 8,
         }}

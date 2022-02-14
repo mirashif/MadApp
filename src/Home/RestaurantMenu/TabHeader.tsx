@@ -1,77 +1,75 @@
 import React from "react";
-import { TouchableWithoutFeedback, View } from "react-native";
-import Animated from "react-native-reanimated";
+import { ScrollView, TouchableWithoutFeedback, View } from "react-native";
+import Animated, { FadeInUp } from "react-native-reanimated";
 
 import { makeStyles, Text } from "../../components";
 import type { Category } from "../../state/store/CategoryStore";
 
+import type { IMeasurement } from "./constants";
 import { HEADER_HEIGHT } from "./constants";
 
 interface TabHeaderProps {
-  onMeasurement: (index: number, length: number) => void;
-  onTabPress: (index: number) => void;
-  activeIndex: number;
-  scrollViewRefX: any;
-  categories: Category[];
+  activeTabId: string | undefined;
+  categories: Category[] | undefined;
+  onMeasurement: (props: IMeasurement) => void;
+  onTabPress: (categoryId: string) => void;
+  tabRef: React.RefObject<ScrollView>;
 }
 
 const TabHeader = ({
+  activeTabId,
+  categories,
   onMeasurement,
   onTabPress,
-  activeIndex,
-  scrollViewRefX,
-  categories,
+  tabRef,
 }: TabHeaderProps) => {
   const styles = useStyles();
-
+  if (!categories?.length || !activeTabId) return null;
   return (
-    <View
-      style={{
-        height: HEADER_HEIGHT,
-      }}
-    >
-      <Animated.ScrollView
-        ref={scrollViewRefX}
+    <Animated.View entering={FadeInUp} style={{ height: HEADER_HEIGHT }}>
+      <ScrollView
+        ref={tabRef}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingHorizontal: 8,
-        }}
+        contentContainerStyle={{ paddingHorizontal: 8 }}
       >
-        {categories.map(({ data }, index) => (
-          <TouchableWithoutFeedback
-            onPress={() => onTabPress(index)}
-            key={data.id}
-          >
-            <View
-              onLayout={({
-                nativeEvent: {
-                  layout: { x: length },
-                },
-              }) => onMeasurement(index, length)}
-              style={styles.tab}
+        {categories.map(({ data: category }) => {
+          const isActive = activeTabId === category.id;
+          return (
+            <TouchableWithoutFeedback
+              onPress={() => onTabPress(category.id)}
+              key={category.id}
             >
-              <Text
-                style={[
-                  styles.tabLabel,
-                  { color: activeIndex === index ? "#FFB81B" : "black" },
-                ]}
+              <View
+                onLayout={({
+                  nativeEvent: {
+                    layout: { x },
+                  },
+                }) => onMeasurement({ categoryId: category.id, x: x - 8 })}
+                style={styles.tab}
               >
-                •
-              </Text>
-              <Text
-                style={[
-                  styles.tabLabel,
-                  { color: activeIndex === index ? "#FFB81B" : "black" },
-                ]}
-              >
-                {data.name}
-              </Text>
-            </View>
-          </TouchableWithoutFeedback>
-        ))}
-      </Animated.ScrollView>
-    </View>
+                <Text
+                  style={[
+                    styles.tabLabel,
+                    { color: isActive ? "#FFB81B" : "black" },
+                  ]}
+                >
+                  •
+                </Text>
+                <Text
+                  style={[
+                    styles.tabLabel,
+                    { color: isActive ? "#FFB81B" : "black" },
+                  ]}
+                >
+                  {category.name}
+                </Text>
+              </View>
+            </TouchableWithoutFeedback>
+          );
+        })}
+      </ScrollView>
+    </Animated.View>
   );
 };
 
@@ -87,6 +85,5 @@ const useStyles = makeStyles(() => ({
     fontFamily: "Bold",
     fontSize: 18,
     paddingHorizontal: 8,
-    color: "#FFB81B",
   },
 }));

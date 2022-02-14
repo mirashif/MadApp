@@ -12,36 +12,35 @@ import { CircularIcon, Text, useTheme } from "../../components";
 import { HEADER_IMAGE_HEIGHT } from "./constants";
 
 interface OfferProps {
-  y: Animated.SharedValue<number>;
-  title: string;
-  description: string;
-  phone: string;
+  contentScroll: Animated.SharedValue<number>;
+  title: string | undefined;
+  description: string | undefined;
+  phone: string | undefined;
 }
 
-const Offer = ({ y, title, description, phone }: OfferProps) => {
+const Offer = ({ contentScroll, title, description, phone }: OfferProps) => {
   const theme = useTheme();
 
   const animatedStyles = useAnimatedStyle(() => {
     const opacity = interpolate(
-      y.value,
+      contentScroll.value,
       [0, HEADER_IMAGE_HEIGHT / 2],
       [1, 0],
       Extrapolate.CLAMP
     );
-
     const translateY = interpolate(
-      y.value,
+      contentScroll.value,
       [HEADER_IMAGE_HEIGHT / 2, HEADER_IMAGE_HEIGHT],
       [0, -HEADER_IMAGE_HEIGHT],
       Extrapolate.CLAMP
     );
-
     return {
       opacity,
       transform: [{ translateY }],
     };
   });
 
+  if (!title && !description && !phone) return null;
   return (
     <Animated.View
       style={[

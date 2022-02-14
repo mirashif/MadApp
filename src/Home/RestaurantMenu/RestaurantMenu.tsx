@@ -1,10 +1,14 @@
 import { observer } from "mobx-react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import type {
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  ScrollView,
+} from "react-native";
 import { View } from "react-native";
-import type Animated from "react-native-reanimated";
 import {
   runOnJS,
-  useAnimatedScrollHandler,
+  useAnimatedRef,
   useDerivedValue,
   useSharedValue,
 } from "react-native-reanimated";
@@ -15,118 +19,180 @@ import { useAppState } from "../../state/StateContext";
 import type { RestaurantStore } from "../../state/store/RestaurantStore";
 import ItemBottomSheet from "../ItemBottomSheet/ItemBottomSheet";
 
+import type { IMeasurement } from "./constants";
 import Content from "./Content";
 import HeaderImage from "./HeaderImage";
 import Offer from "./Offer";
 import TabHeader from "./TabHeader";
-/* 
-TODO: implement new scroll library
-https://github.com/slorber/react-native-scroll-into-view#readme
- */
+
 const RestaurantMenu = observer(
   ({ route }: HomeStackProps<"RestaurantMenu">) => {
-    const y = useSharedValue(0);
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [anchorX, setAnchorX] = useState<number[]>([]);
-    const [anchorY, setAnchorY] = useState<number[]>([]);
-    const scrollViewRefX = useRef<Animated.ScrollView>(null);
-    const scrollViewRef = useRef<Animated.ScrollView>(null);
+    const { restaurantId, target } = route.params;
 
-    const scrollHandler = useAnimatedScrollHandler((event) => {
-      y.value = event.contentOffset.y;
-    });
-
-    const handleActiveIndex = (v: number) => {
-      anchorY.forEach((_, i) => {
-        if (v < Math.floor(anchorY[1])) setActiveIndex(0);
-        else if (v > Math.floor(anchorY[i]) && v < Math.floor(anchorY[i + 1]))
-          setActiveIndex(i);
-        else if (v >= Math.floor(anchorY[anchorY.length - 1]))
-          setActiveIndex(anchorY.length - 1);
-      });
-    };
-
-    useDerivedValue(() => {
-      runOnJS(handleActiveIndex)(y.value);
-    });
-
-    useEffect(() => {
-      if (scrollViewRefX.current && scrollViewRefX.current.getNode) {
-        const node = scrollViewRefX.current.getNode();
-        if (node) {
-          node.scrollTo({
-            x: anchorX[activeIndex],
-            animated: true,
-          });
-        }
-      }
-    }, [activeIndex, anchorX]);
-
-    const { restaurantId } = route.params;
     const restaurants: RestaurantStore = useAppState("restaurants");
     const restaurant = restaurants.get(restaurantId);
 
+    const restaurantName = restaurant?.data.name;
+    const imageURI = restaurant?.data.bannerImageURI;
+    const title = restaurant?.bannerTitle;
+    const description = restaurant?.bannerDescription;
+    const phone = restaurant?.data.phone;
+    const categories = restaurant?.categories;
+
+    // animated values
+    const contentScroll = useSharedValue(0);
+    const tabRef = useAnimatedRef<ScrollView>();
+    const contentRef = useAnimatedRef<ScrollView>();
+
+    // react state values
     const [bottomSheetItemId, setBottomSheetItemId] = useState<string | null>(
       null
     );
+    const [activeTabId, setActiveTabId] = useState<string>();
 
-    if (!restaurant) return null;
+    // x, y scroll measurements
+    const [X, setX] = useState<{ categoryId: string; x: number }[]>([]);
+    const [Y, setY] = useState<{ categoryId: string; y: number }[]>([]);
+    const [itemY, setItemY] = useState<{ itemId: string; y: number }[]>([]);
+
+    const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const { contentOffset } = event.nativeEvent;
+      contentScroll.value = contentOffset.y;
+    };
+
+    const handleMeasurement = ({ categoryId, x, y, itemId }: IMeasurement) => {
+      if (categoryId) {
+        if (x !== undefined) {
+          setX((prev) =>
+            prev.indexOf({ categoryId, x }) === -1
+              ? [...prev, { categoryId, x }]
+              : prev
+          );
+        }
+        if (y !== undefined) {
+          setY((prev) =>
+            prev.indexOf({ categoryId, y }) === -1
+              ? [...prev, { categoryId, y }].sort((a, b) => a.y - b.y)
+              : prev
+          );
+        }
+      }
+      if (itemId && y !== undefined) {
+        setItemY((prev) =>
+          prev.indexOf({ itemId, y }) === -1 ? [...prev, { itemId, y }] : prev
+        );
+      }
+    };
+
+    const handleTabPress = useCallback(
+      (categoryId: string) => {
+        const found = Y.find((item) => item.categoryId === categoryId);
+        if (found)
+          contentRef.current?.scrollTo({
+            x: 0,
+            y: found.y,
+            animated: true,
+          });
+      },
+      [Y, contentRef]
+    );
+
+    const handleItemPress = (itemId: string) => {
+      setBottomSheetItemId(itemId);
+    };
+
+    // handling tabheader scroll
+    useEffect(() => {
+      const found = X.find((item) => item.categoryId === activeTabId);
+      if (found)
+        tabRef.current?.scrollTo({
+          x: found.x,
+          y: 0,
+          animated: true,
+        });
+    }, [activeTabId, tabRef, X]);
+
+    /* 
+    handling active tab id
+    based on content scroll
+  */
+    const handleActiveTabId = useCallback(
+      (scroll: number) => {
+        Y.find((_, i) => {
+          // first tab
+          if (Y[1] && scroll < Y[1].y) {
+            return setActiveTabId(Y[0].categoryId);
+          }
+          // middle tabs
+          else if (Y[i + 1] && scroll >= Y[i].y && scroll < Y[i + 1].y) {
+            return setActiveTabId(Y[i].categoryId);
+          }
+          // last tab
+          else if (scroll >= Y[Y.length - 1].y) {
+            return setActiveTabId(Y[Y.length - 1].categoryId);
+          }
+        });
+      },
+      [Y]
+    );
+
+    useDerivedValue(() => {
+      runOnJS(handleActiveTabId)(contentScroll.value);
+    });
+
+    const scrollToItem = useCallback(
+      (itemId: string) => {
+        const found = itemY.find((item) => item.itemId === itemId);
+        if (found)
+          contentRef.current?.scrollTo({
+            x: 0,
+            y: found.y,
+            animated: true,
+          });
+      },
+      [contentRef, itemY]
+    );
+
+    // handling story swipe gestures
+    useEffect(() => {
+      if (!target) return;
+      else if (target.type === "category") {
+        handleTabPress(target.categoryID);
+      } else if (target.type === "item") {
+        scrollToItem(target.itemID);
+      } else if (target.type === "item-builder") {
+        scrollToItem(target.itemID);
+        setBottomSheetItemId(target.itemID);
+      } else {
+        return;
+      }
+    }, [contentRef, handleTabPress, itemY, scrollToItem, target]);
+
+    if (!restaurant || !categories?.length) return null;
     return (
       <SafeArea>
         <View>
-          <HeaderImage
-            y={y}
-            restaurantName={restaurant.data.name}
-            imageURI={restaurant.data.bannerImageURI}
-          />
-          <Offer
-            y={y}
-            title={restaurant.bannerTitle}
-            description={restaurant.bannerDescription}
-            phone={restaurant.data.phone}
-          />
+          <HeaderImage {...{ contentScroll, restaurantName, imageURI }} />
+          <Offer {...{ contentScroll, title, description, phone }} />
         </View>
-
-        {restaurant.categories && (
-          <TabHeader
-            scrollViewRefX={scrollViewRefX}
-            activeIndex={activeIndex}
-            onTabPress={(index: number) => {
-              if (scrollViewRef.current && scrollViewRef.current.getNode) {
-                const node = scrollViewRef.current.getNode();
-                if (node) {
-                  node.scrollTo({
-                    y: anchorY[index],
-                    animated: true,
-                  });
-                }
-              }
-            }}
-            onMeasurement={(index, length) => {
-              const _anchorX = anchorX;
-              _anchorX[index] = length;
-              setAnchorX(_anchorX);
-            }}
-            categories={restaurant.categories}
-          />
-        )}
-
-        {restaurant.categories && (
-          <Content
-            scrollViewRef={scrollViewRef}
-            onMeasurement={(index, length) => {
-              const _anchorY = anchorY;
-              _anchorY[index] = length;
-              setAnchorY(_anchorY);
-            }}
-            onScroll={scrollHandler}
-            categories={restaurant.categories}
-            onItemPress={(itemId) => {
-              setBottomSheetItemId(itemId);
-            }}
-          />
-        )}
-
+        <TabHeader
+          onMeasurement={handleMeasurement}
+          onTabPress={handleTabPress}
+          {...{
+            activeTabId,
+            categories,
+            tabRef,
+          }}
+        />
+        <Content
+          onMeasurement={handleMeasurement}
+          onItemPress={handleItemPress}
+          onScroll={handleScroll}
+          {...{
+            categories,
+            contentRef,
+          }}
+        />
         <ItemBottomSheet
           {...{
             bottomSheetItemId,
