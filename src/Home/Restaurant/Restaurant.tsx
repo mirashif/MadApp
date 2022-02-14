@@ -171,7 +171,7 @@ const Restaurant = observer(({ route }: HomeStackProps<"Restaurant">) => {
     }
   }, [contentRef, handleTabPress, itemY, scrollToItem, target]);
 
-  if (!restaurant || !categories?.length) return null;
+  if (!restaurant) return null;
   return (
     <SafeArea>
       <View>
@@ -182,7 +182,7 @@ const Restaurant = observer(({ route }: HomeStackProps<"Restaurant">) => {
         onMeasurement={handleMeasurement}
         onTabPress={handleTabPress}
         {...{
-          activeTabId: activeTabId ?? categories[0].id,
+          activeTabId: activeTabId ?? restaurant.categories[0].id,
           categories,
           tabRef,
         }}

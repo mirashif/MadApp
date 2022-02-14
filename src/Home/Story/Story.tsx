@@ -8,6 +8,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import GestureRecognizer from "react-native-swipe-gestures";
 import Markdown from "react-native-markdown-display";
+import { observer } from "mobx-react";
 
 import type { HomeStackProps } from "..";
 import type { Theme } from "../../components";
@@ -16,7 +17,7 @@ import { useAppState } from "../../state/StateContext";
 import type { RestaurantStore } from "../../state/store/RestaurantStore";
 import type { StoryStore } from "../../state/store/StoryStore";
 
-const Story = ({ route, navigation }: HomeStackProps<"Story">) => {
+const Story = observer(({ route, navigation }: HomeStackProps<"Story">) => {
   const styles = useStyles();
   const insets = useSafeAreaInsets();
   const { height } = Dimensions.get("window");
@@ -106,7 +107,7 @@ const Story = ({ route, navigation }: HomeStackProps<"Story">) => {
       </Box>
     </SafeArea>
   );
-};
+});
 
 export default Story;
 
