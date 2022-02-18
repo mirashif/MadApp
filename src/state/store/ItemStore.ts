@@ -90,6 +90,8 @@ export interface ItemType {
     };
 
     addonLimit: number;
+
+    hasSDCharge: boolean;
 }
 
 export class Addon {
@@ -468,5 +470,9 @@ export class ItemStore {
         }
 
         return _p(this.items[id]);
+    }
+
+    get all() {
+        return Object.values(this.items);
     }
 }

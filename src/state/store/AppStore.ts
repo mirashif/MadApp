@@ -28,6 +28,8 @@ export interface GlobalsType {
     serviceChargePercentage?: number;
     pointToTaka?: number;
     takaToPoint?: number;
+
+    crossOrdering?: boolean;
 }
 
 export class AppStore {

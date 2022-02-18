@@ -1,4 +1,4 @@
-import {makeAutoObservable} from 'mobx';
+import {makeAutoObservable, toJS} from 'mobx';
 
 import {Store} from './index';
 import {
@@ -264,16 +264,18 @@ export class Cartable {
         return _p(this.dealt instanceof Array ? this.dealt[1] : this.dealt);
     }
 
+    get originalSingularPrice(): number {
+        return this.item.originalPrice;
+    }
+
     get price(): number {
         const _p = profile('Cartable.price');
-
         return _p(this.singularPrice * this.count);
     }
 
     get originalPrice(): number {
         const _p = profile('Cartable.originalPrice');
-
-        return _p(this.item.originalPrice * this.count);
+        return _p(this.originalSingularPrice * this.count);
     }
 
     get freebies(): Freebie[] {
@@ -311,8 +313,9 @@ export class Cartable {
     addToCart() {
         const _p = profile('Cartable.addToCart');
 
-        this.count = 1;
         const serialized = this.cartablePacket;
+
+        this.count = 1;
         this.parent.cart.upsert(serialized);
 
         _p();
@@ -341,6 +344,10 @@ export interface CartablePacketData {
             selectedVariant: Variant | null;
         };
     };
+    price: number;
+    originalPrice: number;
+    freebies: Freebie[];
+    isDealApplied: boolean;
 }
 
 export interface SerializedCartable {
@@ -394,6 +401,12 @@ export class CartablePacket {
                     ];
                 }),
             ),
+            price: cartable.singularPrice,
+            originalPrice: cartable.isDealApplied
+                ? cartable.originalSingularPrice
+                : cartable.singularPrice,
+            freebies: cartable.freebies,
+            isDealApplied: cartable.isDealApplied,
         };
 
         makeAutoObservable(this, {}, {autoBind: true});
@@ -407,13 +420,13 @@ export class CartablePacket {
         return _p({
             id: this.data.id,
             count: this.data.count,
-            item: this.data.item.data,
+            item: toJS(this.data.item.data),
             addons: Object.fromEntries(
                 Object.entries(this.data.addons).map(([key, value]) => [
                     key,
                     {
                         count: value.count,
-                        addon: value.addon.data,
+                        addon: toJS(value.addon.data),
                     },
                 ]),
             ),
@@ -421,8 +434,10 @@ export class CartablePacket {
                 Object.entries(this.data.variants).map(([key, value]) => [
                     key,
                     {
-                        variantGroup: value.variantGroup.data,
-                        selectedVariant: value.selectedVariant?.data || null,
+                        variantGroup: toJS(value.variantGroup.data),
+                        selectedVariant: toJS(
+                            value.selectedVariant?.data || null,
+                        ),
                     },
                 ]),
             ),

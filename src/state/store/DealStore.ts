@@ -35,6 +35,8 @@ export interface DealType {
     restaurants: string[];
     items: string[];
 
+    minOrderAmount?: number;
+
     scripts:
         | {
               applicability: string;
@@ -386,5 +388,14 @@ export class DealStore {
         const _p = profile('DealStore.get');
 
         return _p(this.deals[id] || null);
+    }
+
+    get coupons() {
+        // TODO: Honestly need to optimize this.
+        return Object.fromEntries(
+            this.all
+                .filter((coupon) => coupon.data.type === 'coupon')
+                .map((coupon) => [coupon.data.code.toLowerCase(), coupon]),
+        );
     }
 }
