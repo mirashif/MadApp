@@ -7,28 +7,34 @@ import Animated, {
   useAnimatedStyle,
 } from "react-native-reanimated";
 
-import { Icon, Text } from "../../components";
+import { Icon, Text, useTheme } from "../../components";
 
 import { HEADER_HEIGHT, HEADER_IMAGE_HEIGHT } from "./constants";
 
 interface HeaderImageProps {
-  y: Animated.SharedValue<number>;
-  restaurantName: string;
+  contentScroll: Animated.SharedValue<number>;
+  restaurantName: string | undefined;
+  imageURI: string | undefined;
 }
 
-const HeaderImage = ({ y, restaurantName }: HeaderImageProps) => {
+const HeaderImage = ({
+  contentScroll,
+  restaurantName,
+  imageURI: uri,
+}: HeaderImageProps) => {
   const navigation = useNavigation();
+  const theme = useTheme();
 
   const animatedStyles = useAnimatedStyle(() => {
     const height = interpolate(
-      y.value,
+      contentScroll.value,
       [0, HEADER_IMAGE_HEIGHT],
       [HEADER_IMAGE_HEIGHT, HEADER_HEIGHT],
       Extrapolate.CLAMP
     );
 
     const marginBottom = interpolate(
-      y.value,
+      contentScroll.value,
       [0, HEADER_IMAGE_HEIGHT],
       [HEADER_HEIGHT / 2, 0],
       Extrapolate.CLAMP
@@ -40,21 +46,15 @@ const HeaderImage = ({ y, restaurantName }: HeaderImageProps) => {
     };
   });
 
+  if (!restaurantName && !uri) return null;
   return (
-    <Animated.View
-      style={[
-        {
-          // offer 50% visible from bottom
-          position: "relative",
-        },
-        animatedStyles,
-      ]}
-    >
+    <Animated.View style={[{ position: "relative" }, animatedStyles]}>
       <ImageBackground
         style={{
           flex: 1,
+          backgroundColor: theme.colors.gray,
         }}
-        source={{ uri: "https://source.unsplash.com/a66sGfOnnqQ" }}
+        source={{ uri }}
       >
         <View
           style={{

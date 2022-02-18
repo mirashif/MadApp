@@ -1,41 +1,56 @@
-import type { NavigationProp, RouteProp } from "@react-navigation/native";
 import React from "react";
-import { Image, ImageBackground, TouchableWithoutFeedback } from "react-native";
+import {
+  Dimensions,
+  Image,
+  ImageBackground,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import GestureRecognizer from "react-native-swipe-gestures";
+import Markdown from "react-native-markdown-display";
+import { observer } from "mobx-react";
 
-import type { HomeStackParamList } from "..";
+import type { HomeStackProps } from "..";
 import type { Theme } from "../../components";
-import { SafeArea, Icon, Box, makeStyles, Text } from "../../components";
-import type { StoryType } from "../../state/store/StoryStore";
+import { Box, Icon, makeStyles, SafeArea, Text } from "../../components";
+import { useAppState } from "../../state/StateContext";
+import type { RestaurantStore } from "../../state/store/RestaurantStore";
+import type { StoryStore } from "../../state/store/StoryStore";
 
-interface IStory {
-  route: RouteProp<{ params: { story: StoryType } }, "params">;
-  navigation: NavigationProp<HomeStackParamList>;
-}
-
-const Story = ({ route, navigation }: IStory) => {
+const Story = observer(({ route, navigation }: HomeStackProps<"Story">) => {
   const styles = useStyles();
   const insets = useSafeAreaInsets();
+  const { height } = Dimensions.get("window");
 
-  const { story } = route.params;
+  const { id } = route.params;
 
-  // TODO: Add swipe navigation to restaurant?
+  const restaurants: RestaurantStore = useAppState("restaurants");
+  const stories: StoryStore = useAppState("stories");
+
+  const story = stories.get(id);
+  const restaurantId = story?.data.restaurantID as string;
+  const caption = story?.data.caption;
+  const target = story?.data.target;
+  const storyImageURI = story?.data.imageURI;
+
+  const restaurant = restaurants.get(restaurantId);
+  const restaurantName = restaurant?.data.name;
+  const restaurantLogoURI = restaurant?.data.logoImageURI;
+
+  const handleSwipeUp = () => {
+    if (!target) return;
+    navigation.navigate("Restaurant", {
+      restaurantId,
+      target,
+    });
+  };
+
+  if (!story || !restaurant) return null;
   return (
     <SafeArea>
-      <GestureRecognizer
-        onSwipeUp={
-          () => navigation.goBack()
-          // navigation.navigate("RestaurantMenu", {
-          //   restaurantId: "44f9bb5d-b5c5-4d55-9a1a-a91912d45f2f",
-          // })
-        }
-        style={{
-          flex: 1,
-        }}
-      >
+      <Box flex={1}>
         <ImageBackground
-          source={{ uri: story.imageURI }}
+          source={{ uri: storyImageURI }}
           resizeMode="cover"
           style={styles.image}
         >
@@ -49,71 +64,50 @@ const Story = ({ route, navigation }: IStory) => {
             <TouchableWithoutFeedback onPress={() => navigation.goBack()}>
               <Icon name="x" size={24} color="white" />
             </TouchableWithoutFeedback>
-
-            {/* TODO: Add avatar from new design */}
-            <Image
-              source={{ uri: story.thumbnailImageURI }}
-              style={styles.avatar}
-            />
-
+            <Image source={{ uri: restaurantLogoURI }} style={styles.avatar} />
             <Box px="l" flexDirection="column" alignItems="flex-start">
-              <Text
-                style={{ fontSize: 15, fontFamily: "Bold", color: "white" }}
-              >
-                Madchef
-              </Text>
-              <Text
-                style={{ fontSize: 11, fontFamily: "Normal", color: "white" }}
-              >
-                30 mins
-              </Text>
+              <Text style={styles.restaurantName}>{restaurantName}</Text>
             </Box>
           </Box>
 
-          <Box
-            flex={1}
-            flexDirection="column"
-            justifyContent="flex-end"
-            alignItems="center"
-            style={{
-              marginBottom: insets.bottom,
-            }}
+          <GestureRecognizer
+            onSwipeUp={handleSwipeUp}
+            style={[
+              styles.gestureContainer,
+              {
+                marginBottom: insets.bottom,
+                marginTop: height * 0.2,
+              },
+            ]}
           >
-            <Text
-              style={{
-                fontSize: 12,
-                fontFamily: "Bold",
-                color: "white",
-                marginHorizontal: 70,
-                marginBottom: 30,
-              }}
-            >
-              OMG, Madchef is alwayssss there for me!!!! #Madchef #MyLove
-            </Text>
-
-            <Box
-              flexDirection="column"
-              justifyContent="center"
-              alignItems="center"
-              my="l"
-            >
-              <Icon name="chevron-up" size={24} color="white" />
-              <Text
-                style={{
-                  fontSize: 15,
-                  fontFamily: "Bold",
-                  color: "white",
-                }}
+            {caption && (
+              <Box style={styles.captionContainer}>
+                <Markdown
+                  style={{
+                    body: { color: "white", fontWeight: "bold", fontSize: 12 },
+                  }}
+                >
+                  {caption}
+                </Markdown>
+              </Box>
+            )}
+            {target && (
+              <Box
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+                my="l"
               >
-                Swipe up to browse
-              </Text>
-            </Box>
-          </Box>
+                <Icon name="chevron-up" size={24} color="white" />
+                <Text style={styles.swipeUpText}>Swipe up to browse</Text>
+              </Box>
+            )}
+          </GestureRecognizer>
         </ImageBackground>
-      </GestureRecognizer>
+      </Box>
     </SafeArea>
   );
-};
+});
 
 export default Story;
 
@@ -136,5 +130,25 @@ const useStyles = makeStyles((theme: Theme) => ({
     position: "absolute",
     width: "100%",
     top: 0,
+  },
+  restaurantName: {
+    fontSize: 15,
+    fontFamily: "Bold",
+    color: "white",
+  },
+  gestureContainer: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
+  captionContainer: {
+    marginHorizontal: 70,
+    marginBottom: 30,
+  },
+  swipeUpText: {
+    fontSize: 15,
+    fontFamily: "Bold",
+    color: "white",
   },
 }));

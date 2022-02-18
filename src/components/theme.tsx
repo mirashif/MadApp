@@ -13,6 +13,7 @@ const palette = {
   white: "#ffffff",
   black: "#000000",
   gray500: "#5b5b5b",
+  gray550: "#8A8A8A",
   gray400: "#bebebe",
   gray300: "#dddddd",
 };
@@ -29,6 +30,8 @@ const theme = {
     darkGray: palette.gray500,
     gray: palette.gray400,
     lightGray: palette.gray300,
+
+    sectionSubtitle: palette.gray550,
   },
   spacing: {
     s: 5,
@@ -57,6 +60,14 @@ const theme = {
       color: "foregound",
       fontFamily: "Medium",
       fontSize: 16,
+    },
+    modalSectionTitle: {
+      fontSize: 20,
+      marginBottom: "s",
+    },
+    modalSectionSubtitle: {
+      color: "sectionSubtitle",
+      marginBottom: "xl",
     },
   },
 };

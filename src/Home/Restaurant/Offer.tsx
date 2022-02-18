@@ -12,33 +12,35 @@ import { CircularIcon, Text, useTheme } from "../../components";
 import { HEADER_IMAGE_HEIGHT } from "./constants";
 
 interface OfferProps {
-  y: Animated.SharedValue<number>;
+  contentScroll: Animated.SharedValue<number>;
+  title: string | undefined;
+  description: string | undefined;
+  phone: string | undefined;
 }
 
-const Offer = ({ y }: OfferProps) => {
+const Offer = ({ contentScroll, title, description, phone }: OfferProps) => {
   const theme = useTheme();
 
   const animatedStyles = useAnimatedStyle(() => {
     const opacity = interpolate(
-      y.value,
+      contentScroll.value,
       [0, HEADER_IMAGE_HEIGHT / 2],
       [1, 0],
       Extrapolate.CLAMP
     );
-
     const translateY = interpolate(
-      y.value,
+      contentScroll.value,
       [HEADER_IMAGE_HEIGHT / 2, HEADER_IMAGE_HEIGHT],
       [0, -HEADER_IMAGE_HEIGHT],
       Extrapolate.CLAMP
     );
-
     return {
       opacity,
       transform: [{ translateY }],
     };
   });
 
+  if (!title && !description && !phone) return null;
   return (
     <Animated.View
       style={[
@@ -72,7 +74,7 @@ const Offer = ({ y }: OfferProps) => {
             color: "white",
           }}
         >
-          20% OFF
+          {title}
         </Text>
         <Text
           style={{
@@ -81,12 +83,12 @@ const Offer = ({ y }: OfferProps) => {
             color: "white",
           }}
         >
-          Enjoy 20% OFF on the entire menu!
+          {description}
         </Text>
       </View>
       <TouchableWithoutFeedback
         onPress={() => {
-          Linking.openURL("tel:8777111223");
+          Linking.openURL(`tel:${phone}`);
         }}
       >
         <CircularIcon name="phone" size={58} />

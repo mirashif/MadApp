@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ImageBackground, TouchableWithoutFeedback } from "react-native";
 
 import type { Theme } from "../components";
@@ -7,7 +7,7 @@ import type { Item as IItem } from "../state/store/ItemStore";
 
 interface ItemProps {
   item: IItem;
-  onItemPress: (item: IItem) => void;
+  onItemPress: (itemId: string) => void;
 }
 
 const Item = ({ item, onItemPress }: ItemProps) => {
@@ -15,21 +15,52 @@ const Item = ({ item, onItemPress }: ItemProps) => {
   const theme = useTheme();
 
   const { name, price, thumbnailURI } = item.data;
-  const { originalPrice } = item;
+  const { originalPrice, tags } = item;
+
+  const [currentTagIdx, setCurrentTagIdx] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTagIdx((_currentTagIdx) => (_currentTagIdx + 1) % tags.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [tags]);
 
   return (
-    <TouchableWithoutFeedback onPress={() => onItemPress(item)}>
+    <TouchableWithoutFeedback onPress={() => onItemPress(item.id)}>
       <Box>
         <ImageBackground
           style={styles.imageView}
           imageStyle={styles.imageStyle}
           source={{ uri: thumbnailURI }}
         >
-          {/* {discount && (
-            <Box style={styles.discount}>
-              <Text style={styles.discountText}>{discount}</Text>
+          {tags.length > 0 && (
+            <Box
+              style={
+                (styles.discount,
+                {
+                  backgroundColor:
+                    tags[currentTagIdx].colors?.background ||
+                    theme.colors.primary,
+                })
+              }
+            >
+              <Text
+                style={
+                  (styles.discountText,
+                  {
+                    color:
+                      tags[currentTagIdx].colors?.foreground ||
+                      theme.colors.primaryContrast,
+                  })
+                }
+              >
+                {tags[currentTagIdx].title}
+              </Text>
             </Box>
-          )} */}
+          )}
+
           <Box style={styles.addCartIcon}>
             <Icon size={18} name="plus" color={theme.colors.primaryContrast} />
           </Box>
@@ -37,9 +68,9 @@ const Item = ({ item, onItemPress }: ItemProps) => {
 
         <Text style={styles.name}>{name}</Text>
         <Box style={styles.price}>
-          <Text style={styles.currentPrice}>{price}</Text>
-          {originalPrice && (
-            <Text style={styles.previousPrice}>{originalPrice}</Text>
+          <Text style={styles.currentPrice}>৳ {price}</Text>
+          {originalPrice && price !== originalPrice && (
+            <Text style={styles.previousPrice}>৳ {originalPrice}</Text>
           )}
         </Box>
       </Box>
@@ -64,7 +95,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     position: "absolute",
     top: 12,
     left: 0,
-    backgroundColor: theme.colors.primary,
     height: 12,
     width: 62,
     justifyContent: "center",
@@ -75,7 +105,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   discountText: {
     fontFamily: "Normal",
     fontSize: 9,
-    color: theme.colors.primaryContrast,
   },
   addCartIcon: {
     position: "absolute",

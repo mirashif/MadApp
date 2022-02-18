@@ -25,19 +25,19 @@ const Stories = observer(() => {
         horizontal
         showsHorizontalScrollIndicator={false}
       >
-        {storyList.map(({ data: story }) => (
+        {storyList.map((story) => (
           <TouchableWithoutFeedback
-            key={story.id}
+            key={story.data.id}
             onPress={() =>
               navigation.navigate("HomeStack", {
                 screen: "Story",
-                params: { story },
+                params: { id: story.data.id },
               })
             }
           >
             <Box style={styles.story}>
               <Image
-                source={{ uri: story.thumbnailImageURI }}
+                source={{ uri: story.data.thumbnailImageURI }}
                 style={styles.storyImage}
               />
             </Box>
