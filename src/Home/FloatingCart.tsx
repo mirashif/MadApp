@@ -81,7 +81,7 @@ const FloatingCart = observer(({ insetBottom = false }: FloatingCartProps) => {
 
           <Box flexGrow={1} flexShrink={0} flexBasis={0} alignItems="flex-end">
             <Text fontSize={17} color="background" fontFamily="Normal">
-              ৳ {cart.subtotalAmount}
+              ৳ {cart.grandTotalAmount}
             </Text>
           </Box>
         </Box>
