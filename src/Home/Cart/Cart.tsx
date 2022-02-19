@@ -32,7 +32,9 @@ const Cart = observer(({ navigation }: RootStackProps<"HomeStack">) => {
 
   useEffect(() => {
     if (cart.all.length === 0)
-      navigation.navigate("BottomTabs", { screen: "Home" });
+      navigation.canGoBack()
+        ? navigation.goBack()
+        : navigation.navigate("BottomTabs", { screen: "Home" });
   }, [cart.all, navigation]);
 
   return (
