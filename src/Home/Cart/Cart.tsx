@@ -4,38 +4,24 @@ import { Dimensions, ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import type { HomeStackProps } from "..";
-import {
-  Box,
-  HeaderBar,
-  makeStyles,
-  SafeArea,
-  Text,
-  useTheme,
-} from "../../components";
+import { Box, HeaderBar, SafeArea, Text } from "../../components";
 import { useAppState } from "../../state/StateContext";
 import type { CartStore, CouponEditor } from "../../state/store/CartStore";
-import type { Item } from "../../state/store/ItemStore";
-import { ItemBuilder } from "../ItemBuilder";
 import LocationBar from "../LocationBar";
 
 import ApplyCouponModal from "./ApplyCouponModal";
 import Breakdown from "./Breakdown";
-import { CheckoutButton, VoucherButton } from "./Button";
+import { CheckoutButton } from "./Button";
 import CartItems from "./CartItems";
-import Discount from "./Discount";
 import InvalidCouponModal from "./InvalidCouponModal";
-import UpsellItem from "./UpsellItem";
 import UpsellItems from "./UpsellItems";
+import Voucher from "./Voucher";
 
 const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
-  const theme = useTheme();
-  const styles = useStyles();
   const insets = useSafeAreaInsets();
   const windowWidth = Dimensions.get("window").width;
 
   const cart: CartStore = useAppState("cart");
-  const upsellItems: Item[] = cart.upsellItems;
-  const isCouponAdded = !!cart.couponDeal;
   const editor: CouponEditor = cart.couponEditor;
   const shouldShowErrorPopup = !editor.isValid;
 
@@ -58,17 +44,7 @@ const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
         {/*Order Summary & Voucher*/}
         <Box style={{ marginTop: 83, paddingHorizontal: 40 }}>
           <Breakdown />
-
-          <Box mt="m">
-            {isCouponAdded ? (
-              <Discount
-                amount={cart.discountAmount}
-                onDiscountCancel={cart.clearCoupon}
-              />
-            ) : (
-              <VoucherButton onPress={() => setApplyCouponModalVisible(true)} />
-            )}
-          </Box>
+          <Voucher {...{ setApplyCouponModalVisible }} />
         </Box>
       </ScrollView>
 
@@ -114,13 +90,5 @@ const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
     </SafeArea>
   );
 });
-
-const useStyles = makeStyles(() => ({
-  sectionTitle: {
-    color: "#8A8A8A",
-    fontSize: 18,
-    marginBottom: 21,
-  },
-}));
 
 export default Cart;
