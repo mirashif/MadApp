@@ -64,7 +64,7 @@ export const QuantityButton = ({
   const theme = useTheme();
 
   return (
-    <TouchableWithoutFeedback {...{ ...onPress, disabled }}>
+    <TouchableWithoutFeedback {...{ onPress, disabled }}>
       <Box
         style={{
           backgroundColor: isIncreaseButton ? theme.colors.primary : "#F8F8F8",

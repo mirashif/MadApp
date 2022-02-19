@@ -7,3 +7,4 @@ export { default as HeaderBar } from "./HeaderBar";
 export { default as CustomModal } from "./CustomModal";
 export { default as OrderStageBar } from "./OrderStageBar";
 export { default as Input } from "./Input";
+export { default as FloatingAreaSpace } from "./FloatingAreaSpace";

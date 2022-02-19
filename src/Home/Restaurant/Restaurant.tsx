@@ -14,9 +14,10 @@ import {
 } from "react-native-reanimated";
 
 import type { HomeStackProps } from "..";
-import { SafeArea } from "../../components";
+import { FloatingAreaSpace, SafeArea } from "../../components";
 import { useAppState } from "../../state/StateContext";
 import type { RestaurantStore } from "../../state/store/RestaurantStore";
+import FloatingCart from "../FloatingCart";
 import { ItemBuilder } from "../ItemBuilder";
 
 import type { IMeasurement } from "./constants";
@@ -174,6 +175,7 @@ const Restaurant = observer(({ route }: HomeStackProps<"Restaurant">) => {
   if (!restaurant) return null;
   return (
     <SafeArea>
+      <FloatingCart insetBottom />
       <View>
         <HeaderImage {...{ contentScroll, restaurantName, imageURI }} />
         <Offer {...{ contentScroll, title, description, phone }} />
@@ -196,6 +198,7 @@ const Restaurant = observer(({ route }: HomeStackProps<"Restaurant">) => {
           contentRef,
         }}
       />
+      <FloatingAreaSpace height={100} />
       <ItemBuilder
         {...{
           itemBuilderId,

@@ -3,26 +3,7 @@ import { TouchableWithoutFeedback } from "react-native";
 
 import { Box, Icon, Text } from "../../components";
 
-interface OrderSummaryItemProps {
-  title: string;
-  description: string;
-}
-
-const Item = ({ title, description }: OrderSummaryItemProps) => {
-  return (
-    <Box
-      flexDirection="row"
-      alignItems="center"
-      justifyContent="space-between"
-      style={{ marginBottom: 6 }}
-    >
-      <Text style={{ color: "#111111" }}>{title}</Text>
-      <Text style={{ color: "#8A8A8A" }}>{description}</Text>
-    </Box>
-  );
-};
-
-export const Discount = ({
+const Discount = ({
   amount,
   onDiscountCancel,
 }: {
@@ -54,4 +35,4 @@ export const Discount = ({
   );
 };
 
-export default Item;
+export default Discount;

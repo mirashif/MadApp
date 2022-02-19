@@ -1,35 +1,32 @@
 import React from "react";
 import { Image, TouchableWithoutFeedback } from "react-native";
 
-import { Box, Icon, makeStyles, Text, Theme } from "../../components";
+import type { Theme } from "../../components";
+import { Box, Icon, makeStyles, Text } from "../../components";
+import type { Item } from "../../state/store/ItemStore";
 
-interface PopularItemProps {
-  id: number;
-  name: string;
-  category: string;
-  currentPrice: number;
-  oldPrice?: number | null;
-  image: string;
-  onAdd: (id: number) => void;
+interface UpsellItemProps {
+  item: Item;
+  onAdd: (id: string) => void;
 }
 
-const PopularItem = (props: PopularItemProps) => {
+const UpsellItem = (props: UpsellItemProps) => {
   const styles = useStyles();
 
-  const { id, name, category, image, currentPrice, oldPrice, onAdd } = props;
+  const { item, onAdd } = props;
 
   return (
     <Box flexDirection="row" marginRight="l" alignItems="center" mb="m">
       <Box position="relative" marginRight="l">
         <Image
           source={{
-            uri: image,
+            uri: item.data.thumbnailURI,
           }}
           style={styles.image}
         />
 
         <Box position="absolute" bottom={-10} right={-8}>
-          <TouchableWithoutFeedback onPress={() => onAdd(id)}>
+          <TouchableWithoutFeedback onPress={() => onAdd(item.data.id)}>
             <Box style={styles.button}>
               <Icon name="plus" color="#fff" size={16} />
             </Box>
@@ -38,14 +35,18 @@ const PopularItem = (props: PopularItemProps) => {
       </Box>
 
       <Box>
-        <Text style={styles.name}>{name}</Text>
+        <Text style={styles.name}>{item.data.name}</Text>
 
-        <Text style={styles.category}>{category}</Text>
+        {item.category && (
+          <Text style={styles.category}>{item.category?.data.name}</Text>
+        )}
 
         <Box flexDirection="row">
-          <Text style={styles.newPrice}>৳{currentPrice}</Text>
+          <Text style={styles.newPrice}>৳{item.price}</Text>
 
-          {oldPrice && <Text style={styles.oldPrice}>৳{oldPrice}</Text>}
+          {item.price !== item.originalPrice && (
+            <Text style={styles.oldPrice}>৳{item.originalPrice}</Text>
+          )}
         </Box>
       </Box>
     </Box>
@@ -53,7 +54,12 @@ const PopularItem = (props: PopularItemProps) => {
 };
 
 const useStyles = makeStyles((theme: Theme) => ({
-  image: { width: 82, height: 82, borderRadius: 12 },
+  image: {
+    width: 82,
+    height: 82,
+    borderRadius: 12,
+    backgroundColor: theme.colors.gray,
+  },
   button: {
     height: 34,
     width: 34,
@@ -73,4 +79,4 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export default PopularItem;
+export default UpsellItem;
