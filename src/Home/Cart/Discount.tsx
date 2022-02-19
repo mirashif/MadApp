@@ -3,7 +3,7 @@ import { TouchableWithoutFeedback } from "react-native";
 
 import { Box, Icon, Text } from "../../components";
 
-export const Discount = ({
+const Discount = ({
   amount,
   onDiscountCancel,
 }: {
@@ -34,3 +34,5 @@ export const Discount = ({
     </Box>
   );
 };
+
+export default Discount;

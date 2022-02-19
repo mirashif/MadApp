@@ -16,6 +16,7 @@ interface ModalProps {
   children: React.ReactNode;
   title?: string;
   buttonTitle?: string;
+  buttonDisabled?: boolean;
   onButtonPress?: () => void;
   onBackPress?: () => void;
   onRequestClose: () => void;
@@ -29,6 +30,7 @@ const CustomModal = ({
   title,
   onButtonPress,
   onBackPress,
+  buttonDisabled = false,
 }: ModalProps) => {
   const theme = useTheme();
   const windowWidth = Dimensions.get("window").width;
@@ -66,7 +68,11 @@ const CustomModal = ({
             {children}
 
             {buttonTitle && onButtonPress && (
-              <Button onPress={onButtonPress} size="lg">
+              <Button
+                onPress={onButtonPress}
+                disabled={buttonDisabled}
+                size="lg"
+              >
                 {buttonTitle}
               </Button>
             )}

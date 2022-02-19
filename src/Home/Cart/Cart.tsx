@@ -1,31 +1,34 @@
+import { observer } from "mobx-react";
 import React, { useState } from "react";
 import { Dimensions, ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { observer } from "mobx-react";
 
+import type { HomeStackProps } from "..";
 import {
   Box,
-  CustomModal,
   HeaderBar,
   makeStyles,
   SafeArea,
   Text,
   useTheme,
 } from "../../components";
-import LocationBar from "../LocationBar";
-import Input from "../../components/Input";
-import type { HomeStackProps } from "..";
-import type { CartableWrapper, CartStore } from "../../state/store/CartStore";
 import { useAppState } from "../../state/StateContext";
+import type {
+  CartableWrapper,
+  CartStore,
+  CouponEditor,
+} from "../../state/store/CartStore";
 import type { Item } from "../../state/store/ItemStore";
 import { ItemBuilder } from "../ItemBuilder";
+import LocationBar from "../LocationBar";
 
+import ApplyCouponModal from "./ApplyCouponModal";
+import Breakdown from "./Breakdown";
+import { CheckoutButton, ClearCartButton, VoucherButton } from "./Button";
+import Discount from "./Discount";
+import InvalidCouponModal from "./InvalidCouponModal";
 import OrderItem from "./OrderItem";
 import UpsellItem from "./UpsellItem";
-import { VoucherButton, ClearCartButton, CheckoutButton } from "./Button";
-import { Discount } from "./Item";
-import VoucherIllustration from "./assets/VoucherIllustration.svg";
-import Breakdown from "./Breakdown";
 
 const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
   const theme = useTheme();
@@ -36,32 +39,13 @@ const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
   const cart: CartStore = useAppState("cart");
   const cartItems: CartableWrapper[] = cart.all;
   const upsellItems: Item[] = cart.upsellItems;
+  const isCouponAdded = !!cart.couponDeal;
+  const editor: CouponEditor = cart.couponEditor;
+  const shouldShowErrorPopup = !editor.isValid;
 
-  const [modalVisible, setModalVisible] = useState(false);
-  const [tempVoucher, setTempVoucher] = useState<null | string>(null);
-  const [voucher, setVoucher] = useState<null | string>(null);
-  const [wrongVoucher, setWrongVoucher] = useState(false);
+  const [applyCouponModalVisible, setApplyCouponModalVisible] = useState(false);
   const [itemBuilderId, setItemBuilderId] = useState<string | null>(null);
-
-  const handleVoucher = () => {
-    if (wrongVoucher) {
-      setWrongVoucher(false);
-      return;
-    }
-
-    if (tempVoucher?.toLocaleLowerCase() === "zanvent") {
-      setVoucher(tempVoucher);
-      setModalVisible(false);
-      return;
-    }
-
-    setWrongVoucher(true);
-  };
-
-  const handleModalClose = () => {
-    setModalVisible(false);
-    setWrongVoucher(false);
-  };
+  const [applyButtonTapped, setApplyButtonTapped] = useState(false);
 
   return (
     <SafeArea>
@@ -122,15 +106,13 @@ const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
           <Breakdown />
 
           <Box mt="m">
-            {voucher && (
+            {isCouponAdded ? (
               <Discount
-                amount={100}
-                onDiscountCancel={() => setVoucher(null)}
+                amount={cart.discountAmount}
+                onDiscountCancel={cart.clearCoupon}
               />
-            )}
-
-            {!voucher && (
-              <VoucherButton onPress={() => setModalVisible(true)} />
+            ) : (
+              <VoucherButton onPress={() => setApplyCouponModalVisible(true)} />
             )}
           </Box>
         </Box>
@@ -155,7 +137,7 @@ const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
             <Text style={{ color: "#BBBBBB", fontSize: 11 }}>VAT included</Text>
           </Box>
 
-          <Text style={{ fontSize: 18 }}>৳TOTAL</Text>
+          <Text style={{ fontSize: 18 }}>৳{cart.grandTotalAmount}</Text>
         </Box>
 
         <Box style={{ alignItems: "center", marginTop: 27 }}>
@@ -163,38 +145,18 @@ const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
         </Box>
       </Box>
 
-      <CustomModal
-        visible={modalVisible}
-        onRequestClose={handleModalClose}
-        onBackPress={handleModalClose}
-        buttonTitle={wrongVoucher ? "Try Again" : "Apply"}
-        onButtonPress={handleVoucher}
-        title={wrongVoucher ? "Uh Oh!" : ""}
-      >
-        {wrongVoucher && (
-          <>
-            <Text fontSize={15} style={{ marginTop: 29, marginBottom: 35 }}>
-              The minimum order value for this voucher is ৳130.00 {"\n\n"}{" "}
-              Please add ৳23.00 more to use this voucher
-            </Text>
-          </>
-        )}
-
-        {!wrongVoucher && (
-          <>
-            <Box alignItems="center">
-              <VoucherIllustration />
-            </Box>
-
-            <Box my="m">
-              <Input
-                placeholder="Enter Your Voucher Code"
-                onChangeText={(value) => setTempVoucher(value)}
-              />
-            </Box>
-          </>
-        )}
-      </CustomModal>
+      <ApplyCouponModal
+        visible={applyCouponModalVisible}
+        onClose={() => setApplyCouponModalVisible(false)}
+        onApplyPress={() => setApplyButtonTapped(true)}
+      />
+      <InvalidCouponModal
+        visible={applyButtonTapped && shouldShowErrorPopup}
+        onRetryPress={() => {
+          setApplyButtonTapped(false);
+          setApplyCouponModalVisible(true);
+        }}
+      />
 
       <ItemBuilder {...{ itemBuilderId, setItemBuilderId }} />
     </SafeArea>
