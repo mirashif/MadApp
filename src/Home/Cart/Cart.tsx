@@ -17,23 +17,14 @@ import Input from "../../components/Input";
 import type { HomeStackProps } from "..";
 import type { CartableWrapper, CartStore } from "../../state/store/CartStore";
 import { useAppState } from "../../state/StateContext";
+import type { Item } from "../../state/store/ItemStore";
+import { ItemBuilder } from "../ItemBuilder";
 
 import OrderItem from "./OrderItem";
-import PopularItem from "./PopularItem";
+import UpsellItem from "./UpsellItem";
 import { VoucherButton, ClearCartButton, CheckoutButton } from "./Button";
 import OrderSummaryItem, { Discount } from "./Item";
 import VoucherIllustration from "./assets/VoucherIllustration.svg";
-
-const popularItems = [...Array(6)].map((_, id) => {
-  return {
-    id,
-    image: "https://source.unsplash.com/collection/8592813/82x82",
-    name: "Burnt Cheezcake",
-    category: "Dessert",
-    currentPrice: 350,
-    oldPrice: 399,
-  };
-});
 
 const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
   const theme = useTheme();
@@ -43,11 +34,13 @@ const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
 
   const cart: CartStore = useAppState("cart");
   const cartItems: CartableWrapper[] = cart.all;
+  const upsellItems: Item[] = cart.upsellItems;
 
   const [modalVisible, setModalVisible] = useState(false);
   const [tempVoucher, setTempVoucher] = useState<null | string>(null);
   const [voucher, setVoucher] = useState<null | string>(null);
   const [wrongVoucher, setWrongVoucher] = useState(false);
+  const [itemBuilderId, setItemBuilderId] = useState<string | null>(null);
 
   const handleVoucher = () => {
     if (wrongVoucher) {
@@ -113,8 +106,12 @@ const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
               paddingHorizontal: theme.spacing.screen,
             }}
           >
-            {popularItems.map((item) => (
-              <PopularItem key={item.id} {...{ ...item }} onAdd={() => null} />
+            {upsellItems.map((item) => (
+              <UpsellItem
+                key={item.id}
+                {...{ item }}
+                onAdd={setItemBuilderId}
+              />
             ))}
           </ScrollView>
         </Box>
@@ -198,6 +195,8 @@ const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
           </>
         )}
       </CustomModal>
+
+      <ItemBuilder {...{ itemBuilderId, setItemBuilderId }} />
     </SafeArea>
   );
 });
