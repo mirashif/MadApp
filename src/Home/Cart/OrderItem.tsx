@@ -25,7 +25,12 @@ const OrderItem = observer((props: OrderItemProps) => {
           source={{
             uri: item.itemThumbnailURI,
           }}
-          style={{ width: 114, height: 114, borderRadius: 12 }}
+          style={{
+            width: 114,
+            height: 114,
+            borderRadius: 12,
+            backgroundColor: theme.colors.gray,
+          }}
         />
 
         <Box position="absolute" bottom={-3} right={-8}>
@@ -51,19 +56,21 @@ const OrderItem = observer((props: OrderItemProps) => {
           {item.itemName}
         </Text>
 
-        <Box flexDirection="row" style={{ marginTop: 9, marginBottom: 6 }}>
-          <Text style={{ color: "#939393", fontSize: 12 }}>+</Text>
-          <Text
-            fontSize={11}
-            style={{
-              color: "#939393",
-              marginLeft: 3,
-              width: 131,
-            }}
-          >
-            "ADDONS, ADDONS"
-          </Text>
-        </Box>
+        {!!item.additions && (
+          <Box flexDirection="row" style={{ marginTop: 9, marginBottom: 6 }}>
+            <Text style={{ color: "#939393", fontSize: 12 }}>+</Text>
+            <Text
+              fontSize={11}
+              style={{
+                color: "#939393",
+                marginLeft: 3,
+                width: 131,
+              }}
+            >
+              {item.additions}
+            </Text>
+          </Box>
+        )}
 
         <Text fontSize={13}>৳ {item.totalPrice}</Text>
       </Box>
