@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import React, { useState } from "react";
 import { ScrollView } from "react-native";
 
-import { SafeArea, Text } from "../components";
+import { FloatingAreaSpace, SafeArea, Text } from "../components";
 import { useAppState } from "../state/StateContext";
 import type { AuthStore } from "../state/store/AuthStore";
 import type {
@@ -15,9 +15,9 @@ import AddressListModal from "./AddressListModal";
 import AuthSheet from "./AuthSheet";
 import BannerCarousel from "./BannerCarousel";
 import FloatingCart from "./FloatingCart";
-import RestaurantMenu from "./RestaurantMenu";
 import { ItemBuilder } from "./ItemBuilder";
 import LocationBar from "./LocationBar";
+import RestaurantMenu from "./RestaurantMenu";
 import Stories from "./Stories";
 
 const Home = observer(() => {
@@ -59,6 +59,8 @@ const Home = observer(() => {
             ))}
           </>
         )}
+
+        <FloatingAreaSpace />
       </ScrollView>
 
       <FloatingCart />
