@@ -1,48 +1,35 @@
+import { observer } from "mobx-react";
 import React from "react";
 import { Image, TouchableWithoutFeedback } from "react-native";
 
 import { Box, Icon, Text, useTheme } from "../../components";
+import type { CartableWrapper } from "../../state/store/CartStore";
 
 import { QuantityButton } from "./Button";
 
 interface OrderItemProps {
-  id: string;
-  name: string;
-  addons: string;
-  price: number;
-  image: string;
-  quantity: number;
-  onDelete: (id: string) => void;
-  onIncrease: (id: string) => void;
-  onDecrease: (id: string) => void;
+  item: CartableWrapper;
+  onDelete: () => void;
+  onIncrease: () => void;
+  onDecrease: () => void;
 }
 
-const OrderItem = (props: OrderItemProps) => {
+const OrderItem = observer((props: OrderItemProps) => {
   const theme = useTheme();
-  const {
-    id,
-    name,
-    addons,
-    price,
-    image,
-    quantity,
-    onDelete,
-    onIncrease,
-    onDecrease,
-  } = props;
+  const { item, onDelete, onIncrease, onDecrease } = props;
 
   return (
     <Box flexDirection="row" alignItems="center" marginBottom="l">
       <Box position="relative">
         <Image
           source={{
-            uri: image,
+            uri: item.itemThumbnailURI,
           }}
           style={{ width: 114, height: 114, borderRadius: 12 }}
         />
 
         <Box position="absolute" bottom={-3} right={-8}>
-          <TouchableWithoutFeedback onPress={() => onDelete(id)}>
+          <TouchableWithoutFeedback onPress={onDelete}>
             <Box
               style={{
                 height: 34,
@@ -61,7 +48,7 @@ const OrderItem = (props: OrderItemProps) => {
 
       <Box style={{ marginLeft: 19, marginRight: 21, width: 162 }}>
         <Text fontFamily="Bold" fontSize={15}>
-          {name}
+          {item.itemName}
         </Text>
 
         <Box flexDirection="row" style={{ marginTop: 9, marginBottom: 6 }}>
@@ -74,22 +61,22 @@ const OrderItem = (props: OrderItemProps) => {
               width: 131,
             }}
           >
-            {addons}
+            "ADDONS, ADDONS"
           </Text>
         </Box>
 
-        <Text fontSize={13}>৳ {price}</Text>
+        <Text fontSize={13}>৳ {item.totalPrice}</Text>
       </Box>
 
       <Box alignItems="center">
-        <QuantityButton isIncreaseButton onPress={() => onIncrease(id)} />
+        <QuantityButton isIncreaseButton onPress={onIncrease} />
         <Text style={{ color: "#8A8A8A", fontSize: 17, marginVertical: 10 }}>
-          {quantity}
+          {item.count}
         </Text>
-        <QuantityButton onPress={() => onDecrease(id)} />
+        <QuantityButton onPress={onDecrease} />
       </Box>
     </Box>
   );
-};
+});
 
 export default OrderItem;

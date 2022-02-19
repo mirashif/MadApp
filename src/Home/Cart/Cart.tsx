@@ -15,33 +15,14 @@ import {
 import LocationBar from "../LocationBar";
 import Input from "../../components/Input";
 import type { HomeStackProps } from "..";
-import { useCart } from "../../state/hooks/useCart";
+import type { CartableWrapper, CartStore } from "../../state/store/CartStore";
+import { useAppState } from "../../state/StateContext";
 
 import OrderItem from "./OrderItem";
 import PopularItem from "./PopularItem";
 import { VoucherButton, ClearCartButton, CheckoutButton } from "./Button";
 import OrderSummaryItem, { Discount } from "./Item";
 import VoucherIllustration from "./assets/VoucherIllustration.svg";
-
-const orderItems = [
-  {
-    id: "1",
-    name: "SMG Pizza",
-    addons:
-      "Cheese, Extra Mushroom, Tomato, Samosa, Black Pepper, Sand Paper, Taylor Swift, Jalapenos, Blue Cheese",
-    price: 669,
-    image: "https://source.unsplash.com/MqT0asuoIcU/114x114/",
-    quantity: 100,
-  },
-  {
-    id: "2",
-    name: "SMG Pizza",
-    addons: "Permission Cheese",
-    price: 669,
-    image: "https://source.unsplash.com/MqT0asuoIcU/114x114/",
-    quantity: 1,
-  },
-];
 
 const popularItems = [...Array(6)].map((_, id) => {
   return {
@@ -57,12 +38,11 @@ const popularItems = [...Array(6)].map((_, id) => {
 const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
   const theme = useTheme();
   const styles = useStyles();
-
   const insets = useSafeAreaInsets();
-
   const windowWidth = Dimensions.get("window").width;
 
-  const { receipt } = useCart();
+  const cart: CartStore = useAppState("cart");
+  const cartItems: CartableWrapper[] = cart.all;
 
   const [modalVisible, setModalVisible] = useState(false);
   const [tempVoucher, setTempVoucher] = useState<null | string>(null);
@@ -97,27 +77,25 @@ const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
       >
         <HeaderBar title="Cart" />
 
-        <Box mx="screen">
-          <LocationBar editMode onEditPress={() => null} />
-        </Box>
+        <LocationBar editMode onEditPress={() => null} />
 
         {/*Order Items*/}
         <Box px={"screen"}>
           <Box style={{ marginTop: 33 }}>
             <Text style={styles.sectionTitle}>Order Details</Text>
 
-            {orderItems.map((item) => (
+            {cartItems.map((item) => (
               <OrderItem
-                key={item.id}
-                {...{ ...item }}
-                onDelete={() => null}
-                onDecrease={() => null}
-                onIncrease={() => null}
+                key={item.itemID}
+                {...{ item }}
+                onIncrease={item.increment}
+                onDecrease={item.decrement}
+                onDelete={item.remove}
               />
             ))}
 
             <Box mt="s">
-              <ClearCartButton onPress={() => null} />
+              <ClearCartButton onPress={cart.clearCart} />
             </Box>
           </Box>
         </Box>
@@ -143,19 +121,13 @@ const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
 
         {/*Order Summary & Voucher*/}
         <Box style={{ marginTop: 83, paddingHorizontal: 40 }}>
-          <OrderSummaryItem
-            title="Subtotal"
-            description={`৳${receipt.subtotal}`}
-          />
-          <OrderSummaryItem
-            title="Delivery fee"
-            description={`৳${receipt.deliveryCharge}`}
-          />
+          <OrderSummaryItem title="Subtotal" description={`৳${500}`} />
+          <OrderSummaryItem title="Delivery fee" description={`৳${30}`} />
 
           <Box mt="m">
             {voucher && (
               <Discount
-                amount={receipt.discount}
+                amount={100}
                 onDiscountCancel={() => setVoucher(null)}
               />
             )}
@@ -186,7 +158,7 @@ const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
             <Text style={{ color: "#BBBBBB", fontSize: 11 }}>VAT included</Text>
           </Box>
 
-          <Text style={{ fontSize: 18 }}>৳{receipt.total}</Text>
+          <Text style={{ fontSize: 18 }}>৳TOTAL</Text>
         </Box>
 
         <Box style={{ alignItems: "center", marginTop: 27 }}>
