@@ -67,24 +67,28 @@ const Offer = ({ contentScroll, title, description, phone }: OfferProps) => {
           marginRight: 8,
         }}
       >
-        <Text
-          style={{
-            fontFamily: "Bold",
-            fontSize: 16,
-            color: "white",
-          }}
-        >
-          {title}
-        </Text>
-        <Text
-          style={{
-            fontFamily: "Normal",
-            fontSize: 12,
-            color: "white",
-          }}
-        >
-          {description}
-        </Text>
+        {title && (
+          <Text
+            style={{
+              fontFamily: "Bold",
+              fontSize: 16,
+              color: "white",
+            }}
+          >
+            {title}
+          </Text>
+        )}
+        {description && (
+          <Text
+            style={{
+              fontFamily: "Normal",
+              fontSize: 12,
+              color: "white",
+            }}
+          >
+            {description}
+          </Text>
+        )}
       </View>
       <TouchableWithoutFeedback
         onPress={() => {
