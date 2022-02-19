@@ -5,7 +5,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { observer } from "mobx-react";
 
 import { Box, Icon, Text } from "../components";
-import { useCart } from "../state/hooks/useCart";
+import { useAppState } from "../state/StateContext";
+import type { CartableWrapper, CartStore } from "../state/store/CartStore";
 
 interface FloatingCartProps {
   insetBottom?: boolean;
@@ -16,7 +17,10 @@ const FloatingCart = observer(({ insetBottom = false }: FloatingCartProps) => {
 
   const insets = useSafeAreaInsets();
 
-  const { receipt, length } = useCart();
+  const cart: CartStore = useAppState("cart");
+  const cartItems: CartableWrapper[] = cart.all;
+
+  if (cartItems.length === 0) return null;
 
   return (
     <TouchableWithoutFeedback
@@ -59,7 +63,7 @@ const FloatingCart = observer(({ insetBottom = false }: FloatingCartProps) => {
               style={{ marginLeft: 8 }}
             >
               <Text fontSize={12} fontFamily="Normal" color="background">
-                {length}
+                {cartItems.length}
               </Text>
             </Box>
 
@@ -77,7 +81,7 @@ const FloatingCart = observer(({ insetBottom = false }: FloatingCartProps) => {
 
           <Box flexGrow={1} flexShrink={0} flexBasis={0} alignItems="flex-end">
             <Text fontSize={17} color="background" fontFamily="Normal">
-              ৳ {receipt.total}
+              ৳ {cart.subtotalAmount}
             </Text>
           </Box>
         </Box>
