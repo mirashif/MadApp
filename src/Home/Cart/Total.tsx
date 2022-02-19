@@ -1,4 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
+import { observer } from "mobx-react";
 import React from "react";
 import { Dimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -10,7 +11,7 @@ import type { CartStore } from "../../state/store/CartStore";
 
 import { CheckoutButton } from "./Button";
 
-const Total = () => {
+const Total = observer(() => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<HomeStackProps<"Cart">["navigation"]>();
 
@@ -45,6 +46,6 @@ const Total = () => {
       </Box>
     </Box>
   );
-};
+});
 
 export default Total;
