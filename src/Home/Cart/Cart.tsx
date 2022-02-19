@@ -7,6 +7,7 @@ import { Box, HeaderBar, SafeArea } from "../../components";
 import { useAppState } from "../../state/StateContext";
 import type { CartStore, CouponEditor } from "../../state/store/CartStore";
 import LocationBar from "../LocationBar";
+import AddressListModal from "../AddressListModal";
 
 import ApplyCouponModal from "./ApplyCouponModal";
 import Breakdown from "./Breakdown";
@@ -24,6 +25,7 @@ const Cart = observer(() => {
   const shouldShowErrorPopup = !editor.isValid;
 
   const [applyCouponModalVisible, setApplyCouponModalVisible] = useState(false);
+  const [addressListModalVisible, setAddressListModalVisible] = useState(false);
 
   const [applyButtonTapped, setApplyButtonTapped] = useState(false);
 
@@ -34,7 +36,7 @@ const Cart = observer(() => {
         contentContainerStyle={{ paddingBottom: 180 + insets.bottom }}
       >
         <HeaderBar title="Cart" />
-        <LocationBar editMode onEditPress={() => null} />
+        <LocationBar onEditPress={() => setAddressListModalVisible(true)} />
         <CartItems />
         <UpsellItems />
 
@@ -48,11 +50,17 @@ const Cart = observer(() => {
       {/* Grand total & checkout */}
       <Total />
 
+      <AddressListModal
+        visible={addressListModalVisible}
+        onClose={() => setAddressListModalVisible(false)}
+      />
+
       <ApplyCouponModal
         visible={applyCouponModalVisible}
         onClose={() => setApplyCouponModalVisible(false)}
         onApplyPress={() => setApplyButtonTapped(true)}
       />
+
       <InvalidCouponModal
         visible={applyButtonTapped && shouldShowErrorPopup}
         onRetryPress={() => {
