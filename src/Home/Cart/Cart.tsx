@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -8,6 +8,7 @@ import { useAppState } from "../../state/StateContext";
 import type { CartStore, CouponEditor } from "../../state/store/CartStore";
 import LocationBar from "../LocationBar";
 import AddressListModal from "../AddressListModal";
+import type { RootStackProps } from "../../components/AppNavigator";
 
 import ApplyCouponModal from "./ApplyCouponModal";
 import Breakdown from "./Breakdown";
@@ -17,7 +18,7 @@ import Total from "./Total";
 import UpsellItems from "./UpsellItems";
 import Voucher from "./Voucher";
 
-const Cart = observer(() => {
+const Cart = observer(({ navigation }: RootStackProps<"HomeStack">) => {
   const insets = useSafeAreaInsets();
 
   const cart: CartStore = useAppState("cart");
@@ -28,6 +29,11 @@ const Cart = observer(() => {
   const [addressListModalVisible, setAddressListModalVisible] = useState(false);
 
   const [applyButtonTapped, setApplyButtonTapped] = useState(false);
+
+  useEffect(() => {
+    if (cart.all.length === 0)
+      navigation.navigate("BottomTabs", { screen: "Home" });
+  }, [cart.all, navigation]);
 
   return (
     <SafeArea>
