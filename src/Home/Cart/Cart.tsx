@@ -25,6 +25,7 @@ import CartItems from "./CartItems";
 import Discount from "./Discount";
 import InvalidCouponModal from "./InvalidCouponModal";
 import UpsellItem from "./UpsellItem";
+import UpsellItems from "./UpsellItems";
 
 const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
   const theme = useTheme();
@@ -39,7 +40,7 @@ const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
   const shouldShowErrorPopup = !editor.isValid;
 
   const [applyCouponModalVisible, setApplyCouponModalVisible] = useState(false);
-  const [itemBuilderId, setItemBuilderId] = useState<string | null>(null);
+
   const [applyButtonTapped, setApplyButtonTapped] = useState(false);
 
   return (
@@ -52,29 +53,7 @@ const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
         <LocationBar editMode onEditPress={() => null} />
 
         <CartItems />
-
-        {/*Popular Orders*/}
-        <Box style={{ marginTop: 40 }}>
-          <Box px="screen">
-            <Text style={styles.sectionTitle}>Popular with your order</Text>
-          </Box>
-
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{
-              paddingHorizontal: theme.spacing.screen,
-            }}
-          >
-            {upsellItems.map((item) => (
-              <UpsellItem
-                key={item.id}
-                {...{ item }}
-                onAdd={setItemBuilderId}
-              />
-            ))}
-          </ScrollView>
-        </Box>
+        <UpsellItems />
 
         {/*Order Summary & Voucher*/}
         <Box style={{ marginTop: 83, paddingHorizontal: 40 }}>
@@ -132,8 +111,6 @@ const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
           setApplyCouponModalVisible(true);
         }}
       />
-
-      <ItemBuilder {...{ itemBuilderId, setItemBuilderId }} />
     </SafeArea>
   );
 });
