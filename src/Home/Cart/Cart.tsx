@@ -23,8 +23,9 @@ import { ItemBuilder } from "../ItemBuilder";
 import OrderItem from "./OrderItem";
 import UpsellItem from "./UpsellItem";
 import { VoucherButton, ClearCartButton, CheckoutButton } from "./Button";
-import OrderSummaryItem, { Discount } from "./Item";
+import { Discount } from "./Item";
 import VoucherIllustration from "./assets/VoucherIllustration.svg";
+import Breakdown from "./Breakdown";
 
 const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
   const theme = useTheme();
@@ -118,8 +119,7 @@ const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
 
         {/*Order Summary & Voucher*/}
         <Box style={{ marginTop: 83, paddingHorizontal: 40 }}>
-          <OrderSummaryItem title="Subtotal" description={`৳${500}`} />
-          <OrderSummaryItem title="Delivery fee" description={`৳${30}`} />
+          <Breakdown />
 
           <Box mt="m">
             {voucher && (
