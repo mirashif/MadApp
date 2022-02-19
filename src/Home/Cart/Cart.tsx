@@ -13,21 +13,17 @@ import {
   useTheme,
 } from "../../components";
 import { useAppState } from "../../state/StateContext";
-import type {
-  CartableWrapper,
-  CartStore,
-  CouponEditor,
-} from "../../state/store/CartStore";
+import type { CartStore, CouponEditor } from "../../state/store/CartStore";
 import type { Item } from "../../state/store/ItemStore";
 import { ItemBuilder } from "../ItemBuilder";
 import LocationBar from "../LocationBar";
 
 import ApplyCouponModal from "./ApplyCouponModal";
 import Breakdown from "./Breakdown";
-import { CheckoutButton, ClearCartButton, VoucherButton } from "./Button";
+import { CheckoutButton, VoucherButton } from "./Button";
+import CartItems from "./CartItems";
 import Discount from "./Discount";
 import InvalidCouponModal from "./InvalidCouponModal";
-import OrderItem from "./OrderItem";
 import UpsellItem from "./UpsellItem";
 
 const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
@@ -37,7 +33,6 @@ const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
   const windowWidth = Dimensions.get("window").width;
 
   const cart: CartStore = useAppState("cart");
-  const cartItems: CartableWrapper[] = cart.all;
   const upsellItems: Item[] = cart.upsellItems;
   const isCouponAdded = !!cart.couponDeal;
   const editor: CouponEditor = cart.couponEditor;
@@ -54,29 +49,9 @@ const Cart = observer(({ navigation }: HomeStackProps<"Cart">) => {
         contentContainerStyle={{ paddingBottom: 180 + insets.bottom }}
       >
         <HeaderBar title="Cart" />
-
         <LocationBar editMode onEditPress={() => null} />
 
-        {/*Order Items*/}
-        <Box px={"screen"}>
-          <Box style={{ marginTop: 33 }}>
-            <Text style={styles.sectionTitle}>Order Details</Text>
-
-            {cartItems.map((item) => (
-              <OrderItem
-                key={item.itemID}
-                {...{ item }}
-                onIncrease={item.increment}
-                onDecrease={item.decrement}
-                onDelete={item.remove}
-              />
-            ))}
-
-            <Box mt="s">
-              <ClearCartButton onPress={cart.clearCart} />
-            </Box>
-          </Box>
-        </Box>
+        <CartItems />
 
         {/*Popular Orders*/}
         <Box style={{ marginTop: 40 }}>

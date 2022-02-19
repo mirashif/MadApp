@@ -7,14 +7,14 @@ import type { CartableWrapper } from "../../state/store/CartStore";
 
 import { QuantityButton } from "./Button";
 
-interface OrderItemProps {
+interface CartItemProps {
   item: CartableWrapper;
   onDelete: () => void;
   onIncrease: () => void;
   onDecrease: () => void;
 }
 
-const OrderItem = observer((props: OrderItemProps) => {
+const CartItem = observer((props: CartItemProps) => {
   const theme = useTheme();
   const { item, onDelete, onIncrease, onDecrease } = props;
 
@@ -86,4 +86,4 @@ const OrderItem = observer((props: OrderItemProps) => {
   );
 });
 
-export default OrderItem;
+export default CartItem;
