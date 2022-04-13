@@ -8,6 +8,7 @@ import DissmissKeyboard from "../components/DissmissKeyboard";
 import Button from "../components/Button";
 import { useAppState } from "../state/StateContext";
 import type { AuthStore } from "../state/store/AuthStore";
+import type { RootStackProps } from "../components/AppNavigator";
 
 import Phone from "./assets/Phone.svg";
 import BDFlag from "./assets/BDFlag.svg";
@@ -16,7 +17,8 @@ import { STEPS } from "./OnBoarding";
 
 const MobileNumber = observer(
   ({ setStep, phoneNumber, setPhoneNumber }: OnBoardingStepProps) => {
-    const navigation = useNavigation();
+    const navigation =
+      useNavigation<RootStackProps<"BottomTabs">["navigation"]>();
 
     const auth: AuthStore = useAppState("auth");
 

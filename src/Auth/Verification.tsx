@@ -10,6 +10,7 @@ import Button from "../components/Button";
 import { useAppState } from "../state/StateContext";
 import type { AuthStore } from "../state/store/AuthStore";
 import type { UserStore } from "../state/store/UserStore";
+import type { RootStackProps } from "../components/AppNavigator";
 
 import OTPVerify from "./assets/OTPVerify.svg";
 import type { OnBoardingStepProps } from "./OnBoarding";
@@ -26,7 +27,8 @@ const Verification = observer(
     setCount: React.Dispatch<React.SetStateAction<number>>;
   }) => {
     const styles = useStyles();
-    const navigation = useNavigation();
+    const navigation =
+      useNavigation<RootStackProps<"BottomTabs">["navigation"]>();
 
     const userStore: UserStore = useAppState("user");
     const auth: AuthStore = useAppState("auth");
@@ -88,7 +90,10 @@ const Verification = observer(
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          <HeaderBar title="Account Verification" />
+          <HeaderBar
+            title="Account Verification"
+            onBackPress={() => setStep(STEPS.MOBILE_NUMBER)}
+          />
 
           <DissmissKeyboard>
             <Box flex={1}>

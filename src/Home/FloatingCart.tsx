@@ -7,13 +7,14 @@ import { observer } from "mobx-react";
 import { Box, Icon, Text } from "../components";
 import { useAppState } from "../state/StateContext";
 import type { CartableWrapper, CartStore } from "../state/store/CartStore";
+import type { RootStackProps } from "../components/AppNavigator";
 
 interface FloatingCartProps {
   insetBottom?: boolean;
 }
 
 const FloatingCart = observer(({ insetBottom = false }: FloatingCartProps) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<RootStackProps<"HomeStack">["navigation"]>();
 
   const insets = useSafeAreaInsets();
 
