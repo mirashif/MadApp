@@ -26,8 +26,9 @@ import type { RootStackProps } from "../components/AppNavigator";
 
 import Success from "./assets/Success.svg";
 import Referral from "./assets/Referral.svg";
-import type { OnBoardingStepProps } from "./OnBoarding";
-import { STEPS } from "./OnBoarding";
+
+import type { OnBoardingStepProps } from ".";
+import { STEPS } from ".";
 
 const UserInfo = observer(({ setStep }: OnBoardingStepProps) => {
   const theme = useTheme();

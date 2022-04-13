@@ -12,8 +12,9 @@ import type { RootStackProps } from "../components/AppNavigator";
 
 import Phone from "./assets/Phone.svg";
 import BDFlag from "./assets/BDFlag.svg";
-import type { OnBoardingStepProps } from "./OnBoarding";
-import { STEPS } from "./OnBoarding";
+
+import type { OnBoardingStepProps } from ".";
+import { STEPS } from ".";
 
 const MobileNumber = observer(
   ({ setStep, phoneNumber, setPhoneNumber }: OnBoardingStepProps) => {

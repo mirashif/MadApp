@@ -4,19 +4,7 @@ import MobileNumber from "./MobileNumber";
 import Verification from "./Verification";
 import UserInfo from "./UserInfo";
 
-export enum STEPS {
-  MOBILE_NUMBER,
-  VERIFICATION,
-  USER_INFO,
-}
-
-export interface OnBoardingStepProps {
-  setStep: React.Dispatch<React.SetStateAction<STEPS>>;
-  phoneNumber: string;
-  setPhoneNumber: React.Dispatch<React.SetStateAction<string>>;
-}
-
-export const OTP_TIMER = 60;
+import { STEPS, OTP_TIMER } from ".";
 
 const OnBoarding = () => {
   const [step, setStep] = useState<STEPS>(STEPS.MOBILE_NUMBER);

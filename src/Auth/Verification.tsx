@@ -13,8 +13,9 @@ import type { UserStore } from "../state/store/UserStore";
 import type { RootStackProps } from "../components/AppNavigator";
 
 import OTPVerify from "./assets/OTPVerify.svg";
-import type { OnBoardingStepProps } from "./OnBoarding";
-import { OTP_TIMER, STEPS } from "./OnBoarding";
+
+import type { OnBoardingStepProps } from ".";
+import { STEPS, OTP_TIMER } from ".";
 
 const Verification = observer(
   ({
