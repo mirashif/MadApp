@@ -16,7 +16,6 @@ import {
   Text,
   useTheme,
 } from "../components";
-import type { RootStackProps } from "../components/AppNavigator";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import type { UserStore } from "../state/store/UserStore";
@@ -26,8 +25,9 @@ import type { ReferralValidator } from "../state/store/ReferralValidator";
 
 import Success from "./assets/Success.svg";
 import Referral from "./assets/Referral.svg";
+import type { OnBoardingStepProps } from "./OnBoarding";
 
-const UserInfo = observer(({ navigation }: RootStackProps<"AuthStack">) => {
+const UserInfo = observer(({ setStep }: OnBoardingStepProps) => {
   const theme = useTheme();
 
   const user: UserStore = useAppState("user");
@@ -47,16 +47,16 @@ const UserInfo = observer(({ navigation }: RootStackProps<"AuthStack">) => {
    */
   useFocusEffect(
     useCallback(() => {
-      const onBackPress = () => {
-        navigation.pop(2);
-        return true;
-      };
+      const onBackPress = () => undefined;
+      // TODO: handle back press
+      // navigation.pop(2);
+      // return true;
 
       BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
       return () =>
         BackHandler.removeEventListener("hardwareBackPress", () => null);
-    }, [navigation])
+    }, [])
   );
 
   const handleRefModalCTAPress = () => {
@@ -112,8 +112,10 @@ const UserInfo = observer(({ navigation }: RootStackProps<"AuthStack">) => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <HeaderBar
           title="Profile"
-          onBackPress={() =>
-            navigation.navigate("AuthStack", { screen: "MobileNumber" })
+          onBackPress={
+            () => undefined
+            // TODO: handle back press
+            // navigation.navigate("AuthStack", { screen: "MobileNumber" })
           }
         />
 
@@ -215,7 +217,11 @@ const UserInfo = observer(({ navigation }: RootStackProps<"AuthStack">) => {
           </Box>
 
           <TouchableWithoutFeedback
-            onPress={() => navigation.navigate("EditLocation", { id: null })}
+            onPress={
+              () => undefined
+              // TODO: handle navigation to edit location
+              // navigation.navigate("EditLocation", { id: null })
+            }
           >
             <Box
               style={{
@@ -305,7 +311,8 @@ const UserInfo = observer(({ navigation }: RootStackProps<"AuthStack">) => {
         buttonTitle="Let's go"
         onButtonPress={() => {
           setSuccessModalVisible(false);
-          navigation.navigate("BottomTabs", { screen: "Home" });
+          // TODO: handle navigation to home
+          // navigation.navigate("BottomTabs", { screen: "Home" });
         }}
       >
         <Box
