@@ -5,13 +5,14 @@ import { ScrollView, Image, TouchableWithoutFeedback } from "react-native";
 
 import type { Theme } from "../components";
 import { Box, makeStyles, useTheme } from "../components";
+import type { RootStackProps } from "../components/AppNavigator";
 import { useAppState } from "../state/StateContext";
 import type { Story, StoryStore } from "../state/store/StoryStore";
 
 const Stories = observer(() => {
   const styles = useStyles();
   const theme = useTheme();
-  const navigation = useNavigation();
+  const navigation = useNavigation<RootStackProps<"HomeStack">["navigation"]>();
 
   const stories: StoryStore = useAppState("stories");
   const storyList: Story[] = stories.all;

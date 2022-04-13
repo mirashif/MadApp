@@ -19,9 +19,8 @@ import { Cashback } from "../Cashback";
 import { Get100 } from "../Get100";
 import type { MenuStackParamList } from "../Menu";
 import { Menu, MenuNavigator } from "../Menu";
-import type { AuthStackParamList } from "../Auth";
-import { AuthNavigator } from "../Auth";
 import { EditLocation } from "../Home/EditLocation";
+import { OnBoarding } from "../Auth";
 
 import { useTheme } from "./theme";
 
@@ -116,7 +115,7 @@ type RootStackParamList = {
   BottomTabs: NavigatorScreenParams<BottomTabParamList>;
   HomeStack: NavigatorScreenParams<HomeStackParamList>;
   MenuStack: NavigatorScreenParams<MenuStackParamList>;
-  AuthStack: NavigatorScreenParams<AuthStackParamList>;
+  OnBoarding: undefined;
   EditLocation: { id: string | null };
 };
 
@@ -133,7 +132,7 @@ const AppNavigator = () => (
     <RootStack.Screen name="BottomTabs" component={BottomTabs} />
     <RootStack.Screen name="HomeStack" component={HomeNavigator} />
     <RootStack.Screen name="MenuStack" component={MenuNavigator} />
-    <RootStack.Screen name="AuthStack" component={AuthNavigator} />
+    <RootStack.Screen name="OnBoarding" component={OnBoarding} />
     <RootStack.Screen name="EditLocation" component={EditLocation} />
   </RootStack.Navigator>
 );

@@ -10,140 +10,147 @@ import Button from "../components/Button";
 import { useAppState } from "../state/StateContext";
 import type { AuthStore } from "../state/store/AuthStore";
 import type { UserStore } from "../state/store/UserStore";
+import type { RootStackProps } from "../components/AppNavigator";
 
 import OTPVerify from "./assets/OTPVerify.svg";
+import type { OnBoardingStepProps } from "./OnBoarding";
+import { OTP_TIMER, STEPS } from "./OnBoarding";
 
-import type { AuthStackProps } from ".";
+const Verification = observer(
+  ({
+    setStep,
+    phoneNumber,
+    count,
+    setCount,
+  }: OnBoardingStepProps & {
+    count: number;
+    setCount: React.Dispatch<React.SetStateAction<number>>;
+  }) => {
+    const styles = useStyles();
+    const navigation =
+      useNavigation<RootStackProps<"BottomTabs">["navigation"]>();
 
-const TIMER = 60;
+    const userStore: UserStore = useAppState("user");
+    const auth: AuthStore = useAppState("auth");
+    const { user } = userStore;
 
-const Verification = observer(({ route }: AuthStackProps<"Verification">) => {
-  const styles = useStyles();
-  const navigation = useNavigation();
-  const { phoneNumber } = route.params;
+    const [otp, setOtp] = useState<null | string>(null);
 
-  const userStore: UserStore = useAppState("user");
-  const auth: AuthStore = useAppState("auth");
-  const { user } = userStore;
-
-  const [otp, setOtp] = useState<null | string>(null);
-  const [count, setCount] = useState(TIMER - 1);
-
-  const handleContinue = async () => {
-    if (!otp) return Alert.alert("Please enter OTP");
-
-    try {
-      await auth.authenticate(phoneNumber, otp);
-    } catch (err) {
-      Alert.alert("Something went wrong!");
-    }
-  };
-
-  useEffect(() => {
-    const isLoggedIn = auth.authenticated;
-    if (!isLoggedIn || !user) return;
-
-    if (user.firstName && user.lastName)
-      navigation.dispatch(
-        StackActions.replace("BottomTabs", { screen: "Home" })
-      );
-    else
-      navigation.dispatch(
-        StackActions.replace("AuthStack", { screen: "UserInfo" })
-      );
-  }, [auth, navigation, user]);
-
-  let interval: any = null;
-  const startTimer = () => {
-    interval = setInterval(() => {
-      const secondsSinceRequest: number = auth.secondsSinceRequest(phoneNumber);
-      if (secondsSinceRequest > TIMER) {
-        clearInterval(interval);
-        return;
+    const handleContinue = async () => {
+      if (!otp) return Alert.alert("Please enter OTP");
+      try {
+        await auth.authenticate(phoneNumber, otp);
+      } catch (err) {
+        Alert.alert("Something went wrong!");
       }
-      setCount((c) => c - 1);
-    }, 1000);
-  };
+    };
 
-  useEffect(() => {
-    startTimer();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    useEffect(() => {
+      const isLoggedIn = auth.authenticated;
+      if (!isLoggedIn || !user) return;
+      if (user.firstName && user.lastName)
+        navigation.dispatch(
+          StackActions.replace("BottomTabs", { screen: "Home" })
+        );
+      else setStep(STEPS.USER_INFO);
+    }, [auth, navigation, setStep, user]);
 
-  const handleResend = async () => {
-    try {
-      await auth.requestOTP(phoneNumber);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setCount(TIMER - 1);
+    let interval: any = null;
+    const startTimer = () => {
+      interval = setInterval(() => {
+        const secondsSinceRequest: number =
+          auth.secondsSinceRequest(phoneNumber);
+        if (secondsSinceRequest > OTP_TIMER) {
+          clearInterval(interval);
+          return;
+        }
+        setCount((c) => c - 1);
+      }, 1000);
+    };
+
+    useEffect(() => {
       startTimer();
-    }
-  };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-  return (
-    <SafeArea>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-      >
-        <HeaderBar title="Account Verification" />
+    const handleResend = async () => {
+      try {
+        await auth.requestOTP(phoneNumber);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setCount(OTP_TIMER - 1);
+        startTimer();
+      }
+    };
 
-        <DissmissKeyboard>
-          <Box flex={1}>
-            <Box alignItems="center" style={{ marginTop: 72 }}>
-              <OTPVerify />
+    return (
+      <SafeArea>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <HeaderBar
+            title="Account Verification"
+            onBackPress={() => setStep(STEPS.MOBILE_NUMBER)}
+          />
 
-              <Box width={263} style={{ marginTop: 25, marginBottom: 14 }}>
-                <Text
-                  textAlign="center"
-                  fontSize={18}
-                  fontFamily="Bold"
-                  style={{ color: "#323232" }}
-                >
-                  We’ve sent a verification code to your phone number
-                </Text>
+          <DissmissKeyboard>
+            <Box flex={1}>
+              <Box alignItems="center" style={{ marginTop: 72 }}>
+                <OTPVerify />
+
+                <Box width={263} style={{ marginTop: 25, marginBottom: 14 }}>
+                  <Text
+                    textAlign="center"
+                    fontSize={18}
+                    fontFamily="Bold"
+                    style={{ color: "#323232" }}
+                  >
+                    We’ve sent a verification code to your phone number
+                  </Text>
+                </Box>
+
+                <Text style={{ color: "#BBBBBB" }}>{phoneNumber}</Text>
+
+                <Box width={300} height={50} style={{ marginTop: 14 }}>
+                  <OTPInputView
+                    pinCount={6}
+                    codeInputFieldStyle={styles.codeInputFieldStyle}
+                    autoFocusOnLoad={true}
+                    keyboardType="number-pad"
+                    onCodeChanged={(code) => setOtp(code)}
+                    onCodeFilled={(code) => setOtp(code)}
+                  />
+                </Box>
               </Box>
 
-              <Text style={{ color: "#BBBBBB" }}>{phoneNumber}</Text>
-
-              <Box width={300} height={50} style={{ marginTop: 14 }}>
-                <OTPInputView
-                  pinCount={6}
-                  codeInputFieldStyle={styles.codeInputFieldStyle}
-                  autoFocusOnLoad={true}
-                  keyboardType="number-pad"
-                  onCodeChanged={(code) => setOtp(code)}
-                  onCodeFilled={(code) => setOtp(code)}
-                />
-              </Box>
-            </Box>
-
-            <Box
-              px="screen"
-              style={{ paddingTop: 16, paddingBottom: 40, marginTop: 14 }}
-            >
-              <Button size="lg" onPress={handleContinue}>
-                Continue
-              </Button>
-              <Button
-                style={{
-                  marginTop: 8,
-                }}
-                variant="text"
-                onPress={handleResend}
-                disabled={count > 0}
+              <Box
+                px="screen"
+                style={{ paddingTop: 16, paddingBottom: 40, marginTop: 14 }}
               >
-                Resend
-                {count > 0 && ` | Wait ${count}s`}
-              </Button>
+                <Button size="lg" onPress={handleContinue}>
+                  Continue
+                </Button>
+                <Button
+                  style={{
+                    marginTop: 8,
+                  }}
+                  variant="text"
+                  onPress={handleResend}
+                  disabled={count > 0}
+                >
+                  Resend
+                  {count > 0 && ` | Wait ${count}s`}
+                </Button>
+              </Box>
             </Box>
-          </Box>
-        </DissmissKeyboard>
-      </ScrollView>
-    </SafeArea>
-  );
-});
+          </DissmissKeyboard>
+        </ScrollView>
+      </SafeArea>
+    );
+  }
+);
 
 const useStyles = makeStyles(() => ({
   codeInputFieldStyle: {
