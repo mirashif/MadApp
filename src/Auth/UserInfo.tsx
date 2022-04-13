@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import {
   BackHandler,
   ScrollView,
@@ -22,23 +22,27 @@ import type { UserStore } from "../state/store/UserStore";
 import { useAppState } from "../state/StateContext";
 import type { UserBuilder } from "../state/store/UserBuilder";
 import type { ReferralValidator } from "../state/store/ReferralValidator";
+import type { RootStackProps } from "../components/AppNavigator";
 
 import Success from "./assets/Success.svg";
 import Referral from "./assets/Referral.svg";
 import type { OnBoardingStepProps } from "./OnBoarding";
+import { STEPS } from "./OnBoarding";
 
 const UserInfo = observer(({ setStep }: OnBoardingStepProps) => {
   const theme = useTheme();
+  const navigation =
+    useNavigation<RootStackProps<"EditLocation">["navigation"]>();
 
   const user: UserStore = useAppState("user");
   const builder: UserBuilder | null = user.builder;
   const [refCode, setRefCode] = useState<null | string>(null);
+  const [lastName, setLastName] = useState("");
+  const [firstName, setFirstName] = useState("");
   const [tempRefCode, setTempRefCode] = useState<null | string>(null);
   const [wrongRefCode, setWrongRefCode] = useState(false);
   const [refModalVisible, setRefModalVisible] = useState(false);
   const [successModalVisible, setSuccessModalVisible] = useState(false);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
 
   const referralValidator: ReferralValidator = useAppState("referralValidator");
 
@@ -47,16 +51,16 @@ const UserInfo = observer(({ setStep }: OnBoardingStepProps) => {
    */
   useFocusEffect(
     useCallback(() => {
-      const onBackPress = () => undefined;
-      // TODO: handle back press
-      // navigation.pop(2);
-      // return true;
+      const onBackPress = () => {
+        setStep(STEPS.MOBILE_NUMBER);
+        return true;
+      };
 
       BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
       return () =>
         BackHandler.removeEventListener("hardwareBackPress", () => null);
-    }, [])
+    }, [setStep])
   );
 
   const handleRefModalCTAPress = () => {
@@ -112,11 +116,7 @@ const UserInfo = observer(({ setStep }: OnBoardingStepProps) => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <HeaderBar
           title="Profile"
-          onBackPress={
-            () => undefined
-            // TODO: handle back press
-            // navigation.navigate("AuthStack", { screen: "MobileNumber" })
-          }
+          onBackPress={() => setStep(STEPS.MOBILE_NUMBER)}
         />
 
         <Box px="screen">
@@ -134,17 +134,11 @@ const UserInfo = observer(({ setStep }: OnBoardingStepProps) => {
 
           {/* Name */}
           <Box mt="xl">
-            <Input
-              label="First Name"
-              onChangeText={(value) => setFirstName(value)}
-            />
+            <Input label="First Name" onChangeText={setFirstName} />
           </Box>
 
           <Box mt="xl">
-            <Input
-              label="Last Name"
-              onChangeText={(value) => setLastName(value)}
-            />
+            <Input label="Last Name" onChangeText={setLastName} />
           </Box>
 
           {/* Referral Code */}
@@ -217,11 +211,7 @@ const UserInfo = observer(({ setStep }: OnBoardingStepProps) => {
           </Box>
 
           <TouchableWithoutFeedback
-            onPress={
-              () => undefined
-              // TODO: handle navigation to edit location
-              // navigation.navigate("EditLocation", { id: null })
-            }
+            onPress={() => navigation.navigate("EditLocation", { id: null })}
           >
             <Box
               style={{
@@ -311,8 +301,7 @@ const UserInfo = observer(({ setStep }: OnBoardingStepProps) => {
         buttonTitle="Let's go"
         onButtonPress={() => {
           setSuccessModalVisible(false);
-          // TODO: handle navigation to home
-          // navigation.navigate("BottomTabs", { screen: "Home" });
+          navigation.navigate("BottomTabs", { screen: "Home" });
         }}
       >
         <Box
