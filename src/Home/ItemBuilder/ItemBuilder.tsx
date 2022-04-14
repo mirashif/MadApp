@@ -35,7 +35,7 @@ const ItemBuilder = observer(
     const itemImageURI = item?.data.pictureURI;
 
     const itemSheetRef = useRef<BottomSheetModal>(null);
-    const snapPoints = useMemo(() => ["60%", "90%"], []);
+    const snapPoints = useMemo(() => ["90%"], []);
     const handleDismiss = useCallback(() => {
       itemSheetRef.current?.close();
       setItemBuilderId(null);
