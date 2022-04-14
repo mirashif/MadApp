@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import React, { useEffect, useState } from "react";
-import { Image, ScrollView, Dimensions, Alert } from "react-native";
+import { Image, ScrollView, Dimensions, Alert, Pressable } from "react-native";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 import {
   Box,
@@ -9,6 +10,7 @@ import {
   Icon,
   SafeArea,
   useTheme,
+  Text,
 } from "../../components";
 import DissmissKeyboard from "../../components/DissmissKeyboard";
 import Input from "../../components/Input";
@@ -18,7 +20,6 @@ const MyProfile = observer(() => {
   const theme = useTheme();
 
   const windowWidth = Dimensions.get("window").width;
-
   const INPUT_GROUP_WIDTH = (windowWidth - theme.spacing.screen * 2) / 2 - 3;
 
   const { user, updateUser } = useUser();
@@ -27,6 +28,13 @@ const MyProfile = observer(() => {
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
+  const [birthday, setBirthday] = useState(new Date(1598051730000));
+  const [showBirthdayPicker, setShowBirthdayPicker] = useState(false);
+
+  const onBirthdayChange = (date: any) => {
+    setShowBirthdayPicker(false);
+    setBirthday(date);
+  };
 
   const handleSave = async () => {
     try {
@@ -117,11 +125,33 @@ const MyProfile = observer(() => {
                   onChangeText={() => null}
                 />
 
-                <Input
-                  style={{ width: INPUT_GROUP_WIDTH }}
-                  label="Birthday"
-                  onChangeText={() => null}
-                />
+                <Box>
+                  <Text mb="m" fontFamily="Medium">
+                    Birthday
+                  </Text>
+                  <Pressable onPress={() => setShowBirthdayPicker(true)}>
+                    <Box
+                      style={{
+                        width: INPUT_GROUP_WIDTH,
+                        height: 56,
+                        borderColor: "#DDDDDD",
+                        borderWidth: 1,
+                        padding: 16,
+                        borderRadius: 12,
+                      }}
+                    >
+                      <Text fontSize={18}>{`${birthday.getDate()}/${
+                        birthday.getMonth() + 1 // month is 0-based
+                      }/${birthday.getFullYear()}`}</Text>
+                    </Box>
+                  </Pressable>
+                  <DateTimePickerModal
+                    isVisible={showBirthdayPicker}
+                    mode="date"
+                    onConfirm={(date) => onBirthdayChange(date)}
+                    onCancel={() => setShowBirthdayPicker(false)}
+                  />
+                </Box>
               </Box>
 
               <Input

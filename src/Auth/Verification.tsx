@@ -110,7 +110,7 @@ const Verification = observer(
                   <OTPInputView
                     pinCount={6}
                     codeInputFieldStyle={styles.codeInputFieldStyle}
-                    autoFocusOnLoad={true}
+                    autoFocusOnLoad={false}
                     keyboardType="number-pad"
                     onCodeChanged={(code) => setOtp(code)}
                     onCodeFilled={(code) => setOtp(code)}
