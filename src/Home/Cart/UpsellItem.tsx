@@ -18,12 +18,14 @@ const UpsellItem = (props: UpsellItemProps) => {
   return (
     <Box flexDirection="row" marginRight="l" alignItems="center" mb="m">
       <Box position="relative" marginRight="l">
-        <Image
-          source={{
-            uri: item.data.thumbnailURI,
-          }}
-          style={styles.image}
-        />
+        <TouchableWithoutFeedback onPress={() => onAdd(item.data.id)}>
+          <Image
+            source={{
+              uri: item.data.thumbnailURI,
+            }}
+            style={styles.image}
+          />
+        </TouchableWithoutFeedback>
 
         <Box position="absolute" bottom={-10} right={-8}>
           <TouchableWithoutFeedback onPress={() => onAdd(item.data.id)}>
