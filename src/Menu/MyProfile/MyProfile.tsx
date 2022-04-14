@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import React, { useEffect, useState } from "react";
 import { Image, ScrollView, Dimensions, Alert, Pressable } from "react-native";
+import RNPickerSelect from "react-native-picker-select";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 import {
@@ -28,6 +29,7 @@ const MyProfile = observer(() => {
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
+  const [gender, setGender] = useState(null);
   const [birthday, setBirthday] = useState(new Date(1598051730000));
   const [showBirthdayPicker, setShowBirthdayPicker] = useState(false);
 
@@ -119,11 +121,47 @@ const MyProfile = observer(() => {
 
               {/* TODO: ADD PICKER */}
               <Box flexDirection="row" justifyContent="space-between" mb="xl">
-                <Input
-                  style={{ width: INPUT_GROUP_WIDTH }}
-                  label="Gender"
-                  onChangeText={() => null}
-                />
+                <Box>
+                  <Text mb="m" fontFamily="Medium">
+                    Gender
+                  </Text>
+
+                  <RNPickerSelect
+                    value={gender}
+                    onValueChange={setGender}
+                    placeholder={{
+                      label: "Select gender",
+                      value: null,
+                    }}
+                    items={[
+                      { label: "Male", value: "Male" },
+                      { label: "Female", value: "Female" },
+                    ]}
+                    style={{
+                      viewContainer: {
+                        width: INPUT_GROUP_WIDTH,
+                        height: 56,
+                        borderColor: "#DDDDDD",
+                        borderWidth: 1,
+                        padding: 16,
+                        borderRadius: 12,
+                      },
+                      placeholder: {
+                        fontSize: 18,
+                      },
+                      inputAndroid: {
+                        fontSize: 18,
+                      },
+                      inputIOS: {
+                        fontSize: 18,
+                      },
+                      iconContainer: {
+                        top: 2,
+                      },
+                    }}
+                    Icon={() => <Icon name="chevron-down" size={56 / 3} />}
+                  />
+                </Box>
 
                 <Box>
                   <Text mb="m" fontFamily="Medium">
