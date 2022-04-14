@@ -57,7 +57,7 @@ const Item = ({ item, onItemPress, onMeasurement }: ItemProps) => {
             color: theme.colors.darkGray,
           }}
         >
-          {price}
+          {price.toLocaleString("en-IN")}
         </Text>
       </Box>
     </TouchableWithoutFeedback>

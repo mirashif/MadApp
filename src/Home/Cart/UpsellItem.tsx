@@ -44,10 +44,14 @@ const UpsellItem = (props: UpsellItemProps) => {
         )}
 
         <Box flexDirection="row">
-          <Text style={styles.newPrice}>৳{item.price}</Text>
+          <Text style={styles.newPrice}>
+            ৳{item.price.toLocaleString("en-IN")}
+          </Text>
 
           {item.price !== item.originalPrice && (
-            <Text style={styles.oldPrice}>৳{item.originalPrice}</Text>
+            <Text style={styles.oldPrice}>
+              ৳{item.originalPrice.toLocaleString("en-IN")}
+            </Text>
           )}
         </Box>
       </Box>

@@ -141,9 +141,11 @@ const ItemFooter = observer(
         ]}
       >
         <View style={styles.priceContainer}>
-          <Text style={styles.price}>৳{price}</Text>
+          <Text style={styles.price}>৳{price?.toLocaleString("en-IN")}</Text>
           {isDealApplided && (
-            <Text style={styles.originalPrice}>৳{originalPrice}</Text>
+            <Text style={styles.originalPrice}>
+              ৳{originalPrice?.toLocaleString("en-IN")}
+            </Text>
           )}
         </View>
 

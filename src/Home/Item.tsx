@@ -68,9 +68,13 @@ const Item = ({ item, onItemPress }: ItemProps) => {
 
         <Text style={styles.name}>{name}</Text>
         <Box style={styles.price}>
-          <Text style={styles.currentPrice}>৳ {price}</Text>
+          <Text style={styles.currentPrice}>
+            ৳ {price.toLocaleString("en-IN")}
+          </Text>
           {originalPrice && price !== originalPrice && (
-            <Text style={styles.previousPrice}>৳ {originalPrice}</Text>
+            <Text style={styles.previousPrice}>
+              ৳ {originalPrice.toLocaleString("en-IN")}
+            </Text>
           )}
         </Box>
       </Box>

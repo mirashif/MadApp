@@ -23,7 +23,7 @@ const AddonItem = observer(({ addon }: AddonsItemProps) => {
       <Text fontSize={18}>
         + {addonName}{" "}
         <Text fontSize={13} style={{ color: "#BEBEBE" }}>
-          ৳ {addonPrice}
+          ৳ {addonPrice.toLocaleString("en-IN")}
         </Text>
       </Text>
 
