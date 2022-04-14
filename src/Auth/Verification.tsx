@@ -13,28 +13,20 @@ import type { UserStore } from "../state/store/UserStore";
 import type { RootStackProps } from "../components/AppNavigator";
 
 import OTPVerify from "./assets/OTPVerify.svg";
-
-import type { OnBoardingStepProps } from ".";
-import { STEPS, OTP_TIMER } from ".";
+import type { OnBoardingStepProps } from "./constants";
+import { OTP_TIMER, STEPS } from "./constants";
 
 const Verification = observer(
-  ({
-    setStep,
-    phoneNumber,
-    count,
-    setCount,
-  }: OnBoardingStepProps & {
-    count: number;
-    setCount: React.Dispatch<React.SetStateAction<number>>;
-  }) => {
+  ({ setStep, phoneNumber }: OnBoardingStepProps) => {
     const styles = useStyles();
     const navigation =
       useNavigation<RootStackProps<"BottomTabs">["navigation"]>();
 
-    const userStore: UserStore = useAppState("user");
     const auth: AuthStore = useAppState("auth");
-    const { user } = userStore;
+    const userStore: UserStore = useAppState("user");
+    const user = userStore.user;
 
+    const [counter, setCounter] = useState(OTP_TIMER - 1);
     const [otp, setOtp] = useState<null | string>(null);
 
     const handleContinue = async () => {
@@ -65,7 +57,7 @@ const Verification = observer(
           clearInterval(interval);
           return;
         }
-        setCount((c) => c - 1);
+        setCounter((c) => c - 1);
       }, 1000);
     };
 
@@ -80,7 +72,7 @@ const Verification = observer(
       } catch (error) {
         console.error(error);
       } finally {
-        setCount(OTP_TIMER - 1);
+        setCounter(OTP_TIMER - 1);
         startTimer();
       }
     };
@@ -118,7 +110,7 @@ const Verification = observer(
                   <OTPInputView
                     pinCount={6}
                     codeInputFieldStyle={styles.codeInputFieldStyle}
-                    autoFocusOnLoad={true}
+                    autoFocusOnLoad={false}
                     keyboardType="number-pad"
                     onCodeChanged={(code) => setOtp(code)}
                     onCodeFilled={(code) => setOtp(code)}
@@ -139,10 +131,10 @@ const Verification = observer(
                   }}
                   variant="text"
                   onPress={handleResend}
-                  disabled={count > 0}
+                  disabled={counter > 0}
                 >
                   Resend
-                  {count > 0 && ` | Wait ${count}s`}
+                  {counter > 0 && ` | Wait ${counter}s`}
                 </Button>
               </Box>
             </Box>

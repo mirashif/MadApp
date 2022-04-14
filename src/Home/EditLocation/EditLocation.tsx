@@ -16,6 +16,7 @@ import type {
 import { useAppState } from "../../state/StateContext";
 import type { AddressBuilder } from "../../state/store/AddressBuilder";
 import type { RootStackProps } from "../../components/AppNavigator";
+import type { LockedAddressStore } from "../../state/store/LockedAddressStore";
 
 import MarkerIcon from "./assets/marker.svg";
 import Label from "./Label";
@@ -32,6 +33,7 @@ const EditLocation = observer(() => {
   const { id } = route?.params;
 
   const addresses: AddressStore = useAppState("addresses");
+  const lockedAddress: LockedAddressStore = useAppState("lockedAddress");
 
   const builder: AddressBuilder = useMemo(() => {
     if (id === "location" || null) {
@@ -49,7 +51,10 @@ const EditLocation = observer(() => {
 
     try {
       if (id) await addresses.updateAddress(id as string, addressable);
-      else await addresses.addAddress(addressable);
+      else {
+        await addresses.addAddress(addressable);
+        lockedAddress.lockAddress(addresses.all[0].data.id);
+      }
     } catch (error) {
       console.error(error);
     }

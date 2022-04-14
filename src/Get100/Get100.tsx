@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import React from "react";
-import { ScrollView, Image } from "react-native";
+import { ScrollView, Image, Share } from "react-native";
 
 import type { Theme } from "../components";
 import {
@@ -32,6 +32,27 @@ const Get100 = observer(() => {
 
   const { invites } = useInvites();
   const { attributes } = useUser();
+
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+          "Share your invite code with your friends and earn 100 points for each friend who joins!",
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error: any) {
+      // eslint-disable-next-line no-alert
+      alert(error.message);
+    }
+  };
 
   return (
     <SafeArea>
@@ -108,12 +129,7 @@ const Get100 = observer(() => {
                 {attributes?.referralCode}
               </Text>
             </Box>
-            {/* TODO: Implement share */}
-            <Button
-              onPress={() => console.log("My coupon share")}
-              size="lg"
-              variant="text"
-            >
+            <Button onPress={onShare} size="lg" variant="text">
               <Icon name="send" size={17} color={theme.colors.primary} />
               <Box width={7} />
               <Text>Share</Text>
