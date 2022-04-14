@@ -129,6 +129,7 @@ const ItemFooter = observer(
     const price = cartable?.price;
     const originalPrice = cartable?.originalPrice;
     const isDealApplided = cartable?.isDealApplied;
+    const variantGroups = cartable?.cartableVariantGroups;
 
     return (
       <View
@@ -164,6 +165,7 @@ const ItemFooter = observer(
 
           <Button
             size="xl"
+            disabled={!variantGroups?.every((group) => group.selected)}
             onPress={() => {
               cartable?.addToCart();
               handleDismiss();
