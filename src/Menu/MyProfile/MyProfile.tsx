@@ -52,8 +52,8 @@ const MyProfile = observer(() => {
   };
 
   const onBirthdayChange = (date: any) => {
-    setShowBirthdayPicker(false);
     setBirthday(date);
+    setShowBirthdayPicker(false);
   };
 
   const handleSave = async () => {
@@ -81,168 +81,159 @@ const MyProfile = observer(() => {
     <SafeArea>
       <DissmissKeyboard>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <Box
-            // stops the touch event propagation
-            onStartShouldSetResponder={() => true}
-          >
-            <HeaderBar title="My Profile" />
+          <HeaderBar title="My Profile" />
 
-            <Box
+          <Box
+            style={{
+              marginVertical: 36,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Pressable
+              onPress={pickImage}
               style={{
-                marginVertical: 36,
-                alignItems: "center",
-                justifyContent: "center",
+                position: "relative",
+                height: IMAGE_SIZE,
+                width: IMAGE_SIZE,
+                borderRadius: IMAGE_SIZE,
+                overflow: "hidden",
               }}
             >
-              <Pressable
-                onPress={pickImage}
-                style={{
-                  position: "relative",
-                  height: IMAGE_SIZE,
-                  width: IMAGE_SIZE,
-                  borderRadius: IMAGE_SIZE,
-                  overflow: "hidden",
-                }}
-              >
-                {image && (
-                  <Image
-                    source={{
-                      uri: image,
-                    }}
-                    style={{
-                      position: "absolute",
-                      width: IMAGE_SIZE,
-                      height: IMAGE_SIZE,
-                      borderRadius: IMAGE_SIZE,
-                    }}
-                  />
-                )}
-                <Box
+              {image && (
+                <Image
+                  source={{
+                    uri: image,
+                  }}
                   style={{
                     position: "absolute",
                     width: IMAGE_SIZE,
                     height: IMAGE_SIZE,
                     borderRadius: IMAGE_SIZE,
-                    // for icon
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: "rgba(0, 0, 0, 0.5)",
                   }}
-                >
-                  <Icon name="camera" size={46} color="#fff" />
-                </Box>
-              </Pressable>
-            </Box>
+                />
+              )}
+              <Box
+                style={{
+                  position: "absolute",
+                  width: IMAGE_SIZE,
+                  height: IMAGE_SIZE,
+                  borderRadius: IMAGE_SIZE,
+                  // for icon
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                }}
+              >
+                <Icon name="camera" size={46} color="#fff" />
+              </Box>
+            </Pressable>
+          </Box>
 
-            <Box px="screen">
-              <Input
-                style={{ marginBottom: 20 }}
-                label="First Name"
-                value={firstName}
-                onChangeText={(value) => setFirstName(value)}
-              />
+          <Box px="screen">
+            <Input
+              style={{ marginBottom: 20 }}
+              label="First Name"
+              value={firstName}
+              onChangeText={(value) => setFirstName(value)}
+            />
 
-              <Input
-                style={{ marginBottom: 20 }}
-                label="Last Name"
-                value={lastName}
-                onChangeText={(value) => setLastName(value)}
-              />
+            <Input
+              style={{ marginBottom: 20 }}
+              label="Last Name"
+              value={lastName}
+              onChangeText={(value) => setLastName(value)}
+            />
 
-              <Input
-                style={{ marginBottom: 20 }}
-                label="Phone"
-                value={phoneNumber}
-                onChangeText={(value) => setPhoneNumber(value)}
-              />
+            <Input
+              style={{ marginBottom: 20 }}
+              label="Phone"
+              value={phoneNumber}
+              onChangeText={(value) => setPhoneNumber(value)}
+            />
 
-              <Box flexDirection="row" justifyContent="space-between" mb="xl">
-                <Box>
-                  <Text mb="m" fontFamily="Medium">
-                    Gender
-                  </Text>
+            <Box flexDirection="row" justifyContent="space-between" mb="xl">
+              <Box>
+                <Text mb="m" fontFamily="Medium">
+                  Gender
+                </Text>
 
-                  <RNPickerSelect
-                    value={gender}
-                    onValueChange={setGender}
-                    placeholder={{
-                      label: "Select gender",
-                      value: null,
-                    }}
-                    items={[
-                      { label: "Male", value: "Male" },
-                      { label: "Female", value: "Female" },
-                    ]}
-                    style={{
-                      viewContainer: {
-                        width: INPUT_GROUP_WIDTH,
-                        height: 56,
-                        borderColor: "#DDDDDD",
-                        borderWidth: 1,
-                        padding: 16,
-                        borderRadius: 12,
-                      },
-                      placeholder: {
-                        fontSize: 18,
-                      },
-                      inputAndroid: {
-                        fontSize: 18,
-                      },
-                      inputIOS: {
-                        fontSize: 18,
-                      },
-                      iconContainer: {
-                        top: 2,
-                      },
-                    }}
-                    Icon={() => <Icon name="chevron-down" size={56 / 3} />}
-                  />
-                </Box>
-
-                <Box>
-                  <Text mb="m" fontFamily="Medium">
-                    Birthday
-                  </Text>
-                  <Pressable onPress={() => setShowBirthdayPicker(true)}>
-                    <Box
-                      style={{
-                        width: INPUT_GROUP_WIDTH,
-                        height: 56,
-                        borderColor: "#DDDDDD",
-                        borderWidth: 1,
-                        padding: 16,
-                        borderRadius: 12,
-                      }}
-                    >
-                      <Text fontSize={18}>{`${birthday.getDate()}/${
-                        birthday.getMonth() + 1 // month is 0-based
-                      }/${birthday.getFullYear()}`}</Text>
-                    </Box>
-                  </Pressable>
-                  <DateTimePickerModal
-                    isVisible={showBirthdayPicker}
-                    mode="date"
-                    onConfirm={(date) => onBirthdayChange(date)}
-                    onCancel={() => setShowBirthdayPicker(false)}
-                  />
-                </Box>
+                <RNPickerSelect
+                  value={gender}
+                  onValueChange={(v) => setGender(v)}
+                  placeholder={{
+                    label: "Select gender",
+                    value: null,
+                  }}
+                  items={[
+                    { label: "Male", value: "Male" },
+                    { label: "Female", value: "Female" },
+                  ]}
+                  style={{
+                    viewContainer: {
+                      width: INPUT_GROUP_WIDTH,
+                      height: 56,
+                      borderColor: "#DDDDDD",
+                      borderWidth: 1,
+                      padding: 16,
+                      borderRadius: 12,
+                    },
+                    placeholder: {
+                      fontSize: 18,
+                    },
+                    inputAndroid: {
+                      fontSize: 18,
+                    },
+                    inputIOS: {
+                      fontSize: 18,
+                    },
+                    iconContainer: {
+                      top: 2,
+                    },
+                  }}
+                  Icon={() => <Icon name="chevron-down" size={56 / 3} />}
+                />
               </Box>
 
-              <Input
-                style={{ marginBottom: 20 }}
-                label="Email"
-                value={email}
-                onChangeText={(value) => setEmail(value)}
-              />
-
-              <Button
-                style={{ marginBottom: 50 }}
-                onPress={handleSave}
-                size="lg"
-              >
-                Save Changes
-              </Button>
+              <Box>
+                <Text mb="m" fontFamily="Medium">
+                  Birthday
+                </Text>
+                <Pressable onPress={() => setShowBirthdayPicker(true)}>
+                  <Box
+                    style={{
+                      width: INPUT_GROUP_WIDTH,
+                      height: 56,
+                      borderColor: "#DDDDDD",
+                      borderWidth: 1,
+                      padding: 16,
+                      borderRadius: 12,
+                    }}
+                  >
+                    <Text fontSize={18}>{`${birthday.getDate()}/${
+                      birthday.getMonth() + 1 // month is 0-based
+                    }/${birthday.getFullYear()}`}</Text>
+                  </Box>
+                </Pressable>
+                <DateTimePickerModal
+                  isVisible={showBirthdayPicker}
+                  mode="date"
+                  onConfirm={(date) => onBirthdayChange(date)}
+                  onCancel={() => setShowBirthdayPicker(false)}
+                />
+              </Box>
             </Box>
+
+            <Input
+              style={{ marginBottom: 20 }}
+              label="Email"
+              value={email}
+              onChangeText={(value) => setEmail(value)}
+            />
+
+            <Button style={{ marginBottom: 50 }} onPress={handleSave} size="lg">
+              Save Changes
+            </Button>
           </Box>
         </ScrollView>
       </DissmissKeyboard>
