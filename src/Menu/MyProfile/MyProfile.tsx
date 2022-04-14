@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import React, { useEffect, useState } from "react";
 import { Image, ScrollView, Dimensions, Alert, Pressable } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import RNPickerSelect from "react-native-picker-select";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
@@ -17,6 +18,8 @@ import DissmissKeyboard from "../../components/DissmissKeyboard";
 import Input from "../../components/Input";
 import { useUser } from "../../state/hooks/useUser";
 
+const IMAGE_SIZE = 134;
+
 const MyProfile = observer(() => {
   const theme = useTheme();
 
@@ -25,6 +28,7 @@ const MyProfile = observer(() => {
 
   const { user, updateUser } = useUser();
 
+  const [image, setImage] = useState<string | null>(null);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -32,6 +36,20 @@ const MyProfile = observer(() => {
   const [gender, setGender] = useState(null);
   const [birthday, setBirthday] = useState(new Date(1598051730000));
   const [showBirthdayPicker, setShowBirthdayPicker] = useState(false);
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setImage(result.uri);
+    }
+  };
 
   const onBirthdayChange = (date: any) => {
     setShowBirthdayPicker(false);
@@ -69,32 +87,51 @@ const MyProfile = observer(() => {
           >
             <HeaderBar title="My Profile" />
 
-            {/* TODO: ADD PICKER */}
             <Box
-              alignItems="center"
-              style={{ marginVertical: 36 }}
-              position="relative"
+              style={{
+                marginVertical: 36,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
             >
-              <Image
-                source={{
-                  uri: "https://source.unsplash.com/hh3ViD0r0Rc/134x134",
-                }}
-                style={{ width: 134, height: 134, borderRadius: 134 }}
-              />
-
-              <Box
-                position="absolute"
-                alignItems="center"
-                justifyContent="center"
+              <Pressable
+                onPress={pickImage}
                 style={{
-                  backgroundColor: "rgba(0, 0, 0, 0.5)",
-                  width: 134,
-                  height: 134,
-                  borderRadius: 134,
+                  position: "relative",
+                  height: IMAGE_SIZE,
+                  width: IMAGE_SIZE,
+                  borderRadius: IMAGE_SIZE,
+                  overflow: "hidden",
                 }}
               >
-                <Icon name="camera" size={46} color="#fff" />
-              </Box>
+                {image && (
+                  <Image
+                    source={{
+                      uri: image,
+                    }}
+                    style={{
+                      position: "absolute",
+                      width: IMAGE_SIZE,
+                      height: IMAGE_SIZE,
+                      borderRadius: IMAGE_SIZE,
+                    }}
+                  />
+                )}
+                <Box
+                  style={{
+                    position: "absolute",
+                    width: IMAGE_SIZE,
+                    height: IMAGE_SIZE,
+                    borderRadius: IMAGE_SIZE,
+                    // for icon
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  }}
+                >
+                  <Icon name="camera" size={46} color="#fff" />
+                </Box>
+              </Pressable>
             </Box>
 
             <Box px="screen">
@@ -119,7 +156,6 @@ const MyProfile = observer(() => {
                 onChangeText={(value) => setPhoneNumber(value)}
               />
 
-              {/* TODO: ADD PICKER */}
               <Box flexDirection="row" justifyContent="space-between" mb="xl">
                 <Box>
                   <Text mb="m" fontFamily="Medium">
