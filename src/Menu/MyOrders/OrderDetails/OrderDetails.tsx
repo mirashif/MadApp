@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   Box,
   Button,
+  CurrencyFormat,
   HeaderBar,
   makeStyles,
   SafeArea,
@@ -33,7 +34,9 @@ const OrderSummaryItem = ({
     style={{ marginBottom: 6 }}
   >
     <Text style={{ color: color || "#111111" }}>{title}</Text>
-    <Text style={{ color: color || "#8A8A8A" }}>{description}</Text>
+    <Text style={{ color: color || "#8A8A8A" }}>
+      <CurrencyFormat value={description} />
+    </Text>
   </Box>
 );
 
@@ -88,7 +91,7 @@ const OrderDetails = () => {
 
           <Box style={{ marginTop: 28 }}>
             <Text style={styles.sectionTitle}>DELIVERED TO</Text>
-            <LocationBar address="5 Rd No. 2/3, Dhaka 1213" label="Office" />
+            <LocationBar />
           </Box>
 
           <Box style={{ marginTop: 51 }}>
@@ -102,11 +105,11 @@ const OrderDetails = () => {
           </Box>
 
           <Box style={{ marginTop: 26 }}>
-            <OrderSummaryItem title="Subtotal" description="৳769.00" />
-            <OrderSummaryItem title="Delivery fee" description="৳30.00" />
+            <OrderSummaryItem title="Subtotal" description="769.00" />
+            <OrderSummaryItem title="Delivery fee" description="30.00" />
             <OrderSummaryItem
               title="Discount"
-              description="- ৳20"
+              description="- 20"
               color={theme.colors.primary}
             />
           </Box>
@@ -114,7 +117,7 @@ const OrderDetails = () => {
           <Box style={{ marginTop: 42 }}>
             <Text style={styles.sectionTitle}>TOTAL AMOUNT</Text>
             <Text fontSize={34} fontFamily="Bold" color="primary">
-              ৳ 2,809
+              <CurrencyFormat value={2809} />
             </Text>
           </Box>
 

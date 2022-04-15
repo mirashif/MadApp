@@ -11,7 +11,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import type { Item, ItemStore } from "../../state/store/ItemStore";
 import type { Theme } from "../../components";
-import { Button, CircularIcon, Icon, makeStyles, Text } from "../../components";
+import {
+  CurrencyFormat,
+  Button,
+  CircularIcon,
+  Icon,
+  makeStyles,
+  Text,
+} from "../../components";
 import { useAppState } from "../../state/StateContext";
 
 import Variants from "./Variants";
@@ -141,10 +148,12 @@ const ItemFooter = observer(
         ]}
       >
         <View style={styles.priceContainer}>
-          <Text style={styles.price}>৳{price?.toLocaleString("en-IN")}</Text>
+          <Text style={styles.price}>
+            <CurrencyFormat value={price} />
+          </Text>
           {isDealApplided && (
             <Text style={styles.originalPrice}>
-              ৳{originalPrice?.toLocaleString("en-IN")}
+              <CurrencyFormat value={originalPrice} />
             </Text>
           )}
         </View>

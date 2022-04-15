@@ -1,9 +1,11 @@
+import { useNavigation } from "@react-navigation/native";
 import { observer } from "mobx-react";
 import React from "react";
 import { Pressable, View } from "react-native";
 
 import type { Theme } from "../components";
 import { Icon, makeStyles, Text, useTheme } from "../components";
+import type { RootStackProps } from "../components/AppNavigator";
 import { useAppState } from "../state/StateContext";
 import type { LockedAddressStore } from "../state/store/LockedAddressStore";
 
@@ -16,12 +18,22 @@ const LocationBar = observer(
   ({ editMode = false, onEditPress }: LocationBarProps) => {
     const styles = useStyles();
     const theme = useTheme();
+    const navigation =
+      useNavigation<RootStackProps<"EditLocation">["navigation"]>();
 
     const lockedAddress: LockedAddressStore = useAppState("lockedAddress");
     const address = lockedAddress.lockedAddress;
 
     const addressLine = address?.data.address || "";
     const addressLabel = address?.data.label || "";
+
+    const onEditPressHandler = () => {
+      if (onEditPress) {
+        onEditPress();
+      } else {
+        navigation.navigate("EditLocation", { id: address?.data.id ?? null });
+      }
+    };
 
     return (
       <View style={styles.container}>
@@ -37,7 +49,7 @@ const LocationBar = observer(
           </View>
         </View>
 
-        <Pressable onPress={onEditPress}>
+        <Pressable onPress={onEditPressHandler}>
           <View
             style={{
               width: 20,

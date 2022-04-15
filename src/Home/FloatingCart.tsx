@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { observer } from "mobx-react";
 
-import { Box, Icon, Text } from "../components";
+import { Box, CurrencyFormat, Icon, Text } from "../components";
 import { useAppState } from "../state/StateContext";
 import type { CartableWrapper, CartStore } from "../state/store/CartStore";
 import type { RootStackProps } from "../components/AppNavigator";
@@ -82,7 +82,7 @@ const FloatingCart = observer(({ insetBottom = false }: FloatingCartProps) => {
 
           <Box flexGrow={1} flexShrink={0} flexBasis={0} alignItems="flex-end">
             <Text fontSize={17} color="background" fontFamily="Normal">
-              ৳ {cart.grandTotalAmount.toLocaleString("en-IN")}
+              <CurrencyFormat value={cart.grandTotalAmount} />
             </Text>
           </Box>
         </Box>

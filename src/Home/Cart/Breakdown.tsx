@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import React from "react";
 
-import { Box, Text } from "../../components";
+import { Box, CurrencyFormat, Text } from "../../components";
 import { useAppState } from "../../state/StateContext";
 import type { CartStore } from "../../state/store/CartStore";
 
@@ -20,7 +20,9 @@ const Item = ({
       style={{ marginBottom: 6 }}
     >
       <Text style={{ color: "#111111" }}>{title}</Text>
-      <Text style={{ color: "#8A8A8A" }}>৳{description}</Text>
+      <Text style={{ color: "#8A8A8A" }}>
+        <CurrencyFormat value={description} />
+      </Text>
     </Box>
   );
 };
@@ -30,19 +32,10 @@ const Breakdown = observer(() => {
 
   return (
     <>
-      <Item
-        title="Subtotal"
-        description={cart.subtotalAmount.toLocaleString("en-IN")}
-      />
-      <Item
-        title="SD"
-        description={cart.serviceChargeAmount.toLocaleString("en-IN")}
-      />
-      <Item title="VAT" description={cart.vatAmount.toLocaleString("en-IN")} />
-      <Item
-        title="Delivery fee"
-        description={cart.deliveryChargeAmount.toLocaleString("en-IN")}
-      />
+      <Item title="Subtotal" description={cart.subtotalAmount} />
+      <Item title="SD" description={cart.serviceChargeAmount} />
+      <Item title="VAT" description={cart.vatAmount} />
+      <Item title="Delivery fee" description={cart.deliveryChargeAmount} />
     </>
   );
 });

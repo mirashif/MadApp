@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import React from "react";
 import { Image, TouchableWithoutFeedback } from "react-native";
 
-import { Box, Icon, Text, useTheme } from "../../components";
+import { Box, CurrencyFormat, Icon, Text, useTheme } from "../../components";
 import type { CartableWrapper } from "../../state/store/CartStore";
 
 import { QuantityButton } from "./Button";
@@ -72,7 +72,9 @@ const CartItem = observer((props: CartItemProps) => {
           </Box>
         )}
 
-        <Text fontSize={13}>৳ {item.totalPrice.toLocaleString("en-IN")}</Text>
+        <Text fontSize={13}>
+          <CurrencyFormat value={item.totalPrice} />
+        </Text>
       </Box>
 
       <Box alignItems="center">

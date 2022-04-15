@@ -4,6 +4,7 @@ import LottieView from "lottie-react-native";
 
 import {
   Box,
+  CurrencyFormat,
   HeaderBar,
   Icon,
   makeStyles,
@@ -102,18 +103,13 @@ const OrderProcessing = () => {
               Delivering to
             </Text>
 
-            <LocationBar
-              address="5 Rd No. 2/3, Dhaka 1213"
-              label="Office"
-              editMode
-              onEditPress={() => null}
-            />
+            <LocationBar editMode onEditPress={undefined} />
           </Box>
 
           <Box mt="xl">
             <Text style={styles.title}>TOTAL AMOUNT</Text>
             <Text fontFamily="Bold" fontSize={34} color="primary">
-              ৳ 2,809
+              <CurrencyFormat value={2809} />
             </Text>
           </Box>
         </Box>
