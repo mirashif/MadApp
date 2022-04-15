@@ -89,7 +89,13 @@ const Checkout = () => {
                   {quantity}x {restaurant}: {name}
                 </Text>
 
-                <Text>৳{price}</Text>
+                <Text>
+                  ৳
+                  {
+                    price
+                    // .toLocaleString("en-IN")
+                  }
+                </Text>
               </Box>
             ))}
           </Box>

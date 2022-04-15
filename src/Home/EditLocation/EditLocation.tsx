@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Dimensions, ScrollView } from "react-native";
+import type { Region } from "react-native-maps";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -45,6 +46,14 @@ const EditLocation = observer(() => {
       return _address ? _address.builder : addresses.builder;
     }
   }, [addresses, id]);
+
+  const [region, setRegion] = useState<Region>({
+    // builder location ?? dhaka
+    latitude: builder.location?.lat ?? 23.8103,
+    longitude: builder.location?.lon ?? 90.4125,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
 
   const handleSaveAddress = async () => {
     const addressable: UnsavedAddressType = builder.addressable;
@@ -97,24 +106,19 @@ const EditLocation = observer(() => {
         <Box style={styles.mapContainer}>
           <MapView
             style={[styles.map, { marginBottom, paddingTop }]}
-            region={{
-              // builder location ?? dhaka
-              latitude: builder.location?.lat ?? 23.8103,
-              longitude: builder.location?.lon ?? 90.4125,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
-            }}
+            region={region}
             provider={PROVIDER_GOOGLE}
             showsCompass={true}
             showsUserLocation={true}
             showsMyLocationButton={true}
-            onRegionChangeComplete={(region) =>
-              builder.setLocation(
-                region.longitude as number,
-                region.latitude as number
-              )
-            }
             onMapReady={_onMapReady}
+            onRegionChangeComplete={(_region) => {
+              setRegion(_region);
+              builder.setLocation(
+                _region.longitude as number,
+                _region.latitude as number
+              );
+            }}
           />
           <Box style={styles.marker}>
             <MarkerIcon />

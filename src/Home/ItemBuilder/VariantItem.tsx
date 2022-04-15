@@ -49,7 +49,7 @@ const VariantItem = observer(({ variant }: VariationItemProps) => {
             {variantName}
           </Text>
         </Box>
-        <Text fontSize={18}>৳ {variantPrice}</Text>
+        <Text fontSize={18}>৳ {variantPrice.toLocaleString("en-IN")}</Text>
       </Box>
     </TouchableWithoutFeedback>
   );

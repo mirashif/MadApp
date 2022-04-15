@@ -72,7 +72,7 @@ const CartItem = observer((props: CartItemProps) => {
           </Box>
         )}
 
-        <Text fontSize={13}>৳ {item.totalPrice}</Text>
+        <Text fontSize={13}>৳ {item.totalPrice.toLocaleString("en-IN")}</Text>
       </Box>
 
       <Box alignItems="center">

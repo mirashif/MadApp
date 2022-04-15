@@ -38,7 +38,9 @@ const Total = observer(() => {
           <Text style={{ color: "#BBBBBB", fontSize: 11 }}>VAT included</Text>
         </Box>
 
-        <Text style={{ fontSize: 18 }}>৳{cart.grandTotalAmount}</Text>
+        <Text style={{ fontSize: 18 }}>
+          ৳{cart.grandTotalAmount.toLocaleString("en-IN")}
+        </Text>
       </Box>
 
       <Box style={{ alignItems: "center", marginTop: 27 }}>

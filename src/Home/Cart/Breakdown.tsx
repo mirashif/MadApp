@@ -30,10 +30,19 @@ const Breakdown = observer(() => {
 
   return (
     <>
-      <Item title="Subtotal" description={cart.subtotalAmount} />
-      <Item title="SD" description={cart.serviceChargeAmount} />
-      <Item title="VAT" description={cart.vatAmount} />
-      <Item title="Delivery fee" description={cart.deliveryChargeAmount} />
+      <Item
+        title="Subtotal"
+        description={cart.subtotalAmount.toLocaleString("en-IN")}
+      />
+      <Item
+        title="SD"
+        description={cart.serviceChargeAmount.toLocaleString("en-IN")}
+      />
+      <Item title="VAT" description={cart.vatAmount.toLocaleString("en-IN")} />
+      <Item
+        title="Delivery fee"
+        description={cart.deliveryChargeAmount.toLocaleString("en-IN")}
+      />
     </>
   );
 });

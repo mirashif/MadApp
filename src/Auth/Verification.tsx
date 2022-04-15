@@ -41,11 +41,13 @@ const Verification = observer(
     useEffect(() => {
       const isLoggedIn = auth.authenticated;
       if (!isLoggedIn || !user) return;
-      if (user.firstName && user.lastName)
+      if (user.firstName && user.lastName) {
         navigation.dispatch(
           StackActions.replace("BottomTabs", { screen: "Home" })
         );
-      else setStep(STEPS.USER_INFO);
+      } else {
+        setStep(STEPS.USER_INFO);
+      }
     }, [auth, navigation, setStep, user]);
 
     let interval: any = null;
