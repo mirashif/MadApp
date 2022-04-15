@@ -162,41 +162,46 @@ const MyProfile = observer(() => {
                     Gender
                   </Text>
 
-                  <RNPickerSelect
-                    value={gender}
-                    onValueChange={(v) => setGender(v)}
-                    placeholder={{
-                      label: "Select gender",
-                      value: null,
-                    }}
-                    items={[
-                      { label: "Male", value: "Male" },
-                      { label: "Female", value: "Female" },
-                    ]}
+                  <Box
                     style={{
-                      viewContainer: {
-                        width: INPUT_GROUP_WIDTH,
-                        height: 56,
-                        borderColor: "#DDDDDD",
-                        borderWidth: 1,
-                        padding: 16,
-                        borderRadius: 12,
-                      },
-                      placeholder: {
-                        fontSize: 18,
-                      },
-                      inputAndroid: {
-                        fontSize: 18,
-                      },
-                      inputIOS: {
-                        fontSize: 18,
-                      },
-                      iconContainer: {
-                        top: 2,
-                      },
+                      width: INPUT_GROUP_WIDTH,
+                      height: 56,
+                      borderColor: "#DDDDDD",
+                      borderWidth: 1,
+                      paddingVertical: 16,
+                      borderRadius: 12,
+                      justifyContent: "center",
+                      alignItems: "center",
                     }}
-                    Icon={() => <Icon name="chevron-down" size={56 / 3} />}
-                  />
+                  >
+                    <RNPickerSelect
+                      value={gender}
+                      onValueChange={(v) => setGender(v)}
+                      fixAndroidTouchableBug={true}
+                      placeholder={{
+                        label: "Select gender",
+                        value: null,
+                      }}
+                      items={[
+                        { label: "Male", value: "Male" },
+                        { label: "Female", value: "Female" },
+                      ]}
+                      style={{
+                        placeholder: {
+                          fontSize: 18,
+                          color: "#dddddd",
+                        },
+                        inputAndroid: {
+                          fontSize: 18,
+                          color: "black",
+                        },
+                        inputIOS: {
+                          fontSize: 18,
+                          color: "black",
+                        },
+                      }}
+                    />
+                  </Box>
                 </Box>
 
                 <Box>
