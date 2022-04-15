@@ -2,7 +2,7 @@ import React from "react";
 import { Image, TouchableWithoutFeedback } from "react-native";
 
 import type { Theme } from "../../components";
-import { Box, Icon, makeStyles, Text } from "../../components";
+import { CurrencyFormat, Box, Icon, makeStyles, Text } from "../../components";
 import type { Item } from "../../state/store/ItemStore";
 
 interface UpsellItemProps {
@@ -45,12 +45,12 @@ const UpsellItem = (props: UpsellItemProps) => {
 
         <Box flexDirection="row">
           <Text style={styles.newPrice}>
-            ৳{item.price.toLocaleString("en-IN")}
+            <CurrencyFormat value={item.price} />
           </Text>
 
           {item.price !== item.originalPrice && (
             <Text style={styles.oldPrice}>
-              ৳{item.originalPrice.toLocaleString("en-IN")}
+              <CurrencyFormat value={item.originalPrice} />
             </Text>
           )}
         </Box>

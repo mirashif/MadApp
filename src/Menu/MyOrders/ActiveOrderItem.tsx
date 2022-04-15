@@ -1,7 +1,7 @@
 import React from "react";
 import { Pressable } from "react-native";
 
-import { Box, Text } from "../../components";
+import { Box, CurrencyFormat, Text } from "../../components";
 
 interface ActiveOrderItemProps {
   onPress: () => void;
@@ -20,7 +20,9 @@ const ActiveOrderItem = ({ onPress }: ActiveOrderItemProps) => {
           <Text fontSize={16} fontFamily="Bold">
             Madchef x Cheez
           </Text>
-          <Text style={{ marginTop: 2 }}>৳619.00</Text>
+          <Text style={{ marginTop: 2 }}>
+            <CurrencyFormat value={619.0} />
+          </Text>
 
           <Box mt="m">
             <Text fontSize={11} style={{ color: "#939393" }}>

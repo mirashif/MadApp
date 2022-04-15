@@ -1,7 +1,7 @@
 import React from "react";
 import { Image } from "react-native";
 
-import { Box, Icon, Text } from "../../../components";
+import { Box, CurrencyFormat, Icon, Text } from "../../../components";
 
 const Item = () => {
   return (
@@ -38,7 +38,7 @@ const Item = () => {
           </Box>
 
           <Text style={{ marginTop: 6 }} fontSize={13}>
-            ৳ 669.00
+            <CurrencyFormat value={669.0} />
           </Text>
         </Box>
       </Box>
