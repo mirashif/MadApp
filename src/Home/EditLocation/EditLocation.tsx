@@ -35,6 +35,7 @@ const EditLocation = observer(() => {
 
   const addresses: AddressStore = useAppState("addresses");
   const lockedAddress: LockedAddressStore = useAppState("lockedAddress");
+
   const builder: AddressBuilder = useMemo(() => {
     if (id === "location" || null) {
       // new addresses
