@@ -14,6 +14,7 @@ import {
 import { useAppState } from "../../state/StateContext";
 import type { Address } from "../../state/store/AddressStore";
 import type { LockedAddressStore } from "../../state/store/LockedAddressStore";
+import type { Branch, BranchStore } from "../../state/store/BranchStore";
 
 import Store from "./Store";
 
@@ -27,6 +28,10 @@ const StoreLocator = () => {
   const lockedAddress: LockedAddressStore = useAppState("lockedAddress");
   const currentlySelectedAddress: Address | null = lockedAddress.lockedAddress;
   const currentlySelectedLocation = currentlySelectedAddress?.builder.location;
+
+  const branchStore: BranchStore = useAppState("branches");
+  const branches: Branch[] = branchStore.all;
+  const nearbyBranches: Branch[] = branchStore.availableBranches;
 
   useEffect(() => {
     checkIfLocationEnabled();
@@ -55,17 +60,6 @@ const StoreLocator = () => {
   return (
     <SafeArea>
       <Box style={styles.mapContainer}>
-        {/* back button */}
-        <Box position="absolute" top={24} left={24}>
-          <Pressable onPress={() => navigation.goBack()}>
-            <CircularIcon
-              name="arrow-left"
-              color="#000"
-              backgroundColor="#fff"
-              size={54}
-            />
-          </Pressable>
-        </Box>
         <MapView
           style={[styles.map, { marginBottom, paddingTop }]}
           region={{
@@ -81,21 +75,59 @@ const StoreLocator = () => {
           showsMyLocationButton={true}
           onMapReady={_onMapReady}
         />
+        {/* back button */}
+        <Box position="absolute" top={24} left={24}>
+          <Pressable onPress={() => navigation.goBack()}>
+            <CircularIcon
+              name="arrow-left"
+              color="#000"
+              backgroundColor="#fff"
+              size={54}
+            />
+          </Pressable>
+        </Box>
       </Box>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <Box padding="screen">
           <Box style={{ marginTop: 27 }}>
             <Text style={styles.title}>Nearby</Text>
-
-            <Store />
+            {nearbyBranches.map((branch) => {
+              const id = branch.data.id;
+              const logoImageURI = branch.restaurant?.data.logoImageURI ?? "";
+              const name = branch.data.name;
+              const address = branch.data.address;
+              const location = branch.data.location;
+              return (
+                <Store
+                  key={id}
+                  logoImageURI={logoImageURI}
+                  name={name}
+                  address={address}
+                  location={location}
+                />
+              );
+            })}
           </Box>
 
           <Box style={{ marginTop: 60 }}>
             <Text style={styles.title}>Other Locations</Text>
-
-            <Store />
-            <Store />
+            {branches.map((branch) => {
+              const id = branch.data.id;
+              const logoImageURI = branch.restaurant?.data.logoImageURI ?? "";
+              const name = branch.data.name;
+              const address = branch.data.address;
+              const location = branch.data.location;
+              return (
+                <Store
+                  key={id}
+                  logoImageURI={logoImageURI}
+                  name={name}
+                  address={address}
+                  location={location}
+                />
+              );
+            })}
           </Box>
         </Box>
       </ScrollView>
@@ -104,17 +136,19 @@ const StoreLocator = () => {
 };
 
 const useStyles = makeStyles(() => ({
-  title: {
-    fontFamily: "Normal",
-    fontSize: 18,
-  },
   mapContainer: {
     height,
     width,
+    position: "relative",
   },
   map: {
-    width,
     height,
+    width,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 15,
   },
 }));
 

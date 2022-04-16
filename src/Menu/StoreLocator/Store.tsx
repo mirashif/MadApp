@@ -3,7 +3,14 @@ import { Pressable, Image } from "react-native";
 
 import { Box, Icon, Text, useTheme } from "../../components";
 
-const Store = () => {
+interface StoreProps {
+  logoImageURI: string;
+  name: string;
+  address: string;
+  location: { lat: number; lon: number };
+}
+
+const Store = ({ logoImageURI, name, address }: StoreProps) => {
   const theme = useTheme();
 
   return (
@@ -17,13 +24,13 @@ const Store = () => {
     >
       <Box flexDirection="row">
         <Image
-          source={{ uri: "https://cutt.ly/QWjYTaA" }}
+          source={{ uri: logoImageURI }}
           style={{ width: 48, height: 48 }}
         />
 
         <Box style={{ marginLeft: 13 }}>
           <Text fontFamily="Bold" fontSize={18}>
-            Cheez Uttara
+            {name}
           </Text>
 
           <Box width={171} mt="s">
@@ -32,11 +39,12 @@ const Store = () => {
               fontSize={11}
               style={{ color: "#8A8A8A" }}
             >
-              Gareeb-e-Nawaz Avenue, House 34, Sector 11, Dhaka
+              {address}
             </Text>
           </Box>
 
-          <Pressable>
+          {/* TODO: add get direction */}
+          <Pressable onPress={undefined}>
             <Text fontFamily="Medium" fontSize={14} color="primary" mt="m">
               Get Directions
             </Text>
