@@ -3,7 +3,14 @@ import { ScrollView, TextInput } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import type { Theme } from "../../components";
-import { Box, HeaderBar, makeStyles, SafeArea, Text } from "../../components";
+import {
+  CurrencyFormat,
+  Box,
+  HeaderBar,
+  makeStyles,
+  SafeArea,
+  Text,
+} from "../../components";
 import DissmissKeyboard from "../../components/DissmissKeyboard";
 import { CheckoutButton } from "../Cart/Button";
 import LocationBar from "../LocationBar";
@@ -49,14 +56,7 @@ const Checkout = () => {
         >
           <HeaderBar title="Checkout" />
 
-          <Box mx="screen">
-            <LocationBar
-              address="5 Rd No. 2/3, Dhaka 1213"
-              label="Scratchboard"
-              editMode
-              onEditPress={() => null}
-            />
-          </Box>
+          <LocationBar editMode onEditPress={undefined} />
 
           <Box style={{ marginTop: 32 }}>
             <Text style={styles.title}>Payment method</Text>
@@ -94,7 +94,9 @@ const Checkout = () => {
                   {quantity}x {restaurant}: {name}
                 </Text>
 
-                <Text>৳{price}</Text>
+                <Text>
+                  <CurrencyFormat value={price} />
+                </Text>
               </Box>
             ))}
           </Box>

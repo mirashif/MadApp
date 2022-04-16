@@ -1,17 +1,17 @@
 import React from "react";
 
-import { Box, Button, Text, useTheme } from "../components";
+import { Box, Button, CurrencyFormat, Text, useTheme } from "../components";
 
 interface CouponProps {
-  discount: string;
-  minimum: string;
-  points: string;
+  name: string;
+  minimum: number;
+  points: number;
   disabled?: boolean;
   onPress: () => void;
 }
 
 const Coupon = ({
-  discount,
+  name,
   minimum,
   points,
   onPress,
@@ -29,7 +29,7 @@ const Coupon = ({
             color: theme.colors.primary,
           }}
         >
-          Get ৳{discount} Off
+          {name}
         </Text>
         <Text
           style={{
@@ -38,7 +38,7 @@ const Coupon = ({
             color: theme.colors.darkGray,
           }}
         >
-          Minimum Order ৳{minimum}
+          Minimum Order <CurrencyFormat value={minimum} />
         </Text>
         <Text
           style={{

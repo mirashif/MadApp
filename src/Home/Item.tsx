@@ -1,39 +1,73 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ImageBackground, TouchableWithoutFeedback } from "react-native";
 
-import { Box, Icon, makeStyles, Text, Theme, useTheme } from "../components";
+import type { Theme } from "../components";
+import {
+  CurrencyFormat,
+  Box,
+  Icon,
+  makeStyles,
+  Text,
+  useTheme,
+} from "../components";
+import type { Item as IItem } from "../state/store/ItemStore";
 
-import { IItem } from "./Home";
-
-interface ItemProps extends IItem {
-  onItemPress: (id: number | string) => void;
+interface ItemProps {
+  item: IItem;
+  onItemPress: (itemId: string) => void;
 }
 
-const Item = ({
-  id,
-  discount,
-  name,
-  previousPrice,
-  price,
-  imageUri,
-  onItemPress,
-}: ItemProps) => {
+const Item = ({ item, onItemPress }: ItemProps) => {
   const styles = useStyles();
   const theme = useTheme();
 
+  const { name, price, thumbnailURI } = item.data;
+  const { originalPrice, tags } = item;
+
+  const [currentTagIdx, setCurrentTagIdx] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTagIdx((_currentTagIdx) => (_currentTagIdx + 1) % tags.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [tags]);
+
   return (
-    <TouchableWithoutFeedback onPress={() => onItemPress(id)}>
+    <TouchableWithoutFeedback onPress={() => onItemPress(item.id)}>
       <Box>
         <ImageBackground
           style={styles.imageView}
           imageStyle={styles.imageStyle}
-          source={{ uri: imageUri }}
+          source={{ uri: thumbnailURI }}
         >
-          {discount && (
-            <Box style={styles.discount}>
-              <Text style={styles.discountText}>{discount}</Text>
+          {tags.length > 0 && (
+            <Box
+              style={
+                (styles.discount,
+                {
+                  backgroundColor:
+                    tags[currentTagIdx].colors?.background ||
+                    theme.colors.primary,
+                })
+              }
+            >
+              <Text
+                style={
+                  (styles.discountText,
+                  {
+                    color:
+                      tags[currentTagIdx].colors?.foreground ||
+                      theme.colors.primaryContrast,
+                  })
+                }
+              >
+                {tags[currentTagIdx].title}
+              </Text>
             </Box>
           )}
+
           <Box style={styles.addCartIcon}>
             <Icon size={18} name="plus" color={theme.colors.primaryContrast} />
           </Box>
@@ -41,9 +75,13 @@ const Item = ({
 
         <Text style={styles.name}>{name}</Text>
         <Box style={styles.price}>
-          <Text style={styles.currentPrice}>{price}</Text>
-          {previousPrice && (
-            <Text style={styles.previousPrice}>{previousPrice}</Text>
+          <Text style={styles.currentPrice}>
+            <CurrencyFormat value={price} />
+          </Text>
+          {originalPrice && price !== originalPrice && (
+            <Text style={styles.previousPrice}>
+              <CurrencyFormat value={originalPrice} />
+            </Text>
           )}
         </Box>
       </Box>
@@ -62,12 +100,12 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   imageStyle: {
     borderRadius: theme.borderRadii.l,
+    backgroundColor: theme.colors.gray,
   },
   discount: {
     position: "absolute",
     top: 12,
     left: 0,
-    backgroundColor: theme.colors.primary,
     height: 12,
     width: 62,
     justifyContent: "center",
@@ -78,7 +116,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   discountText: {
     fontFamily: "Normal",
     fontSize: 9,
-    color: theme.colors.primaryContrast,
   },
   addCartIcon: {
     position: "absolute",

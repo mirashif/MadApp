@@ -4,9 +4,11 @@ import { StyleSheet } from "react-native";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
 import { Box, Text, Button } from "../components";
+import type { RootStackProps } from "../components/AppNavigator";
 
 const AuthSheet = () => {
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<RootStackProps<"OnBoarding">["navigation"]>();
 
   const authSheetRef = useRef<BottomSheetModal>(null);
 
@@ -18,9 +20,10 @@ const AuthSheet = () => {
     <BottomSheetModal
       ref={authSheetRef}
       snapPoints={[210]}
-      dismissOnPanDown={false}
-      handleComponent={null}
+      enableContentPanningGesture={false}
+      enableHandlePanningGesture={false}
       enableOverDrag={false}
+      handleComponent={null}
       backdropComponent={() => (
         <Box
           style={{
@@ -44,7 +47,7 @@ const AuthSheet = () => {
           size="xl"
           onPress={() => {
             authSheetRef.current?.close();
-            navigation.navigate("AuthStack");
+            navigation.navigate("OnBoarding");
           }}
         >
           Continue with phone

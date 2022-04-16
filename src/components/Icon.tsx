@@ -4,7 +4,7 @@ import { View } from "react-native";
 
 import { useTheme } from "./theme";
 
-interface IconProps {
+export interface IconProps {
   name: React.ComponentProps<typeof Feather>["name"];
   size?: number;
   color?: string;

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "556263731651",
+    "firebase_url": "https://mad-bits-default-rtdb.firebaseio.com",
+    "project_id": "mad-bits",
+    "storage_bucket": "mad-bits.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:556263731651:android:405ce65ff77a8e49490d76",
+        "android_client_info": {
+          "package_name": "bd.com.madchef.integrationpilot"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "556263731651-umjr1nq93b2hjoohrtqc319gcnsje23k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "bd.com.madchef.integrationpilot",
+            "certificate_hash": "023a4ba7c0499d0afe54389f95660085e0853dcc"
+          }
+        },
+        {
+          "client_id": "556263731651-ffm6rlu5n1rpo7f3kuej12mtomn3dgvh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwfgZ_rj9BsoI2vyuCtsxdwcfAoO2x3C8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "556263731651-ffm6rlu5n1rpo7f3kuej12mtomn3dgvh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

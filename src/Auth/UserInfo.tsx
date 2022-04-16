@@ -1,10 +1,11 @@
 import React, { useCallback, useState } from "react";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import {
   BackHandler,
   ScrollView,
   TouchableWithoutFeedback,
 } from "react-native";
+import { observer } from "mobx-react";
 
 import {
   Box,
@@ -15,21 +16,35 @@ import {
   Text,
   useTheme,
 } from "../components";
-import { RootStackProps } from "../components/AppNavigator";
 import Button from "../components/Button";
 import Input from "../components/Input";
+import type { UserStore } from "../state/store/UserStore";
+import { useAppState } from "../state/StateContext";
+import type { UserBuilder } from "../state/store/UserBuilder";
+import type { ReferralValidator } from "../state/store/ReferralValidator";
+import type { RootStackProps } from "../components/AppNavigator";
 
-import Referral from "./assets/Referral.svg";
 import Success from "./assets/Success.svg";
+import Referral from "./assets/Referral.svg";
+import type { OnBoardingStepProps } from "./constants";
+import { STEPS } from "./constants";
 
-const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
+const UserInfo = observer(({ setStep }: OnBoardingStepProps) => {
   const theme = useTheme();
+  const navigation =
+    useNavigation<RootStackProps<"EditLocation">["navigation"]>();
 
+  const user: UserStore = useAppState("user");
+  const builder: UserBuilder | null = user.builder;
   const [refCode, setRefCode] = useState<null | string>(null);
+  const [lastName, setLastName] = useState("");
+  const [firstName, setFirstName] = useState("");
   const [tempRefCode, setTempRefCode] = useState<null | string>(null);
   const [wrongRefCode, setWrongRefCode] = useState(false);
   const [refModalVisible, setRefModalVisible] = useState(false);
   const [successModalVisible, setSuccessModalVisible] = useState(false);
+
+  const referralValidator: ReferralValidator = useAppState("referralValidator");
 
   /**
    * When user presses back button it takes to the mobile number screen
@@ -37,7 +52,7 @@ const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
-        navigation.pop(2);
+        setStep(STEPS.MOBILE_NUMBER);
         return true;
       };
 
@@ -45,18 +60,28 @@ const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
 
       return () =>
         BackHandler.removeEventListener("hardwareBackPress", () => null);
-    }, [navigation])
+    }, [setStep])
   );
 
   const handleRefModalCTAPress = () => {
+    if (tempRefCode) {
+      referralValidator.setReferral(tempRefCode);
+    }
+
+    // handle try again button
     if (wrongRefCode) {
       setWrongRefCode(false);
       return;
     }
 
-    if (tempRefCode === "madapp") {
-      setRefCode(tempRefCode);
-      setRefModalVisible(!refModalVisible);
+    if (referralValidator.isValidating) {
+      handleRefModalCTAPress();
+      return;
+    }
+
+    if (referralValidator.isValid) {
+      setRefCode(referralValidator.referral);
+      setRefModalVisible(false);
       return;
     }
 
@@ -68,14 +93,30 @@ const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
     setRefModalVisible(false);
   };
 
+  const handleFinish = async () => {
+    if (user) {
+      if (builder && firstName && lastName) {
+        builder.setFirstName(firstName);
+        builder.setLastName(lastName);
+        await user.updateUser(builder.userable);
+
+        if (referralValidator.referral && referralValidator.isValid) {
+          await user.updateUser({
+            referral: referralValidator.referral,
+          });
+        }
+
+        setSuccessModalVisible(true);
+      }
+    }
+  };
+
   return (
     <SafeArea>
       <ScrollView showsVerticalScrollIndicator={false}>
         <HeaderBar
           title="Profile"
-          onBackPress={() =>
-            navigation.navigate("AuthStack", { screen: "MobileNumber" })
-          }
+          onBackPress={() => setStep(STEPS.MOBILE_NUMBER)}
         />
 
         <Box px="screen">
@@ -87,13 +128,17 @@ const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
               mt="l"
               style={{ color: "#323232" }}
             >
-              You’re almost done!
+              You're almost done!
             </Text>
           </Box>
 
           {/* Name */}
           <Box mt="xl">
-            <Input label="Name" onChangeText={(value) => console.log(value)} />
+            <Input label="First Name" onChangeText={setFirstName} />
+          </Box>
+
+          <Box mt="xl">
+            <Input label="Last Name" onChangeText={setLastName} />
           </Box>
 
           {/* Referral Code */}
@@ -124,7 +169,12 @@ const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
 
             <Box>
               {refCode && (
-                <TouchableWithoutFeedback onPress={() => setRefCode(null)}>
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    setRefCode(null);
+                    referralValidator.setReferral("");
+                  }}
+                >
                   <Box
                     height={25}
                     width={25}
@@ -160,35 +210,43 @@ const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
             </Box>
           </Box>
 
-          <Box
-            style={{
-              marginTop: 26,
-              paddingHorizontal: 25,
-              paddingVertical: 23,
-            }}
-            borderColor="lightGray"
-            borderWidth={1}
-            borderRadius="l"
-            flexDirection="row"
-            justifyContent="space-between"
+          <TouchableWithoutFeedback
+            onPress={() => navigation.navigate("EditLocation", { id: null })}
           >
-            <Box flexDirection="row">
-              <Icon name="navigation" size={14} color={theme.colors.primary} />
-              <Text
-                style={{ marginLeft: 12 }}
-                fontFamily="Bold"
-                fontSize={15}
-                color="primary"
-              >
-                Set Your Address
-              </Text>
-            </Box>
+            <Box
+              style={{
+                marginTop: 26,
+                paddingHorizontal: 25,
+                paddingVertical: 23,
+              }}
+              borderColor="lightGray"
+              borderWidth={1}
+              borderRadius="l"
+              flexDirection="row"
+              justifyContent="space-between"
+            >
+              <Box flexDirection="row">
+                <Icon
+                  name="navigation"
+                  size={14}
+                  color={theme.colors.primary}
+                />
+                <Text
+                  style={{ marginLeft: 12 }}
+                  fontFamily="Bold"
+                  fontSize={15}
+                  color="primary"
+                >
+                  Set Your Address
+                </Text>
+              </Box>
 
-            <Icon name="edit-2" size={14} color={theme.colors.primary} />
-          </Box>
+              <Icon name="edit-2" size={14} color={theme.colors.primary} />
+            </Box>
+          </TouchableWithoutFeedback>
 
           <Box style={{ paddingTop: 16, paddingBottom: 40, marginTop: 14 }}>
-            <Button onPress={() => setSuccessModalVisible(true)} size="lg">
+            <Button onPress={handleFinish} size="lg">
               Let's Go!
             </Button>
           </Box>
@@ -226,7 +284,10 @@ const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
 
             <Box my="m">
               <Input
-                onChangeText={(value) => setTempRefCode(value)}
+                onChangeText={(value) => {
+                  setTempRefCode(value);
+                  referralValidator.setReferral(value);
+                }}
                 placeholder="Enter your referral code"
               />
             </Box>
@@ -237,8 +298,11 @@ const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
       <CustomModal
         visible={successModalVisible}
         onRequestClose={() => setSuccessModalVisible(false)}
-        buttonTitle="Let’s go"
-        onButtonPress={() => setSuccessModalVisible(false)}
+        buttonTitle="Let's go"
+        onButtonPress={() => {
+          setSuccessModalVisible(false);
+          navigation.navigate("BottomTabs", { screen: "Home" });
+        }}
       >
         <Box
           alignItems="center"
@@ -247,12 +311,12 @@ const UserInfo = ({ navigation }: RootStackProps<"AuthStack">) => {
         >
           <Success />
           <Text fontSize={18} style={{ color: "#323232" }}>
-            Wohoo! you’re done
+            Wohoo! you're done
           </Text>
         </Box>
       </CustomModal>
     </SafeArea>
   );
-};
+});
 
 export default UserInfo;

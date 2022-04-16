@@ -29,8 +29,12 @@ const Button = (props: ButtonProps) => {
   let backgroundColor, color, height, fontSize, fontFamily;
 
   if (disabled) {
-    backgroundColor = theme.colors.lightGray;
-    color = theme.colors.primaryContrast;
+    if (variant === "text") {
+      color = theme.colors.gray;
+    } else {
+      backgroundColor = theme.colors.lightGray;
+      color = theme.colors.primaryContrast;
+    }
   } else {
     switch (variant) {
       case "text":
@@ -85,7 +89,7 @@ const Button = (props: ButtonProps) => {
 
   return (
     <View style={borderStyles}>
-      <TouchableWithoutFeedback {...{ disabled: disabled, onPress }}>
+      <TouchableWithoutFeedback {...{ disabled, onPress }}>
         <View style={[styles.button, buttonStyle, style]}>
           <Text
             selectable={false}

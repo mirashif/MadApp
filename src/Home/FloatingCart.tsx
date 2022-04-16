@@ -2,17 +2,26 @@ import React from "react";
 import { TouchableWithoutFeedback } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { observer } from "mobx-react";
 
-import { Box, Icon, Text } from "../components";
+import { Box, CurrencyFormat, Icon, Text } from "../components";
+import { useAppState } from "../state/StateContext";
+import type { CartableWrapper, CartStore } from "../state/store/CartStore";
+import type { RootStackProps } from "../components/AppNavigator";
 
 interface FloatingCartProps {
   insetBottom?: boolean;
 }
 
-const FloatingCart = ({ insetBottom = false }: FloatingCartProps) => {
-  const navigation = useNavigation();
+const FloatingCart = observer(({ insetBottom = false }: FloatingCartProps) => {
+  const navigation = useNavigation<RootStackProps<"HomeStack">["navigation"]>();
 
   const insets = useSafeAreaInsets();
+
+  const cart: CartStore = useAppState("cart");
+  const cartItems: CartableWrapper[] = cart.all;
+
+  if (cartItems.length === 0) return null;
 
   return (
     <TouchableWithoutFeedback
@@ -55,7 +64,7 @@ const FloatingCart = ({ insetBottom = false }: FloatingCartProps) => {
               style={{ marginLeft: 8 }}
             >
               <Text fontSize={12} fontFamily="Normal" color="background">
-                7
+                {cartItems.length}
               </Text>
             </Box>
 
@@ -73,13 +82,13 @@ const FloatingCart = ({ insetBottom = false }: FloatingCartProps) => {
 
           <Box flexGrow={1} flexShrink={0} flexBasis={0} alignItems="flex-end">
             <Text fontSize={17} color="background" fontFamily="Normal">
-              ৳ 2,021
+              <CurrencyFormat value={cart.grandTotalAmount} />
             </Text>
           </Box>
         </Box>
       </Box>
     </TouchableWithoutFeedback>
   );
-};
+});
 
 export default FloatingCart;

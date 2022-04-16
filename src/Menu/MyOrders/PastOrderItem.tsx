@@ -1,7 +1,7 @@
 import React from "react";
 import { TouchableWithoutFeedback } from "react-native";
 
-import { Box, Button, Text } from "../../components";
+import { Box, Button, CurrencyFormat, Text } from "../../components";
 
 interface PastOrderItemProps {
   variant: "CANCELLED" | "DELIVERED";
@@ -26,7 +26,9 @@ const PastOrderItem = ({
           <Text fontSize={16} fontFamily="Bold">
             Pagla Baburchi
           </Text>
-          <Text style={{ marginTop: 2 }}>৳619.00</Text>
+          <Text style={{ marginTop: 2 }}>
+            <CurrencyFormat value={619.0} />
+          </Text>
 
           <Box mt="m">
             <Text fontSize={11} style={{ color: "#939393" }}>

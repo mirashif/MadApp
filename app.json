@@ -15,16 +15,31 @@
       "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": ["**/*"],
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you set your profile photo."
+        }
+      ]
+    ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "bd.com.madchef.madapp"
+      "bundleIdentifier": "bd.com.madchef.app.ios",
+      "infoPlist": {
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app uses the location info to delivery food.",
+        "NSLocationWhenInUseUsageDescription": "This app uses the location info to delivery food.",
+        "NSLocationAlwaysUsageDescription": "This app uses the location info to delivery food.",
+        "NSLocationUsageDescription": "This app uses the location info to delivery food."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "bd.com.madchef.madapp",
+      "package": "bd.com.madchef.integrationpilot",
+      "googleServicesFile": "./google-services.json",
       "versionCode": 1
     },
     "web": {

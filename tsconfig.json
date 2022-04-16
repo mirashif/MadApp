@@ -1,9 +1,5 @@
 {
   "extends": "expo/tsconfig.base",
-  "include": [
-    "node_modules/react-native-redash/lib/typescript/v1/index.d.ts",
-    "src"
-  ],
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "jsx": "react-native",
@@ -24,5 +20,7 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true
-  }
+  },
+  "exclude": ["node_modules"],
+  "include": ["src"]
 }

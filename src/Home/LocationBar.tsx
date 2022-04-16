@@ -1,58 +1,82 @@
+import { useNavigation } from "@react-navigation/native";
+import { observer } from "mobx-react";
 import React from "react";
 import { Pressable, View } from "react-native";
 
 import type { Theme } from "../components";
 import { Icon, makeStyles, Text, useTheme } from "../components";
+import type { RootStackProps } from "../components/AppNavigator";
+import { useAppState } from "../state/StateContext";
+import type { LockedAddressStore } from "../state/store/LockedAddressStore";
 
 interface LocationBarProps {
-  address: string;
-  label: string;
-  showIcon?: boolean;
   editMode?: boolean;
   onEditPress?: () => void;
 }
 
-export default function LocationBar({
-  address,
-  label,
-  editMode = false,
-  onEditPress,
-  showIcon = true,
-}: LocationBarProps) {
-  const styles = useStyles();
-  const theme = useTheme();
+const LocationBar = observer(
+  ({ editMode = false, onEditPress }: LocationBarProps) => {
+    const styles = useStyles();
+    const theme = useTheme();
+    const navigation =
+      useNavigation<RootStackProps<"EditLocation">["navigation"]>();
 
-  return (
-    <View style={styles.container}>
-      <View>
-        <Text numberOfLines={1} style={styles.address}>
-          {address}
-        </Text>
-        <View style={styles.label}>
-          <Icon color={theme.colors.darkGray} name="book-open" size={12} />
-          <Text numberOfLines={1} style={styles.labelText}>
-            {label}
-          </Text>
-        </View>
-      </View>
+    const lockedAddress: LockedAddressStore = useAppState("lockedAddress");
+    const address = lockedAddress.lockedAddress;
 
-      {showIcon && (
+    const addressLine = address?.data.address || "";
+    const addressLabel = address?.data.label || "";
+
+    const onEditPressHandler = () => {
+      if (onEditPress) {
+        onEditPress();
+      } else {
+        navigation.navigate("EditLocation", { id: address?.data.id ?? null });
+      }
+    };
+
+    return (
+      <View style={styles.container}>
         <View>
-          {editMode ? (
-            <Pressable onPress={onEditPress}>
-              <Icon name="edit-2" size={15} color={theme.colors.primary} />
-            </Pressable>
-          ) : (
-            <Icon name="chevron-down" size={15} color={theme.colors.gray} />
-          )}
+          <Text numberOfLines={1} style={styles.address}>
+            {addressLine}
+          </Text>
+          <View style={styles.label}>
+            <Icon color={theme.colors.darkGray} name="book-open" size={12} />
+            <Text numberOfLines={1} style={styles.labelText}>
+              {addressLabel}
+            </Text>
+          </View>
         </View>
-      )}
-    </View>
-  );
-}
+
+        <Pressable onPress={onEditPressHandler}>
+          <View
+            style={{
+              width: 20,
+              height: 20,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {editMode ? (
+              <Icon name="edit-2" size={15} color={theme.colors.primary} />
+            ) : (
+              <Icon name="chevron-down" size={15} color={theme.colors.gray} />
+            )}
+          </View>
+        </Pressable>
+      </View>
+    );
+  }
+);
+
+export default LocationBar;
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
+    marginHorizontal: theme.spacing.screen,
+    marginTop: theme.spacing.m,
+    marginBottom: theme.spacing.l,
     paddingVertical: 14,
     paddingHorizontal: 30,
     borderRadius: theme.borderRadii.l,
@@ -77,5 +101,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontFamily: "Bold",
     fontSize: 11,
     marginLeft: theme.spacing.s,
+    textTransform: "capitalize",
   },
 }));

@@ -17,7 +17,7 @@ const madAppLogo = {
 export const assets = [cardBackgroundImage.src, madAppLogo.src];
 
 interface CardProps {
-  points: string;
+  points: number;
   name: string;
 }
 

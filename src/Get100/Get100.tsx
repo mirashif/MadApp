@@ -1,5 +1,6 @@
+import { observer } from "mobx-react";
 import React from "react";
-import { ScrollView, Image } from "react-native";
+import { ScrollView, Image, Share } from "react-native";
 
 import type { Theme } from "../components";
 import {
@@ -12,6 +13,8 @@ import {
   Button,
   Icon,
 } from "../components";
+import { useInvites } from "../state/hooks/useInvites";
+import { useUser } from "../state/hooks/useUser";
 
 import InviteItem from "./InviteItem";
 
@@ -23,9 +26,33 @@ const madAppLogo = {
 
 export const assets = [madAppLogo.src];
 
-const Get100 = () => {
+const Get100 = observer(() => {
   const theme = useTheme();
   const styles = useStyles();
+
+  const { invites } = useInvites();
+  const { attributes } = useUser();
+
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+          "Share your invite code with your friends and earn 100 points for each friend who joins!",
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error: any) {
+      // eslint-disable-next-line no-alert
+      alert(error.message);
+    }
+  };
 
   return (
     <SafeArea>
@@ -99,14 +126,10 @@ const Get100 = () => {
           <Box style={styles.couponShare}>
             <Box style={styles.coupon}>
               <Text numberOfLines={1} style={styles.couponText}>
-                RABBILITV
+                {attributes?.referralCode}
               </Text>
             </Box>
-            <Button
-              onPress={() => console.log("My coupon share")}
-              size="lg"
-              variant="text"
-            >
+            <Button onPress={onShare} size="lg" variant="text">
               <Icon name="send" size={17} color={theme.colors.primary} />
               <Box width={7} />
               <Text>Share</Text>
@@ -138,31 +161,39 @@ const Get100 = () => {
                     fontFamily: "Normal",
                   }}
                 >
-                  2
+                  {invites.length}
                 </Text>
               </Box>
             </Box>
 
             {/* Empty state */}
-            <Text
-              style={{
-                fontSize: 14,
-                fontFamily: "Normal",
-                color: theme.colors.gray,
-              }}
-            >
-              None of your friends signed up yet! They will show up here once
-              they do.
-            </Text>
+            {invites.length === 0 && (
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontFamily: "Normal",
+                  color: theme.colors.gray,
+                }}
+              >
+                None of your friends signed up yet! They will show up here once
+                they do.
+              </Text>
+            )}
 
             {/* Not Empty state */}
-            <InviteItem name="Omran Jamal" id="+88 017#####123" />
+            {invites.map((invite) => (
+              <InviteItem
+                key={invite.data.id}
+                name={invite.data.name}
+                id={invite.data.number}
+              />
+            ))}
           </Box>
         </Box>
       </ScrollView>
     </SafeArea>
   );
-};
+});
 
 export default Get100;
 
