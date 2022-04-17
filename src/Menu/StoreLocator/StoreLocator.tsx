@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { Dimensions, Pressable, ScrollView } from "react-native";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 
 import {
@@ -73,10 +73,26 @@ const StoreLocator = () => {
           showsCompass={true}
           showsUserLocation={true}
           showsMyLocationButton={true}
+          showsPointsOfInterest={false}
+          loadingEnabled={true}
           onMapReady={_onMapReady}
-        />
-        {/* back button */}
-        <Box position="absolute" top={24} left={24}>
+        >
+          {branches.map((branch) => {
+            return (
+              <Marker
+                key={branch.data.id}
+                coordinate={{
+                  latitude: branch.data.location.lat,
+                  longitude: branch.data.location.lon,
+                }}
+                title={branch.data.name}
+                description={branch.data.address}
+              />
+            );
+          })}
+        </MapView>
+
+        <Box position="absolute" m="screen">
           <Pressable onPress={() => navigation.goBack()}>
             <CircularIcon
               name="arrow-left"
