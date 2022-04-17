@@ -1,8 +1,9 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { Dimensions, Pressable, ScrollView } from "react-native";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import { Alert, Dimensions, Pressable, ScrollView } from "react-native";
+import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
+import { observer } from "mobx-react";
 
 import {
   SafeArea,
@@ -17,11 +18,48 @@ import type { LockedAddressStore } from "../../state/store/LockedAddressStore";
 import type { Branch, BranchStore } from "../../state/store/BranchStore";
 
 import Store from "./Store";
+import BranchMarker from "./BranchMarker";
 
 const { height: windowHeight, width } = Dimensions.get("window");
 const height = windowHeight * 0.5;
 
-const StoreLocator = () => {
+// TODO: remove and replace with branches for markers
+const MARKERS = [
+  {
+    data: {
+      id: "1",
+      name: "Branch 1",
+      address: "Address 1",
+      location: {
+        lat: 23.746768,
+        lon: 90.421824,
+      },
+    },
+    restaurant: {
+      data: {
+        logoImageURI: "https://via.placeholder.com/22",
+      },
+    },
+  },
+  {
+    data: {
+      id: "2",
+      name: "Branch 2",
+      address: "Address 2",
+      location: {
+        lat: 23.86492,
+        lon: 90.38709,
+      },
+    },
+    restaurant: {
+      data: {
+        logoImageURI: "https://via.placeholder.com/22",
+      },
+    },
+  },
+];
+
+const StoreLocator = observer(() => {
   const styles = useStyles();
   const navigation = useNavigation();
 
@@ -64,8 +102,8 @@ const StoreLocator = () => {
           style={[styles.map, { marginBottom, paddingTop }]}
           region={{
             // currently selcted location ?? dhaka
-            latitude: currentlySelectedLocation?.lat ?? 23.8103,
-            longitude: currentlySelectedLocation?.lon ?? 90.4125,
+            latitude: currentlySelectedLocation?.lat ?? 23.746768,
+            longitude: currentlySelectedLocation?.lon ?? 90.421824,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
@@ -74,19 +112,23 @@ const StoreLocator = () => {
           showsUserLocation={true}
           showsMyLocationButton={true}
           showsPointsOfInterest={false}
-          loadingEnabled={true}
           onMapReady={_onMapReady}
         >
-          {branches.map((branch) => {
+          {MARKERS.map((branch) => {
+            const id = branch.data.id;
+            const coordinate = {
+              latitude: branch.data.location.lat,
+              longitude: branch.data.location.lon,
+            };
+            const name = branch.data.name;
+            const logoImageURI = branch.restaurant?.data.logoImageURI || "";
             return (
-              <Marker
-                key={branch.data.id}
-                coordinate={{
-                  latitude: branch.data.location.lat,
-                  longitude: branch.data.location.lon,
-                }}
-                title={branch.data.name}
-                description={branch.data.address}
+              <BranchMarker
+                key={id}
+                coordinate={coordinate}
+                name={name}
+                logoImageURI={logoImageURI}
+                onGetDirection={() => Alert.alert("Get Direction")}
               />
             );
           })}
@@ -105,6 +147,10 @@ const StoreLocator = () => {
       </Box>
 
       <ScrollView showsVerticalScrollIndicator={false}>
+        <Box padding="screen">
+          <Text>Number of branches: {branches.length}</Text>
+        </Box>
+
         <Box padding="screen">
           <Box style={{ marginTop: 27 }}>
             <Text style={styles.title}>Nearby</Text>
@@ -149,7 +195,7 @@ const StoreLocator = () => {
       </ScrollView>
     </SafeArea>
   );
-};
+});
 
 const useStyles = makeStyles(() => ({
   mapContainer: {
