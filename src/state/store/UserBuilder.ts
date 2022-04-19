@@ -11,6 +11,8 @@ export class UserBuilder {
     dob = '';
     email = '';
     phone = '';
+    gender: 'male' | 'female' | 'other' | 'prefer-not-to-disclose' | null = null;
+    profileImageURI: string | null = null;
 
     constructor(parent: Store, data: UserType) {
         this.parent = parent;
@@ -20,6 +22,9 @@ export class UserBuilder {
         this.dob = data.dob || '';
         this.email = data.email || '';
         this.phone = data.phone || '';
+        this.gender = data.gender ?? null;
+        this.profileImageURI = data.profileImageURI ?? null;
+
 
         makeAutoObservable(this, {}, {autoBind: true});
     }
@@ -64,7 +69,15 @@ export class UserBuilder {
         _p();
     }
 
-    get userable() {
+    setProfileImageURI(uri: string) {
+        this.profileImageURI = uri;
+    }
+
+    setGender(gender: 'male' | 'female' | 'other' | 'prefer-not-to-disclose') {
+        this.gender = gender;
+    }
+
+    get userable(): Partial<UserType> {
         const _p = profile('UserBuilder.userable');
 
         return _p({
@@ -73,6 +86,8 @@ export class UserBuilder {
             dob: this.dob,
             email: this.email,
             phone: this.phone,
+            ...(this.gender ? {gender: this.gender} : null),
+            ...(this.profileImageURI ? {profileImageURI: this.profileImageURI} : null),
         });
     }
 }

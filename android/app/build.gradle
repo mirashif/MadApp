@@ -147,6 +147,14 @@ android {
         }
     }
     signingConfigs {
+        release {
+            if (project.hasProperty('MADAPP_UPLOAD_STORE_FILE')) {
+                storeFile file(MADAPP_UPLOAD_STORE_FILE)
+                storePassword MADAPP_UPLOAD_STORE_PASSWORD
+                keyAlias MADAPP_UPLOAD_KEY_ALIAS
+                keyPassword MADAPP_UPLOAD_KEY_PASSWORD
+            }
+        }
         debug {
             storeFile file('debug.keystore')
             storePassword 'android'

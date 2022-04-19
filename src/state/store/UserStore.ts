@@ -19,7 +19,7 @@ export interface UserType {
     firstName?: string;
     lastName?: string;
 
-    gender?: string;
+    gender?: 'male' | 'female' | 'other' | 'prefer-not-to-disclose' | null;
     dob?: string;
     email?: string;
     phone: string;
