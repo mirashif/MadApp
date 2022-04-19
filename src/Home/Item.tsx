@@ -2,7 +2,14 @@ import React, { useEffect, useState } from "react";
 import { ImageBackground, TouchableWithoutFeedback } from "react-native";
 
 import type { Theme } from "../components";
-import { Box, Icon, makeStyles, Text, useTheme } from "../components";
+import {
+  CurrencyFormat,
+  Box,
+  Icon,
+  makeStyles,
+  Text,
+  useTheme,
+} from "../components";
 import type { Item as IItem } from "../state/store/ItemStore";
 
 interface ItemProps {
@@ -68,9 +75,13 @@ const Item = ({ item, onItemPress }: ItemProps) => {
 
         <Text style={styles.name}>{name}</Text>
         <Box style={styles.price}>
-          <Text style={styles.currentPrice}>৳ {price}</Text>
+          <Text style={styles.currentPrice}>
+            <CurrencyFormat value={price} />
+          </Text>
           {originalPrice && price !== originalPrice && (
-            <Text style={styles.previousPrice}>৳ {originalPrice}</Text>
+            <Text style={styles.previousPrice}>
+              <CurrencyFormat value={originalPrice} />
+            </Text>
           )}
         </Box>
       </Box>

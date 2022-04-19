@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import React from "react";
 import { Image, TouchableWithoutFeedback } from "react-native";
 
-import { Box, Text } from "../../components";
+import { Box, CurrencyFormat, Text } from "../../components";
 import type { CartableVariant } from "../../state/store/Cartable";
 
 interface VariationItemProps {
@@ -49,7 +49,9 @@ const VariantItem = observer(({ variant }: VariationItemProps) => {
             {variantName}
           </Text>
         </Box>
-        <Text fontSize={18}>৳ {variantPrice}</Text>
+        <Text fontSize={18}>
+          <CurrencyFormat value={variantPrice} />
+        </Text>
       </Box>
     </TouchableWithoutFeedback>
   );

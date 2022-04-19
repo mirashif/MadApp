@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Box, Button, Text, useTheme } from "../components";
+import { Box, Button, CurrencyFormat, Text, useTheme } from "../components";
 
 interface CouponProps {
   name: string;
@@ -38,7 +38,7 @@ const Coupon = ({
             color: theme.colors.darkGray,
           }}
         >
-          Minimum Order ৳{minimum}
+          Minimum Order <CurrencyFormat value={minimum} />
         </Text>
         <Text
           style={{

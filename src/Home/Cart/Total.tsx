@@ -5,7 +5,7 @@ import { Dimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import type { HomeStackProps } from "..";
-import { Box, Text } from "../../components";
+import { Box, CurrencyFormat, Text } from "../../components";
 import { useAppState } from "../../state/StateContext";
 import type { CartStore } from "../../state/store/CartStore";
 
@@ -38,7 +38,9 @@ const Total = observer(() => {
           <Text style={{ color: "#BBBBBB", fontSize: 11 }}>VAT included</Text>
         </Box>
 
-        <Text style={{ fontSize: 18 }}>৳{cart.grandTotalAmount}</Text>
+        <Text style={{ fontSize: 18 }}>
+          <CurrencyFormat value={cart.grandTotalAmount} />
+        </Text>
       </Box>
 
       <Box style={{ alignItems: "center", marginTop: 27 }}>

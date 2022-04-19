@@ -11,7 +11,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import type { Item, ItemStore } from "../../state/store/ItemStore";
 import type { Theme } from "../../components";
-import { Button, CircularIcon, Icon, makeStyles, Text } from "../../components";
+import {
+  CurrencyFormat,
+  Button,
+  CircularIcon,
+  Icon,
+  makeStyles,
+  Text,
+} from "../../components";
 import { useAppState } from "../../state/StateContext";
 
 import Variants from "./Variants";
@@ -35,7 +42,7 @@ const ItemBuilder = observer(
     const itemImageURI = item?.data.pictureURI;
 
     const itemSheetRef = useRef<BottomSheetModal>(null);
-    const snapPoints = useMemo(() => ["60%", "90%"], []);
+    const snapPoints = useMemo(() => ["90%"], []);
     const handleDismiss = useCallback(() => {
       itemSheetRef.current?.close();
       setItemBuilderId(null);
@@ -129,6 +136,7 @@ const ItemFooter = observer(
     const price = cartable?.price;
     const originalPrice = cartable?.originalPrice;
     const isDealApplided = cartable?.isDealApplied;
+    const variantGroups = cartable?.cartableVariantGroups;
 
     return (
       <View
@@ -140,9 +148,13 @@ const ItemFooter = observer(
         ]}
       >
         <View style={styles.priceContainer}>
-          <Text style={styles.price}>৳{price}</Text>
+          <Text style={styles.price}>
+            <CurrencyFormat value={price} />
+          </Text>
           {isDealApplided && (
-            <Text style={styles.originalPrice}>৳{originalPrice}</Text>
+            <Text style={styles.originalPrice}>
+              <CurrencyFormat value={originalPrice} />
+            </Text>
           )}
         </View>
 
@@ -164,6 +176,7 @@ const ItemFooter = observer(
 
           <Button
             size="xl"
+            disabled={!variantGroups?.every((group) => group.selected)}
             onPress={() => {
               cartable?.addToCart();
               handleDismiss();

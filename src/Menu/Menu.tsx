@@ -71,7 +71,13 @@ const Menu = observer(({ navigation }: RootStackProps<"MenuStack">) => {
               navigation.navigate("MenuStack", { screen: "Settings" })
             }
           />
-          <Item icon="🧭" label="Store Locator" />
+          <Item
+            icon="🧭"
+            label="Store Locator"
+            onPress={() =>
+              navigation.navigate("MenuStack", { screen: "StoreLocator" })
+            }
+          />
           <Item icon="🚶‍♂️" label="Logout" onPress={handleLogout} />
         </Box>
 

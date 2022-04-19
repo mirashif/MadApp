@@ -94,7 +94,6 @@ export class BranchStore {
         const _p = profile('BranchStore.upsert');
 
         this.branches[id] = new Branch(this, data);
-
         _p();
     }
 
@@ -111,8 +110,8 @@ export class BranchStore {
 
         this.listener = this.parent.firebase
             .firestore()
-            .collectionGroup('branches')
-            .where('isAvailable', '==', true)
+            .collection('branches')
+            // .where('isAvailable', '==', true)
             .onSnapshot((snap) => {
                 snap.docChanges().forEach((change) => {
                     if (change.type === 'added' || change.type === 'modified') {
@@ -144,7 +143,6 @@ export class BranchStore {
 
     get all(): Branch[] {
         const _p = profile('BranchStore.all');
-
         return _p(Object.values(this.branches));
     }
 

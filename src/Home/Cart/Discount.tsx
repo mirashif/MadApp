@@ -1,7 +1,7 @@
 import React from "react";
 import { TouchableWithoutFeedback } from "react-native";
 
-import { Box, Icon, Text } from "../../components";
+import { Box, CurrencyFormat, Icon, Text } from "../../components";
 
 const Discount = ({
   amount,
@@ -30,7 +30,9 @@ const Discount = ({
           </Box>
         </TouchableWithoutFeedback>
       </Box>
-      <Text color="primary">- ৳{amount}</Text>
+      <Text color="primary">
+        - <CurrencyFormat value={amount} />
+      </Text>
     </Box>
   );
 };

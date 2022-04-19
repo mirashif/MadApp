@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import React from "react";
 
-import { Box, Text } from "../../components";
+import { Box, CurrencyFormat, Text } from "../../components";
 import { useAppState } from "../../state/StateContext";
 import type { CartStore } from "../../state/store/CartStore";
 
@@ -20,7 +20,9 @@ const Item = ({
       style={{ marginBottom: 6 }}
     >
       <Text style={{ color: "#111111" }}>{title}</Text>
-      <Text style={{ color: "#8A8A8A" }}>৳{description}</Text>
+      <Text style={{ color: "#8A8A8A" }}>
+        <CurrencyFormat value={description} />
+      </Text>
     </Box>
   );
 };

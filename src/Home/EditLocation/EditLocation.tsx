@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Dimensions, ScrollView } from "react-native";
+import type { Region } from "react-native-maps";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -16,6 +17,7 @@ import type {
 import { useAppState } from "../../state/StateContext";
 import type { AddressBuilder } from "../../state/store/AddressBuilder";
 import type { RootStackProps } from "../../components/AppNavigator";
+import type { LockedAddressStore } from "../../state/store/LockedAddressStore";
 
 import MarkerIcon from "./assets/marker.svg";
 import Label from "./Label";
@@ -32,6 +34,7 @@ const EditLocation = observer(() => {
   const { id } = route?.params;
 
   const addresses: AddressStore = useAppState("addresses");
+  const lockedAddress: LockedAddressStore = useAppState("lockedAddress");
 
   const builder: AddressBuilder = useMemo(() => {
     if (id === "location" || null) {
@@ -44,12 +47,23 @@ const EditLocation = observer(() => {
     }
   }, [addresses, id]);
 
+  const [region, setRegion] = useState<Region>({
+    // builder location ?? dhaka
+    latitude: builder.location?.lat ?? 23.8103,
+    longitude: builder.location?.lon ?? 90.4125,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
+
   const handleSaveAddress = async () => {
     const addressable: UnsavedAddressType = builder.addressable;
 
     try {
       if (id) await addresses.updateAddress(id as string, addressable);
-      else await addresses.addAddress(addressable);
+      else {
+        await addresses.addAddress(addressable);
+        lockedAddress.lockAddress(addresses.all[0].data.id);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -92,24 +106,19 @@ const EditLocation = observer(() => {
         <Box style={styles.mapContainer}>
           <MapView
             style={[styles.map, { marginBottom, paddingTop }]}
-            region={{
-              // builder location ?? dhaka
-              latitude: builder.location?.lat ?? 23.8103,
-              longitude: builder.location?.lon ?? 90.4125,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
-            }}
+            region={region}
             provider={PROVIDER_GOOGLE}
             showsCompass={true}
             showsUserLocation={true}
             showsMyLocationButton={true}
-            onRegionChangeComplete={(region) =>
-              builder.setLocation(
-                region.longitude as number,
-                region.latitude as number
-              )
-            }
             onMapReady={_onMapReady}
+            onRegionChangeComplete={(_region) => {
+              setRegion(_region);
+              builder.setLocation(
+                _region.longitude as number,
+                _region.latitude as number
+              );
+            }}
           />
           <Box style={styles.marker}>
             <MarkerIcon />

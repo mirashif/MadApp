@@ -2,7 +2,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { TouchableWithoutFeedback } from "react-native";
 
-import { Box, CircularIcon, Text } from "../../components";
+import { Box, CircularIcon, CurrencyFormat, Text } from "../../components";
 import type { CartableAddon } from "../../state/store/Cartable";
 
 interface AddonsItemProps {
@@ -23,7 +23,7 @@ const AddonItem = observer(({ addon }: AddonsItemProps) => {
       <Text fontSize={18}>
         + {addonName}{" "}
         <Text fontSize={13} style={{ color: "#BEBEBE" }}>
-          ৳ {addonPrice}
+          <CurrencyFormat value={addonPrice} />
         </Text>
       </Text>
 

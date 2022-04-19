@@ -1,7 +1,7 @@
 import React from "react";
 import { Image, TouchableWithoutFeedback } from "react-native";
 
-import { useTheme, Text, Box } from "../../components";
+import { useTheme, Text, Box, CurrencyFormat } from "../../components";
 import type { Item as ItemType } from "../../state/store/ItemStore";
 
 import type { IMeasurement } from "./constants";
@@ -57,7 +57,7 @@ const Item = ({ item, onItemPress, onMeasurement }: ItemProps) => {
             color: theme.colors.darkGray,
           }}
         >
-          {price}
+          <CurrencyFormat value={price} />
         </Text>
       </Box>
     </TouchableWithoutFeedback>

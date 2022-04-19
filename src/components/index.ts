@@ -8,3 +8,4 @@ export { default as CustomModal } from "./CustomModal";
 export { default as OrderStageBar } from "./OrderStageBar";
 export { default as Input } from "./Input";
 export { default as FloatingAreaSpace } from "./FloatingAreaSpace";
+export { default as CurrencyFormat } from "./CurrencyFormat";

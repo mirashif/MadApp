@@ -2,7 +2,7 @@ import React from "react";
 import { Image, TouchableWithoutFeedback } from "react-native";
 
 import type { Theme } from "../../components";
-import { Box, Icon, makeStyles, Text } from "../../components";
+import { CurrencyFormat, Box, Icon, makeStyles, Text } from "../../components";
 import type { Item } from "../../state/store/ItemStore";
 
 interface UpsellItemProps {
@@ -18,12 +18,14 @@ const UpsellItem = (props: UpsellItemProps) => {
   return (
     <Box flexDirection="row" marginRight="l" alignItems="center" mb="m">
       <Box position="relative" marginRight="l">
-        <Image
-          source={{
-            uri: item.data.thumbnailURI,
-          }}
-          style={styles.image}
-        />
+        <TouchableWithoutFeedback onPress={() => onAdd(item.data.id)}>
+          <Image
+            source={{
+              uri: item.data.thumbnailURI,
+            }}
+            style={styles.image}
+          />
+        </TouchableWithoutFeedback>
 
         <Box position="absolute" bottom={-10} right={-8}>
           <TouchableWithoutFeedback onPress={() => onAdd(item.data.id)}>
@@ -42,10 +44,14 @@ const UpsellItem = (props: UpsellItemProps) => {
         )}
 
         <Box flexDirection="row">
-          <Text style={styles.newPrice}>৳{item.price}</Text>
+          <Text style={styles.newPrice}>
+            <CurrencyFormat value={item.price} />
+          </Text>
 
           {item.price !== item.originalPrice && (
-            <Text style={styles.oldPrice}>৳{item.originalPrice}</Text>
+            <Text style={styles.oldPrice}>
+              <CurrencyFormat value={item.originalPrice} />
+            </Text>
           )}
         </Box>
       </Box>

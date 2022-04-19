@@ -61,20 +61,24 @@ const Cashback = observer(() => {
               🏆 Discount Coupons
             </Text>
 
-            {cashbacks.map(({ data: cashback }) => (
-              <Box my="xl" key={cashback.id}>
-                <Coupon
-                  // disabled={!cashback.isAvailable}
-                  onPress={() => {
-                    setSelectedCashback(cashback);
-                    setModalVisible(true);
-                  }}
-                  name={cashback.name}
-                  minimum={cashback.minimumOrderAmount}
-                  points={cashback.requiredPoints}
-                />
-              </Box>
-            ))}
+            {cashbacks.map(({ data: cashback }) => {
+              const userPoints = points ? points : 0; // could be undefined
+              const isRedeemable = cashback.requiredPoints <= userPoints;
+              return (
+                <Box my="xl" key={cashback.id}>
+                  <Coupon
+                    onPress={() => {
+                      setSelectedCashback(cashback);
+                      setModalVisible(true);
+                    }}
+                    name={cashback.name}
+                    minimum={cashback.minimumOrderAmount}
+                    points={cashback.requiredPoints}
+                    disabled={!isRedeemable}
+                  />
+                </Box>
+              );
+            })}
           </Box>
         </Box>
       </ScrollView>

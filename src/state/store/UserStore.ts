@@ -7,7 +7,6 @@ import {profile} from '../helpers/profile';
 export interface SettingsType {
     receivePush?: boolean;
     receiveEmail?: boolean;
-    language: 'english';
 }
 
 export interface UserType {

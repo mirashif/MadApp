@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import {
   BackHandler,
   ScrollView,
@@ -16,29 +16,33 @@ import {
   Text,
   useTheme,
 } from "../components";
-import type { RootStackProps } from "../components/AppNavigator";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import type { UserStore } from "../state/store/UserStore";
 import { useAppState } from "../state/StateContext";
 import type { UserBuilder } from "../state/store/UserBuilder";
 import type { ReferralValidator } from "../state/store/ReferralValidator";
+import type { RootStackProps } from "../components/AppNavigator";
 
 import Success from "./assets/Success.svg";
 import Referral from "./assets/Referral.svg";
+import type { OnBoardingStepProps } from "./constants";
+import { STEPS } from "./constants";
 
-const UserInfo = observer(({ navigation }: RootStackProps<"AuthStack">) => {
+const UserInfo = observer(({ setStep }: OnBoardingStepProps) => {
   const theme = useTheme();
+  const navigation =
+    useNavigation<RootStackProps<"EditLocation">["navigation"]>();
 
   const user: UserStore = useAppState("user");
   const builder: UserBuilder | null = user.builder;
   const [refCode, setRefCode] = useState<null | string>(null);
+  const [lastName, setLastName] = useState("");
+  const [firstName, setFirstName] = useState("");
   const [tempRefCode, setTempRefCode] = useState<null | string>(null);
   const [wrongRefCode, setWrongRefCode] = useState(false);
   const [refModalVisible, setRefModalVisible] = useState(false);
   const [successModalVisible, setSuccessModalVisible] = useState(false);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
 
   const referralValidator: ReferralValidator = useAppState("referralValidator");
 
@@ -48,7 +52,7 @@ const UserInfo = observer(({ navigation }: RootStackProps<"AuthStack">) => {
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
-        navigation.pop(2);
+        setStep(STEPS.MOBILE_NUMBER);
         return true;
       };
 
@@ -56,7 +60,7 @@ const UserInfo = observer(({ navigation }: RootStackProps<"AuthStack">) => {
 
       return () =>
         BackHandler.removeEventListener("hardwareBackPress", () => null);
-    }, [navigation])
+    }, [setStep])
   );
 
   const handleRefModalCTAPress = () => {
@@ -112,9 +116,7 @@ const UserInfo = observer(({ navigation }: RootStackProps<"AuthStack">) => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <HeaderBar
           title="Profile"
-          onBackPress={() =>
-            navigation.navigate("AuthStack", { screen: "MobileNumber" })
-          }
+          onBackPress={() => setStep(STEPS.MOBILE_NUMBER)}
         />
 
         <Box px="screen">
@@ -132,17 +134,11 @@ const UserInfo = observer(({ navigation }: RootStackProps<"AuthStack">) => {
 
           {/* Name */}
           <Box mt="xl">
-            <Input
-              label="First Name"
-              onChangeText={(value) => setFirstName(value)}
-            />
+            <Input label="First Name" onChangeText={setFirstName} />
           </Box>
 
           <Box mt="xl">
-            <Input
-              label="Last Name"
-              onChangeText={(value) => setLastName(value)}
-            />
+            <Input label="Last Name" onChangeText={setLastName} />
           </Box>
 
           {/* Referral Code */}
