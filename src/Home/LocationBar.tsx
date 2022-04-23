@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { observer } from "mobx-react";
 import React from "react";
-import { Pressable, View } from "react-native";
+import { TouchableWithoutFeedback, View } from "react-native";
 
 import type { Theme } from "../components";
 import { Icon, makeStyles, Text, useTheme } from "../components";
@@ -36,20 +36,20 @@ const LocationBar = observer(
     };
 
     return (
-      <View style={styles.container}>
-        <View>
-          <Text numberOfLines={1} style={styles.address}>
-            {addressLine}
-          </Text>
-          <View style={styles.label}>
-            <Icon color={theme.colors.darkGray} name="book-open" size={12} />
-            <Text numberOfLines={1} style={styles.labelText}>
-              {addressLabel}
+      <TouchableWithoutFeedback onPress={onEditPressHandler}>
+        <View style={styles.container}>
+          <View>
+            <Text numberOfLines={1} style={styles.address}>
+              {addressLine}
             </Text>
+            <View style={styles.label}>
+              <Icon color={theme.colors.darkGray} name="book-open" size={12} />
+              <Text numberOfLines={1} style={styles.labelText}>
+                {addressLabel}
+              </Text>
+            </View>
           </View>
-        </View>
 
-        <Pressable onPress={onEditPressHandler}>
           <View
             style={{
               width: 20,
@@ -64,8 +64,8 @@ const LocationBar = observer(
               <Icon name="chevron-down" size={15} color={theme.colors.gray} />
             )}
           </View>
-        </Pressable>
-      </View>
+        </View>
+      </TouchableWithoutFeedback>
     );
   }
 );
