@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 import React from "react";
 import { ScrollView } from "react-native";
 
@@ -42,4 +43,4 @@ const Settings = () => {
   );
 };
 
-export default Settings;
+export default observer(Settings);

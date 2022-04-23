@@ -154,6 +154,9 @@ const MyProfile = observer(() => {
                 label="Phone"
                 value={phoneNumber}
                 onChangeText={(value) => setPhoneNumber(value)}
+                inputProps={{
+                  editable: false,
+                }}
               />
 
               <Box flexDirection="row" justifyContent="space-between" mb="xl">
