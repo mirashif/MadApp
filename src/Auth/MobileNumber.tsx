@@ -59,7 +59,7 @@ const MobileNumber = observer(
                 textAlign="center"
                 style={{ color: "#323232", marginTop: 26 }}
               >
-                What’s Your Mobile Number?
+                What's Your Mobile Number?
               </Text>
 
               <Box alignItems="center" my="l">
@@ -89,6 +89,7 @@ const MobileNumber = observer(
                   <TextInput
                     keyboardType="number-pad"
                     onChangeText={setPhoneNumber}
+                    maxLength={11}
                     style={{
                       borderColor: "#DDDDDD",
                       borderWidth: 1,
