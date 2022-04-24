@@ -4,7 +4,9 @@ import { Image, ScrollView, Dimensions, Alert, Pressable } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import RNPickerSelect from "react-native-picker-select";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { v4 as uuidv4 } from "uuid";
 
+import { augmentedFirebase } from "../../state/augmentedFirebase";
 import {
   Box,
   Button,
@@ -13,6 +15,7 @@ import {
   SafeArea,
   useTheme,
   Text,
+  CustomModal,
 } from "../../components";
 import DissmissKeyboard from "../../components/DissmissKeyboard";
 import Input from "../../components/Input";
@@ -36,18 +39,42 @@ const MyProfile = observer(() => {
   const [gender, setGender] = useState(null);
   const [birthday, setBirthday] = useState(new Date(1598051730000));
   const [showBirthdayPicker, setShowBirthdayPicker] = useState(false);
+  const [showImageModal, setShowImageModal] = useState(false);
 
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
+  const checkImagePermission = async () => {
+    await ImagePicker.requestCameraPermissionsAsync();
+    await ImagePicker.requestMediaLibraryPermissionsAsync();
+  };
+
+  const takePhoto = async () => {
+    setShowImageModal(false);
+    await checkImagePermission();
+    const res = await ImagePicker.launchCameraAsync();
+
+    if (!res.cancelled) {
+      setImage(res.uri);
+    }
+  };
+
+  const choosePhoto = async () => {
+    setShowImageModal(false);
+    await checkImagePermission();
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [1, 1],
       quality: 1,
     });
 
     if (!result.cancelled) {
-      setImage(result.uri);
+      try {
+        const { storage } = await augmentedFirebase();
+        const reference = storage().ref(uuidv4());
+        await reference.putFile(result.uri);
+        setImage(result.uri);
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
@@ -95,7 +122,7 @@ const MyProfile = observer(() => {
               }}
             >
               <Pressable
-                onPress={pickImage}
+                onPress={() => setShowImageModal(true)}
                 style={{
                   position: "relative",
                   height: IMAGE_SIZE,
@@ -254,6 +281,23 @@ const MyProfile = observer(() => {
           </Box>
         </ScrollView>
       </DissmissKeyboard>
+
+      <CustomModal
+        visible={showImageModal}
+        onRequestClose={() => setShowImageModal(false)}
+      >
+        <Pressable onPress={takePhoto}>
+          <Box py="m">
+            <Text>Take photo</Text>
+          </Box>
+        </Pressable>
+
+        <Pressable onPress={choosePhoto}>
+          <Box py="m">
+            <Text>Choose photo</Text>
+          </Box>
+        </Pressable>
+      </CustomModal>
     </SafeArea>
   );
 });
