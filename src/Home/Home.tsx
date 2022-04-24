@@ -1,15 +1,18 @@
 import { useIsFocused } from "@react-navigation/native";
 import { observer } from "mobx-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView } from "react-native";
 
+import { OnBoardingSteps } from "../Auth";
 import { FloatingAreaSpace, SafeArea, Text } from "../components";
+import type { RootStackProps } from "../components/AppNavigator";
 import { useAppState } from "../state/StateContext";
 import type { AuthStore } from "../state/store/AuthStore";
 import type {
   Restaurant,
   RestaurantStore,
 } from "../state/store/RestaurantStore";
+import type { UserStore } from "../state/store/UserStore";
 
 import AddressListModal from "./AddressListModal";
 import AuthSheet from "./AuthSheet";
@@ -20,17 +23,31 @@ import LocationBar from "./LocationBar";
 import RestaurantMenu from "./RestaurantMenu";
 import Stories from "./Stories";
 
-const Home = observer(() => {
+const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
   const isFocused = useIsFocused();
 
   const auth: AuthStore = useAppState("auth");
   const restaurants: RestaurantStore = useAppState("restaurants");
+  const userStore: UserStore = useAppState("user");
+  const user = userStore.user;
 
   const isLoggedIn = auth.authenticated;
   const restaurantList: Restaurant[] = restaurants.all;
 
   const [itemBuilderId, setItemBuilderId] = useState<string | null>(null);
   const [addressListModalVisible, setAddressListModalVisible] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      if (!user.firstName || !user.lastName) {
+        setTimeout(() => {
+          navigation.navigate("OnBoarding", {
+            step: OnBoardingSteps.USER_INFO,
+          });
+        }, 100);
+      }
+    }
+  }, [user, navigation, isFocused]);
 
   return (
     <SafeArea>
