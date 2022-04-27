@@ -57,7 +57,7 @@ const theme = {
       fontFamily: "Normal",
     },
     body: {
-      color: "foregound",
+      color: "foreground",
       fontFamily: "Medium",
       fontSize: 16,
     },
