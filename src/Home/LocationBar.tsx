@@ -8,6 +8,7 @@ import { Icon, makeStyles, Text, useTheme } from "../components";
 import type { RootStackProps } from "../components/AppNavigator";
 import { useAppState } from "../state/StateContext";
 import type { LockedAddressStore } from "../state/store/LockedAddressStore";
+import { AuthStore } from "../state/store/AuthStore";
 
 interface LocationBarProps {
   editMode?: boolean;
@@ -27,6 +28,9 @@ const LocationBar = observer(
     const addressLine = address?.data.address || "";
     const addressLabel = address?.data.label || "";
 
+    const auth: AuthStore = useAppState("auth");
+    const isLoggedIn = auth.authenticated;
+
     const onEditPressHandler = () => {
       if (onEditPress) {
         onEditPress();
@@ -36,12 +40,12 @@ const LocationBar = observer(
     };
 
     useEffect(() => {
-      if (!address && onEditPress) {
+      if (!address && onEditPress && isLoggedIn) {
         setTimeout(() => {
           onEditPress();
         }, 1000);
       }
-    }, [address, onEditPress]);
+    }, [address, onEditPress, isLoggedIn]);
 
     return (
       <TouchableWithoutFeedback onPress={onEditPressHandler}>

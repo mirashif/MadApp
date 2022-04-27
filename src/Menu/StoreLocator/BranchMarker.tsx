@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, Pressable } from "react-native";
+import { Image } from "react-native";
 import { Marker } from "react-native-maps";
 
 import { Box, Text, useTheme } from "../../components";
@@ -18,7 +18,6 @@ const BranchMarker = ({
   logoImageURI,
   name,
   onGetDirection,
-  ...marker
 }: BranchMarkerProps) => {
   const theme = useTheme();
 
@@ -28,6 +27,7 @@ const BranchMarker = ({
         latitude: location.lat,
         longitude: location.lon,
       }}
+      onPress={onGetDirection}
     >
       <Box alignItems="center">
         <Box
@@ -36,7 +36,6 @@ const BranchMarker = ({
           backgroundColor="background"
           paddingVertical="s"
           paddingHorizontal="m"
-          {...marker}
         >
           <Image
             source={{
@@ -60,17 +59,15 @@ const BranchMarker = ({
             >
               {name}
             </Text>
-            <Pressable onPress={onGetDirection}>
-              <Text
-                style={{
-                  fontFamily: "Normal",
-                  fontSize: 7,
-                  color: "#FF385A",
-                }}
-              >
-                Get Directions
-              </Text>
-            </Pressable>
+            <Text
+              style={{
+                fontFamily: "Normal",
+                fontSize: 7,
+                color: "#FF385A",
+              }}
+            >
+              Get Directions
+            </Text>
           </Box>
         </Box>
         <Box>
