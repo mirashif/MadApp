@@ -4,7 +4,6 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { LogBox, Text } from "react-native";
 import "react-native-get-random-values";
-
 import { observer } from "mobx-react";
 
 import AppNavigator from "./src/components/AppNavigator";

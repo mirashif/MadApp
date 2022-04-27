@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { observer } from "mobx-react";
-import React from "react";
+import React, { useEffect } from "react";
 import { TouchableWithoutFeedback, View } from "react-native";
 
 import type { Theme } from "../components";
@@ -34,6 +34,14 @@ const LocationBar = observer(
         navigation.navigate("EditLocation", { id: address?.data.id ?? null });
       }
     };
+
+    useEffect(() => {
+      if (!address && onEditPress) {
+        setTimeout(() => {
+          onEditPress();
+        }, 1000);
+      }
+    }, [address, onEditPress]);
 
     return (
       <TouchableWithoutFeedback onPress={onEditPressHandler}>

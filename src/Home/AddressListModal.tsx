@@ -1,7 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
 import { observer } from "mobx-react";
-import React from "react";
-import { TouchableWithoutFeedback, StyleSheet } from "react-native";
+import React, { useEffect } from "react";
+import {
+  TouchableWithoutFeedback,
+  StyleSheet,
+  BackHandler,
+} from "react-native";
 import Animated, {
   FadingTransition,
   SlideInUp,
@@ -47,6 +51,20 @@ const AddressListModal = observer(
     const handleLockAddress = ({ id }: AddressType) => {
       lockedAddress.lockAddress(id);
     };
+
+    useEffect(() => {
+      const backAction = () => {
+        onClose();
+        return true;
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+      );
+
+      return () => backHandler.remove();
+    }, [onClose]);
 
     if (!visible) return null;
     return (
