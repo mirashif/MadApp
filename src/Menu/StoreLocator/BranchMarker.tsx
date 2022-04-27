@@ -2,29 +2,33 @@ import React from "react";
 import { Image, Pressable } from "react-native";
 import { Marker } from "react-native-maps";
 
-import { Box, Text } from "../../components";
+import { Box, Text, useTheme } from "../../components";
 
 import ArrowBottom from "./assets/ArrowBottom.svg";
 
 interface BranchMarkerProps {
-  coordinate: {
-    latitude: number;
-    longitude: number;
-  };
+  location: { lat: number; lon: number };
   logoImageURI: string;
   name: string;
   onGetDirection: () => void;
 }
 
 const BranchMarker = ({
-  coordinate,
+  location,
   logoImageURI,
   name,
   onGetDirection,
   ...marker
 }: BranchMarkerProps) => {
+  const theme = useTheme();
+
   return (
-    <Marker coordinate={coordinate}>
+    <Marker
+      coordinate={{
+        latitude: location.lat,
+        longitude: location.lon,
+      }}
+    >
       <Box alignItems="center">
         <Box
           position="relative"
@@ -42,6 +46,7 @@ const BranchMarker = ({
               height: 22,
               width: 22,
               marginRight: 6,
+              backgroundColor: theme.colors.gray,
             }}
           />
 

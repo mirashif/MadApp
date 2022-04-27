@@ -1,17 +1,26 @@
 import React from "react";
 import { Pressable, Image } from "react-native";
 
-import { Box, Icon, Text, useTheme } from "../../components";
+import { Box, Icon, makeStyles, Text, useTheme } from "../../components";
 
 interface StoreProps {
   logoImageURI: string;
   name: string;
   address: string;
   location: { lat: number; lon: number };
+  onGetDirections: () => void;
+  onDialCall: () => void;
 }
 
-const Store = ({ logoImageURI, name, address }: StoreProps) => {
+const Store = ({
+  onDialCall,
+  logoImageURI,
+  name,
+  address,
+  onGetDirections,
+}: StoreProps) => {
   const theme = useTheme();
+  const styles = useStyles();
 
   return (
     <Box
@@ -23,10 +32,7 @@ const Store = ({ logoImageURI, name, address }: StoreProps) => {
       }}
     >
       <Box flexDirection="row">
-        <Image
-          source={{ uri: logoImageURI }}
-          style={{ width: 48, height: 48 }}
-        />
+        <Image source={{ uri: logoImageURI }} style={styles.imageStyle} />
 
         <Box style={{ marginLeft: 13 }}>
           <Text fontFamily="Bold" fontSize={18}>
@@ -44,7 +50,7 @@ const Store = ({ logoImageURI, name, address }: StoreProps) => {
           </Box>
 
           {/* TODO: add get direction */}
-          <Pressable onPress={undefined}>
+          <Pressable onPress={onGetDirections}>
             <Text fontFamily="Medium" fontSize={14} color="primary" mt="m">
               Get Directions
             </Text>
@@ -52,7 +58,7 @@ const Store = ({ logoImageURI, name, address }: StoreProps) => {
         </Box>
       </Box>
 
-      <Pressable>
+      <Pressable onPress={onDialCall}>
         <Icon name="phone" size={25} color={theme.colors.primary} />
       </Pressable>
     </Box>
@@ -60,3 +66,12 @@ const Store = ({ logoImageURI, name, address }: StoreProps) => {
 };
 
 export default Store;
+
+const useStyles = makeStyles((theme) => ({
+  imageStyle: {
+    borderRadius: theme.borderRadii.l,
+    backgroundColor: theme.colors.gray,
+    width: 48,
+    height: 48,
+  },
+}));
