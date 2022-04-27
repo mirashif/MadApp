@@ -5,6 +5,7 @@ import {
   TouchableWithoutFeedback,
   StyleSheet,
   BackHandler,
+  Modal,
 } from "react-native";
 import Animated, {
   FadingTransition,
@@ -68,91 +69,98 @@ const AddressListModal = observer(
 
     if (!visible) return null;
     return (
-      <Animated.View layout={FadingTransition} style={styles.backdrop}>
-        <Animated.ScrollView
-          showsVerticalScrollIndicator={false}
-          entering={SlideInUp}
-          exiting={SlideOutUp}
-          style={styles.container}
-        >
-          <Box style={[styles.header, { paddingTop: insets.top }]}>
-            <TouchableWithoutFeedback onPress={onClose}>
-              <Icon name="arrow-left" size={24} />
-            </TouchableWithoutFeedback>
-            <Text ml="m" fontSize={24}>
-              Delivery address
-            </Text>
-          </Box>
+      <Modal transparent onRequestClose={onClose}>
+        <TouchableWithoutFeedback onPress={onClose}>
+          <Animated.View layout={FadingTransition} style={styles.backdrop}>
+            <Animated.ScrollView
+              showsVerticalScrollIndicator={false}
+              entering={SlideInUp}
+              exiting={SlideOutUp}
+              style={styles.container}
+            >
+              <Box style={[styles.header, { paddingTop: insets.top }]}>
+                <TouchableWithoutFeedback onPress={onClose}>
+                  <Icon name="arrow-left" size={24} />
+                </TouchableWithoutFeedback>
+                <Text ml="m" fontSize={24}>
+                  Delivery address
+                </Text>
+              </Box>
 
-          {/* Saved locations */}
-          {addressList.map((_address) => {
-            const address = _address?.data;
-            const currentlySelectedId = currentlySelectedAddress?.data.id ?? "";
-            const isSelected = address.id === currentlySelectedId;
+              {/* Saved locations */}
+              {addressList.map((_address) => {
+                const address = _address?.data;
+                const currentlySelectedId =
+                  currentlySelectedAddress?.data.id ?? "";
+                const isSelected = address.id === currentlySelectedId;
 
-            return (
-              <TouchableWithoutFeedback
-                key={address.id}
-                onPress={() => handleLockAddress(address)}
-              >
-                <Box style={styles.item}>
-                  <Box style={styles.radioContainer}>
-                    <Box
-                      style={[
-                        styles.radio,
-                        isSelected ? styles.radioSelected : undefined,
-                      ]}
-                    />
-                  </Box>
-
-                  <Box style={styles.address}>
-                    <Text style={styles.label}>{address.label}</Text>
-                    <Text
-                      style={styles.street}
-                      numberOfLines={1}
-                      ellipsizeMode="tail"
-                    >
-                      {address.address}
-                    </Text>
-                  </Box>
-
+                return (
                   <TouchableWithoutFeedback
-                    onPress={() => handleEditLocation(address.id)}
-                    style={styles.editIcon}
+                    key={address.id}
+                    onPress={() => handleLockAddress(address)}
                   >
-                    <Icon
-                      name="edit-2"
-                      size={13}
-                      color={theme.colors.primary}
-                    />
+                    <Box style={styles.item}>
+                      <Box style={styles.radioContainer}>
+                        <Box
+                          style={[
+                            styles.radio,
+                            isSelected ? styles.radioSelected : undefined,
+                          ]}
+                        />
+                      </Box>
+
+                      <Box style={styles.address}>
+                        <Text style={styles.label}>{address.label}</Text>
+                        <Text
+                          style={styles.street}
+                          numberOfLines={1}
+                          ellipsizeMode="tail"
+                        >
+                          {address.address}
+                        </Text>
+                      </Box>
+
+                      <TouchableWithoutFeedback
+                        onPress={() => handleEditLocation(address.id)}
+                        style={styles.editIcon}
+                      >
+                        <Icon
+                          name="edit-2"
+                          size={13}
+                          color={theme.colors.primary}
+                        />
+                      </TouchableWithoutFeedback>
+                    </Box>
                   </TouchableWithoutFeedback>
+                );
+              })}
+
+              {/* Use current location */}
+              <UseCurrentLocation
+                onEditLocation={() => handleEditLocation("location")}
+              />
+
+              {/* Add new address */}
+              <TouchableWithoutFeedback
+                onPress={() => handleEditLocation(null)}
+              >
+                <Box style={styles.addAddress}>
+                  <Icon name="plus" size={23} color={theme.colors.primary} />
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: theme.colors.primary,
+                      marginLeft: 12,
+                    }}
+                  >
+                    Add a New Address
+                  </Text>
                 </Box>
               </TouchableWithoutFeedback>
-            );
-          })}
-
-          {/* Use current location */}
-          <UseCurrentLocation
-            onEditLocation={() => handleEditLocation("location")}
-          />
-
-          {/* Add new address */}
-          <TouchableWithoutFeedback onPress={() => handleEditLocation(null)}>
-            <Box style={styles.addAddress}>
-              <Icon name="plus" size={23} color={theme.colors.primary} />
-              <Text
-                style={{
-                  fontSize: 14,
-                  color: theme.colors.primary,
-                  marginLeft: 12,
-                }}
-              >
-                Add a New Address
-              </Text>
-            </Box>
-          </TouchableWithoutFeedback>
-        </Animated.ScrollView>
-      </Animated.View>
+            </Animated.ScrollView>
+          </Animated.View>
+        </TouchableWithoutFeedback>
+      </Modal>
     );
   }
 );
