@@ -3,7 +3,7 @@ import {Store} from './index';
 import {CartablePacket} from './Cartable';
 import {profile} from '../helpers/profile';
 import {Freebie} from './FreebieStore';
-import {OrderableInterface} from "./OrderStore";
+import {OrderableInterface} from './OrderStore';
 
 export class CouponEditor {
     code: string = '';
@@ -337,7 +337,9 @@ export class CartStore {
         }
 
         return {
-            cart: Object.values(this.cart).map(wrapper => wrapper.packet.serialized),
+            cart: Object.values(this.cart).map(
+                (wrapper) => wrapper.packet.serialized,
+            ),
             couponCode: this.couponDeal?.data.code ?? null,
             specialInstructions: this.specialInstructions,
             payments: {
@@ -348,15 +350,18 @@ export class CartStore {
                 serviceChargeAmount: this.serviceChargeAmount,
                 vatAmount: this.vatAmount,
                 subtotalAmount: this.subtotalAmount,
-                originalTotal: this.originalTotal
+                originalTotal: this.originalTotal,
             },
             address: {
                 addressID: this.parent.lockedAddress.lockedAddress.data.id,
                 lat: this.parent.lockedAddress.lockedAddress.data.lat,
                 lon: this.parent.lockedAddress.lockedAddress.data.lon,
                 address: this.parent.lockedAddress.lockedAddress.data.address,
-                directions: this.parent.lockedAddress.lockedAddress.data.directions ?? '',
-            }
+                directions:
+                    this.parent.lockedAddress.lockedAddress.data.directions ??
+                    '',
+                label: this.parent.lockedAddress.lockedAddress.data.label ?? '',
+            },
         };
     }
 }
