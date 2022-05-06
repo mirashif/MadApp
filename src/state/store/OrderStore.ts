@@ -1,52 +1,123 @@
-import {makeAutoObservable} from 'mobx';
+import {makeAutoObservable, when} from 'mobx';
 import {Store} from './index';
 import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
-import {toGenerator} from '../helpers/toGenerator';
 import {profile} from '../helpers/profile';
+import {SerializedCartable} from './Cartable';
+import {composeFlow} from '../helpers/composeFlow';
+import {v4 as uuidv4} from 'uuid';
 
-// import {OrderableType} from './CartStore';
+export interface OrderableInterface {
+    cart: SerializedCartable[];
+    specialInstructions: string;
+    couponCode: string | null;
+    address: {
+        addressID: string;
+        lat: number;
+        lon: number;
+        address: string;
+        directions: string | null;
+        label: string | null;
+    };
+    payments: {
+        method: 'cash-on-delivery' | 'bkash' | 'card';
+        grandTotalAmount: number;
+        deliveryChargeAmount: number;
+        discountAmount: number;
+        serviceChargeAmount: number;
+        vatAmount: number;
+        subtotalAmount: number;
+        originalTotal: number;
+    };
+}
 
-export interface OrderType {
+export interface OrderType extends OrderableInterface {
     id: string;
     userID: string;
+    orderNumber: string;
 
     active: boolean;
     stage:
-        | 'payment-waiting'
-        | 'paid'
         | 'waiting'
         | 'accepted'
         | 'preparing'
         | 'prepared'
         | 'picked-up'
         | 'delivering'
-        | 'delivered';
+        | 'delivered'
+        | 'cancelled';
 
-    paymentComplete: boolean;
+    paymentRequired: boolean;
     paymentURL?: string;
 
+    timeLeft:
+        | {
+              from: number;
+              to: number;
+          }
+        | {
+              lessThan: number;
+          }
+        | {
+              string: string;
+          };
+
+    displayText: string;
     createdAt: FirebaseFirestoreTypes.Timestamp;
+}
+
+export class Order {
+    parent: OrderStore;
+    data: OrderType;
+
+    constructor(parent: OrderStore, data: OrderType) {
+        this.parent = parent;
+        this.data = data;
+
+        makeAutoObservable(this, {}, {autoBind: true});
+    }
+
+    get simplifiedStage() {
+        return {
+            waiting: 'waiting',
+            accepted: 'active',
+            preparing: 'active',
+            prepared: 'active',
+            'picked-up': 'active',
+            delivering: 'active',
+            delivered: 'delivered',
+            cancelled: 'cancelled',
+        }[this.data.stage];
+    }
+}
+
+export class OrderPage {
+    constructor(public parent: OrderStore, public orderIDs: string[]) {}
+
+    add(orderID: string) {
+        this.orderIDs.push(orderID);
+    }
+
+    get all() {
+        return this.orderIDs
+            .map((id) => this.parent.get(id))
+            .sort((a, b) => {
+                return (
+                    (b?.data?.createdAt?.toMillis() || 0) -
+                    (a?.data?.createdAt?.toMillis() || 0)
+                );
+            });
+    }
 }
 
 export class OrderStore {
     parent: Store;
-
-    listener: null | (() => void) = null;
-    error: null | any;
+    listener: (() => void) | null = null;
 
     orders: {
-        [id: string]: OrderType;
+        [key: string]: Order;
     } = {};
 
-    recentOrders: {
-        [id: string]: boolean;
-    } = {};
-
-    pages: {
-        [id: string]: boolean;
-    }[] = [];
-
-    minTime: number = Date.now();
+    pages: OrderPage[] = [new OrderPage(this, [])];
 
     constructor(parent: Store) {
         this.parent = parent;
@@ -64,14 +135,10 @@ export class OrderStore {
         this._ready = ready;
     }
 
-    upsert(id: string, doc: OrderType): void {
+    upsert(id: string, data: OrderType): void {
         const _p = profile('OrderStore.upsert');
 
-        this.orders[id] = doc;
-
-        if (this.minTime > doc.createdAt.toMillis()) {
-            this.minTime = doc.createdAt.toMillis();
-        }
+        this.orders[id] = new Order(this, data);
 
         _p();
     }
@@ -84,23 +151,22 @@ export class OrderStore {
         _p();
     }
 
-    listen(): void {
+    listen() {
         const _p = profile('OrderStore.listen');
 
         if (!this.parent.auth.user || this.parent.auth.user === true) {
-            throw new Error('Cannot listen before user initialization.');
+            throw new Error("Can't listen if auth-user is not initialized.");
         }
+
+        const since = new Date();
+        since.setHours(since.getHours() - 24);
 
         this.listener = this.parent.firebase
             .firestore()
             .collection('users')
-            .doc(this.parent.auth.user.uid)
+            .doc(this.parent.auth.user?.uid)
             .collection('orders')
-            .where(
-                'createdAt',
-                '>=',
-                new Date(Date.now() - 24 * 60 * 60 * 1000),
-            )
+            .where('createdAt', '>', since)
             .onSnapshot((snap) => {
                 snap.docChanges().forEach((change) => {
                     if (change.type === 'added' || change.type === 'modified') {
@@ -109,10 +175,9 @@ export class OrderStore {
                             <OrderType>change.doc.data(),
                         );
 
-                        this.recentOrders[change.doc.id] = true;
+                        this.pages[0].add(change.doc.id);
                     } else if (change.type === 'removed') {
                         this.remove(change.doc.id);
-                        delete this.recentOrders[change.doc.id];
                     }
                 });
 
@@ -127,77 +192,83 @@ export class OrderStore {
 
         if (this.listener) {
             this.listener();
+            this.listener = null;
         }
 
         _p();
     }
 
     *loadPage() {
-        const _p = profile('OrderStore.loadPage');
-
         if (!this.parent.auth.user || this.parent.auth.user === true) {
-            throw new Error('Cannot listen before user initialization.');
+            return;
         }
 
-        const snap = yield* toGenerator(
+        const lastPage = this.pages[this.pages.length - 1];
+        const lastOrder = lastPage.all[lastPage.all.length - 1];
+        const lastOrderTime = lastOrder?.data.createdAt;
+
+        const orderSnap = yield* composeFlow(
             this.parent.firebase
                 .firestore()
                 .collection('users')
-                .doc(this.parent.auth.user.uid)
+                .doc(this.parent.auth.user?.uid)
                 .collection('orders')
-                .where('createdAt', '<', new Date(this.minTime))
-                .limit(15)
+                .where('createdAt', '<', lastOrderTime)
                 .get(),
         );
 
-        snap.forEach((doc) => this.upsert(doc.id, <OrderType>doc.data()));
+        const orderIDs: string[] = [];
 
-        _p();
+        orderSnap.forEach((doc) => {
+            this.upsert(doc.id, doc.data() as OrderType);
+            orderIDs.push(doc.id);
+        });
+
+        const page = new OrderPage(this, orderIDs);
+
+        this.pages.push(page);
     }
 
-    get activeOrders(): OrderType[] {
-        const _p = profile('OrderStore.activeOrders');
-
-        return _p(
-            Object.keys(this.recentOrders)
-                .map((id) => this.orders[id])
-                .filter((order) => order.active),
-        );
-    }
-
-    get pageCount() {
-        const _p = profile('OrderStore.pageCount');
-
-        return _p(this.pages.length + 1);
-    }
-
-    get orderPages(): OrderType[][] {
-        const _p = profile('OrderStore.orderPages');
-
-        return _p(
-            [
-                Object.keys(this.recentOrders).map((id) => this.orders[id]),
-            ].concat(
-                this.pages.map((page) => {
-                    return Object.keys(page).map((id) => {
-                        return this.orders[id];
-                    });
-                }),
-            ),
-        );
-    }
-
-    get(id: string) {
-        const _p = profile('OrderStore.get');
+    get(id: string): Order | null {
+        const _p = profile('InviteStore.get');
 
         return _p(this.orders[id] || null);
     }
 
-    clearErrors() {
-        const _p = profile('OrderStore.clearErrors');
+    *createOrder(orderable: OrderableInterface) {
+        if (!this.parent.auth.user || this.parent.auth.user === true) {
+            return;
+        }
 
-        this.error = null;
+        const orderNumber = Math.round(Math.random() * 9999999);
+        const orderNumberString = `${orderNumber}`.padStart(7, '0');
+        const id = uuidv4();
 
-        _p();
+        const order: OrderType = {
+            ...orderable,
+            id: id,
+            userID: this.parent.auth.user?.uid,
+            orderNumber: orderNumberString,
+            active: true,
+            stage: 'waiting',
+            paymentRequired: orderable.payments.method !== 'cash-on-delivery',
+            timeLeft: {
+                string: 'WAITING',
+            },
+            displayText: 'WAITING',
+            createdAt: FirebaseFirestoreTypes.Timestamp.fromDate(new Date()),
+        };
+
+        yield this.parent.firebase
+            .firestore()
+            .collection('users')
+            .doc(this.parent.auth.user?.uid)
+            .collection('orders')
+            .doc(id)
+            .set(order);
+
+        yield when(() => !!this.orders[id]);
+
+        return id;
     }
 }

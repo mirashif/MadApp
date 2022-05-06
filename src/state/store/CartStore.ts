@@ -3,6 +3,7 @@ import {Store} from './index';
 import {CartablePacket} from './Cartable';
 import {profile} from '../helpers/profile';
 import {Freebie} from './FreebieStore';
+import {OrderableInterface} from "./OrderStore";
 
 export class CouponEditor {
     code: string = '';
@@ -328,5 +329,34 @@ export class CartStore {
 
     selectPaymentMethod(method: 'cash-on-delivery' | 'bkash' | 'card') {
         this.paymentMethod = method;
+    }
+
+    get orderable(): OrderableInterface | null {
+        if (!this.parent.lockedAddress.lockedAddress) {
+            return null;
+        }
+
+        return {
+            cart: Object.values(this.cart).map(wrapper => wrapper.packet.serialized),
+            couponCode: this.couponDeal?.data.code ?? null,
+            specialInstructions: this.specialInstructions,
+            payments: {
+                method: this.paymentMethod,
+                grandTotalAmount: this.grandTotalAmount,
+                deliveryChargeAmount: this.deliveryChargeAmount,
+                discountAmount: this.deliveryChargeAmount,
+                serviceChargeAmount: this.serviceChargeAmount,
+                vatAmount: this.vatAmount,
+                subtotalAmount: this.subtotalAmount,
+                originalTotal: this.originalTotal
+            },
+            address: {
+                addressID: this.parent.lockedAddress.lockedAddress.data.id,
+                lat: this.parent.lockedAddress.lockedAddress.data.lat,
+                lon: this.parent.lockedAddress.lockedAddress.data.lon,
+                address: this.parent.lockedAddress.lockedAddress.data.address,
+                directions: this.parent.lockedAddress.lockedAddress.data.directions ?? '',
+            }
+        };
     }
 }
