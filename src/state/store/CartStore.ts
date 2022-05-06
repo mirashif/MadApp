@@ -4,6 +4,7 @@ import {CartablePacket} from './Cartable';
 import {profile} from '../helpers/profile';
 import {Freebie} from './FreebieStore';
 import {OrderableInterface} from './OrderStore';
+import {composeFlow} from '../helpers/composeFlow';
 
 export class CouponEditor {
     code: string = '';
@@ -363,5 +364,19 @@ export class CartStore {
                 label: this.parent.lockedAddress.lockedAddress.data.label ?? '',
             },
         };
+    }
+
+    *placeOrder() {
+        const orderable = this.orderable;
+
+        if (!orderable) {
+            return null;
+        }
+
+        const orderID = yield* composeFlow(
+            this.parent.orders.createOrder(orderable),
+        );
+
+        return orderID ?? null;
     }
 }
