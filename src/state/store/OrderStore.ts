@@ -76,17 +76,35 @@ export class Order {
         makeAutoObservable(this, {}, {autoBind: true});
     }
 
-    get simplifiedStage() {
-        return {
-            waiting: 'waiting',
-            accepted: 'active',
-            preparing: 'active',
-            prepared: 'active',
-            'picked-up': 'active',
-            delivering: 'active',
-            delivered: 'delivered',
-            cancelled: 'cancelled',
-        }[this.data.stage];
+    get simplifiedStage(): 'waiting' | 'active' | 'delivered' | 'cancelled' {
+        return (
+            {
+                waiting: 'waiting',
+                accepted: 'active',
+                preparing: 'active',
+                prepared: 'active',
+                'picked-up': 'active',
+                delivering: 'active',
+                delivered: 'delivered',
+                cancelled: 'cancelled',
+            } as {
+                [key: string]: 'waiting' | 'active' | 'delivered' | 'cancelled';
+            }
+        )[this.data.stage];
+    }
+
+    get restaurantNames(): string[] {
+        const restaurantIDs = [
+            ...new Set(
+                this.data.cart.map((cartable) => cartable.item.restaurantID),
+            ),
+        ];
+
+        return restaurantIDs
+            .map(
+                (id) => this.parent.parent.restaurants.get(id)?.data.name ?? '',
+            )
+            .filter((name) => !!name);
     }
 }
 
