@@ -52,6 +52,11 @@ export function orderReactions(store: Store) {
             setTimeout(
                 action(() => {
                     order.data.stage = 'preparing';
+                    order.data.displayText = '3d Printing Buns ...';
+                    order.data.timeLeft = {
+                        from: 40,
+                        to: 30,
+                    };
                 }),
                 10000,
             );
@@ -59,6 +64,12 @@ export function orderReactions(store: Store) {
             setTimeout(
                 action(() => {
                     order.data.stage = 'delivering';
+                    order.data.displayText =
+                        'Rocket bikes are illegal, otherwise we would have used it.';
+
+                    order.data.timeLeft = {
+                        lessThan: 10,
+                    };
                 }),
                 15000,
             );
@@ -66,24 +77,45 @@ export function orderReactions(store: Store) {
             setTimeout(
                 action(() => {
                     order.data.stage = 'delivered';
+                    order.data.displayText = 'Go monch.';
+
+                    order.data.timeLeft = {
+                        string: 'delivered',
+                    };
                 }),
                 20000,
             );
         } else {
             action(() => {
                 order.data.stage = 'preparing';
+                order.data.displayText = '3d Printing Buns ...';
+                order.data.timeLeft = {
+                    from: 40,
+                    to: 30,
+                };
             });
 
             setTimeout(
                 action(() => {
                     order.data.stage = 'delivering';
+                    order.data.displayText =
+                        'Rocket bikes are illegal, otherwise we would have used it.';
+
+                    order.data.timeLeft = {
+                        lessThan: 10,
+                    };
                 }),
-                15000,
+                10000,
             );
 
             setTimeout(
                 action(() => {
                     order.data.stage = 'delivered';
+                    order.data.displayText = 'Go monch.';
+
+                    order.data.timeLeft = {
+                        string: 'delivered',
+                    };
                 }),
                 20000,
             );
