@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { observer } from "mobx-react";
-import React from "react";
+import React, { useEffect } from "react";
 import { TouchableWithoutFeedback, View } from "react-native";
 
 import type { Theme } from "../components";
@@ -8,6 +8,7 @@ import { Icon, makeStyles, Text, useTheme } from "../components";
 import type { RootStackProps } from "../components/AppNavigator";
 import { useAppState } from "../state/StateContext";
 import type { LockedAddressStore } from "../state/store/LockedAddressStore";
+import { AuthStore } from "../state/store/AuthStore";
 
 interface LocationBarProps {
   editMode?: boolean;
@@ -27,6 +28,9 @@ const LocationBar = observer(
     const addressLine = address?.data.address || "";
     const addressLabel = address?.data.label || "";
 
+    const auth: AuthStore = useAppState("auth");
+    const isLoggedIn = auth.authenticated;
+
     const onEditPressHandler = () => {
       if (onEditPress) {
         onEditPress();
@@ -34,6 +38,14 @@ const LocationBar = observer(
         navigation.navigate("EditLocation", { id: address?.data.id ?? null });
       }
     };
+
+    useEffect(() => {
+      if (!address && onEditPress && isLoggedIn) {
+        setTimeout(() => {
+          onEditPress();
+        }, 1000);
+      }
+    }, [address, onEditPress, isLoggedIn]);
 
     return (
       <TouchableWithoutFeedback onPress={onEditPressHandler}>

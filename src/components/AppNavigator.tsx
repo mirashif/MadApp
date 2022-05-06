@@ -20,6 +20,7 @@ import { Get100 } from "../Get100";
 import type { MenuStackParamList } from "../Menu";
 import { Menu, MenuNavigator } from "../Menu";
 import { EditLocation } from "../Home/EditLocation";
+import type { OnBoardingSteps } from "../Auth";
 import { OnBoarding } from "../Auth";
 
 import { useTheme } from "./theme";
@@ -115,7 +116,7 @@ type RootStackParamList = {
   BottomTabs: NavigatorScreenParams<BottomTabParamList>;
   HomeStack: NavigatorScreenParams<HomeStackParamList>;
   MenuStack: NavigatorScreenParams<MenuStackParamList>;
-  OnBoarding: undefined;
+  OnBoarding: { step?: OnBoardingSteps };
   EditLocation: { id: string | null };
 };
 

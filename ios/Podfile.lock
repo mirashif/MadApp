@@ -413,6 +413,9 @@ PODS:
   - Firebase/Functions (8.6.0):
     - Firebase/CoreOnly
     - FirebaseFunctions (~> 8.6.0)
+  - Firebase/Storage (8.6.0):
+    - Firebase/CoreOnly
+    - FirebaseStorage (~> 8.6.0)
   - FirebaseAuth (8.6.0):
     - FirebaseCore (~> 8.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.4)
@@ -441,6 +444,9 @@ PODS:
     - leveldb-library (~> 1.22)
     - nanopb (~> 2.30908.0)
   - FirebaseFunctions (8.6.0):
+    - FirebaseCore (~> 8.0)
+    - GTMSessionFetcher/Core (~> 1.5)
+  - FirebaseStorage (8.6.0):
     - FirebaseCore (~> 8.0)
     - GTMSessionFetcher/Core (~> 1.5)
   - Folly (2020.01.13.00):
@@ -788,6 +794,10 @@ PODS:
     - Firebase/Functions (= 8.6.0)
     - React-Core
     - RNFBApp
+  - RNFBStorage (14.8.0):
+    - Firebase/Storage (= 8.6.0)
+    - React-Core
+    - RNFBApp
   - RNGestureHandler (1.10.3):
     - React-Core
   - RNReanimated (2.3.1):
@@ -889,6 +899,7 @@ DEPENDENCIES:
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
   - "RNFBFirestore (from `../node_modules/@react-native-firebase/firestore`)"
   - "RNFBFunctions (from `../node_modules/@react-native-firebase/functions`)"
+  - "RNFBStorage (from `../node_modules/@react-native-firebase/storage`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -910,6 +921,7 @@ SPEC REPOS:
     - FirebaseCoreDiagnostics
     - FirebaseFirestore
     - FirebaseFunctions
+    - FirebaseStorage
     - Google-Maps-iOS-Utils
     - GoogleDataTransport
     - GoogleMaps
@@ -1029,6 +1041,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/firestore"
   RNFBFunctions:
     :path: "../node_modules/@react-native-firebase/functions"
+  RNFBStorage:
+    :path: "../node_modules/@react-native-firebase/storage"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNReanimated:
@@ -1076,6 +1090,7 @@ SPEC CHECKSUMS:
   FirebaseCoreDiagnostics: 64d9709d804a6c25bd77841371c1fcfd909d5601
   FirebaseFirestore: 7b8bd72aff4d3ad91498343e81fdbaa994ce8abe
   FirebaseFunctions: 7639390ac39a914ab7a137fd162956b99cba59a7
+  FirebaseStorage: 2765944230981e63f8bd2938d9d5819158b7c34c
   Folly: b73c3869541e86821df3c387eb0af5f65addfab4
   glog: 40a13f7840415b9a77023fbcae0f1e6f43192af3
   Google-Maps-iOS-Utils: c32891ff472eaaa1fca032beedafa1a013af7875
@@ -1122,6 +1137,7 @@ SPEC CHECKSUMS:
   RNFBAuth: a63fc58edf68af3e36eea2f02cadc733226b4c61
   RNFBFirestore: c0622857f20df376d20495ce08a409a6dcfbdb0a
   RNFBFunctions: 33a4c1f84a73a02b11b5f65a8a1361900e710425
+  RNFBStorage: 0934915f813e5dbcaa26d394f3be9f6d04a32ab2
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNReanimated: 5b5df752f76020971549cb57aa6371dac6895b9e
   RNScreens: 21b73c94c9117e1110a79ee0ee80c93ccefed8ce

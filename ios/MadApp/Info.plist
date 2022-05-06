@@ -73,5 +73,11 @@
 	<string>This app uses the location info to delivery food.</string>
 	<key>NSLocationUsageDescription</key>
 	<string>This app uses the location info to delivery food.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app uses the camera to take pictures.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app uses the microphone to record audio.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app uses the photo library to save photos.</string>
 </dict>
 </plist>

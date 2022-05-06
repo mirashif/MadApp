@@ -1,10 +1,26 @@
 import React from "react";
 import { Pressable, Image } from "react-native";
 
-import { Box, Icon, Text, useTheme } from "../../components";
+import { Box, Icon, makeStyles, Text, useTheme } from "../../components";
 
-const Store = () => {
+interface StoreProps {
+  logoImageURI: string;
+  name: string;
+  address: string;
+  location: { lat: number; lon: number };
+  onGetDirections: () => void;
+  onDialCall: () => void;
+}
+
+const Store = ({
+  onDialCall,
+  logoImageURI,
+  name,
+  address,
+  onGetDirections,
+}: StoreProps) => {
   const theme = useTheme();
+  const styles = useStyles();
 
   return (
     <Box
@@ -16,14 +32,11 @@ const Store = () => {
       }}
     >
       <Box flexDirection="row">
-        <Image
-          source={{ uri: "https://cutt.ly/QWjYTaA" }}
-          style={{ width: 48, height: 48 }}
-        />
+        <Image source={{ uri: logoImageURI }} style={styles.imageStyle} />
 
         <Box style={{ marginLeft: 13 }}>
           <Text fontFamily="Bold" fontSize={18}>
-            Cheez Uttara
+            {name}
           </Text>
 
           <Box width={171} mt="s">
@@ -32,11 +45,12 @@ const Store = () => {
               fontSize={11}
               style={{ color: "#8A8A8A" }}
             >
-              Gareeb-e-Nawaz Avenue, House 34, Sector 11, Dhaka
+              {address}
             </Text>
           </Box>
 
-          <Pressable>
+          {/* TODO: add get direction */}
+          <Pressable onPress={onGetDirections}>
             <Text fontFamily="Medium" fontSize={14} color="primary" mt="m">
               Get Directions
             </Text>
@@ -44,7 +58,7 @@ const Store = () => {
         </Box>
       </Box>
 
-      <Pressable>
+      <Pressable onPress={onDialCall}>
         <Icon name="phone" size={25} color={theme.colors.primary} />
       </Pressable>
     </Box>
@@ -52,3 +66,12 @@ const Store = () => {
 };
 
 export default Store;
+
+const useStyles = makeStyles((theme) => ({
+  imageStyle: {
+    borderRadius: theme.borderRadii.l,
+    backgroundColor: theme.colors.gray,
+    width: 48,
+    height: 48,
+  },
+}));

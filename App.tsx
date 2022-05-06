@@ -2,9 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { LogBox, Text } from "react-native";
+import { ImageBackground, LogBox, Text } from "react-native";
 import "react-native-get-random-values";
-
 import { observer } from "mobx-react";
 
 import AppNavigator from "./src/components/AppNavigator";
@@ -37,7 +36,10 @@ const AppLoader = observer(() => {
     </BottomSheetModalProvider>
   ) : (
     <>
-      <Text>LOADING</Text>
+      <ImageBackground
+        source={require("./assets/splash.png")}
+        style={{ flex: 1 }}
+      />
     </>
   );
 });

@@ -12,4 +12,5 @@ export interface OnBoardingStepProps {
   setStep: React.Dispatch<React.SetStateAction<STEPS>>;
   phoneNumber: string;
   setPhoneNumber: React.Dispatch<React.SetStateAction<string>>;
+  disableGoingBack?: boolean;
 }

@@ -5,7 +5,12 @@ import {
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
-import { ImageBackground, TouchableWithoutFeedback, View } from "react-native";
+import {
+  BackHandler,
+  ImageBackground,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import { observer } from "mobx-react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -73,6 +78,20 @@ const ItemBuilder = observer(
         return itemSheetRef.current?.present();
       }
     }, [itemBuilderId, item]);
+
+    useEffect(() => {
+      const backAction = () => {
+        handleDismiss();
+        return true;
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+      );
+
+      return () => backHandler.remove();
+    }, [handleDismiss]);
 
     return (
       <BottomSheetModal
