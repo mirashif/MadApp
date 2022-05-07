@@ -1,14 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
 import { observer } from "mobx-react";
-import React, { useEffect } from "react";
-import { TouchableWithoutFeedback, View } from "react-native";
+import React from "react";
+import { TouchableWithoutFeedback } from "react-native";
 
 import type { Theme } from "../components";
-import { Icon, makeStyles, Text, useTheme } from "../components";
+import { Box, Icon, makeStyles, Text, useTheme } from "../components";
 import type { RootStackProps } from "../components/AppNavigator";
 import { useAppState } from "../state/StateContext";
 import type { LockedAddressStore } from "../state/store/LockedAddressStore";
-import { AuthStore } from "../state/store/AuthStore";
 
 interface LocationBarProps {
   editMode?: boolean;
@@ -28,9 +27,6 @@ const LocationBar = observer(
     const addressLine = address?.data.address || "";
     const addressLabel = address?.data.label || "";
 
-    const auth: AuthStore = useAppState("auth");
-    const isLoggedIn = auth.authenticated;
-
     const onEditPressHandler = () => {
       if (onEditPress) {
         onEditPress();
@@ -39,30 +35,40 @@ const LocationBar = observer(
       }
     };
 
-    useEffect(() => {
-      if (!address && onEditPress && isLoggedIn) {
-        setTimeout(() => {
-          onEditPress();
-        }, 1000);
-      }
-    }, [address, onEditPress, isLoggedIn]);
-
     return (
       <TouchableWithoutFeedback onPress={onEditPressHandler}>
-        <View style={styles.container}>
-          <View>
-            <Text numberOfLines={1} style={styles.address}>
-              {addressLine}
-            </Text>
-            <View style={styles.label}>
-              <Icon color={theme.colors.darkGray} name="book-open" size={12} />
-              <Text numberOfLines={1} style={styles.labelText}>
-                {addressLabel}
+        <Box style={styles.container}>
+          {address ? (
+            <Box>
+              <Text numberOfLines={1} style={styles.address}>
+                {addressLine}
               </Text>
-            </View>
-          </View>
+              <Box style={styles.label}>
+                <Icon
+                  color={theme.colors.darkGray}
+                  name="book-open"
+                  size={12}
+                />
+                <Text numberOfLines={1} style={styles.labelText}>
+                  {addressLabel}
+                </Text>
+              </Box>
+            </Box>
+          ) : (
+            <Box flexDirection="row" alignItems="center">
+              <Icon name="navigation" size={14} color={theme.colors.primary} />
+              <Text
+                style={{ marginLeft: 12 }}
+                fontFamily="Bold"
+                fontSize={15}
+                color="primary"
+              >
+                Set Your Address
+              </Text>
+            </Box>
+          )}
 
-          <View
+          <Box
             style={{
               width: 20,
               height: 20,
@@ -75,8 +81,8 @@ const LocationBar = observer(
             ) : (
               <Icon name="chevron-down" size={15} color={theme.colors.gray} />
             )}
-          </View>
-        </View>
+          </Box>
+        </Box>
       </TouchableWithoutFeedback>
     );
   }

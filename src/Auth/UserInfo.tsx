@@ -14,7 +14,6 @@ import {
   Icon,
   SafeArea,
   Text,
-  useTheme,
 } from "../components";
 import Button from "../components/Button";
 import Input from "../components/Input";
@@ -23,15 +22,15 @@ import { useAppState } from "../state/StateContext";
 import type { UserBuilder } from "../state/store/UserBuilder";
 import type { ReferralValidator } from "../state/store/ReferralValidator";
 import type { RootStackProps } from "../components/AppNavigator";
+import LocationBar from "../Home/LocationBar";
 
-import Success from "./assets/Success.svg";
+import SuccessIcon from "./assets/Success.svg";
 import Referral from "./assets/Referral.svg";
 import type { OnBoardingStepProps } from "./constants";
 import { STEPS } from "./constants";
 
 const UserInfo = observer(
   ({ setStep, disableGoingBack }: OnBoardingStepProps) => {
-    const theme = useTheme();
     const navigation =
       useNavigation<RootStackProps<"EditLocation">["navigation"]>();
 
@@ -96,20 +95,18 @@ const UserInfo = observer(
     };
 
     const handleFinish = async () => {
-      if (user) {
-        if (builder && firstName && lastName) {
-          builder.setFirstName(firstName);
-          builder.setLastName(lastName);
-          await user.updateUser(builder.userable);
+      if (user && builder && firstName && lastName) {
+        builder.setFirstName(firstName);
+        builder.setLastName(lastName);
+        await user.updateUser(builder.userable);
 
-          if (referralValidator.referral && referralValidator.isValid) {
-            await user.updateUser({
-              referral: referralValidator.referral,
-            });
-          }
-
-          setSuccessModalVisible(true);
+        if (referralValidator.referral && referralValidator.isValid) {
+          await user.updateUser({
+            referral: referralValidator.referral,
+          });
         }
+
+        setSuccessModalVisible(true);
       }
     };
 
@@ -122,20 +119,19 @@ const UserInfo = observer(
             onBackPress={() => setStep(STEPS.MOBILE_NUMBER)}
           />
 
-          <Box px="screen">
-            <Box alignItems="center">
-              <Text fontSize={64}>🥳</Text>
-              <Text
-                fontSize={18}
-                fontFamily="Bold"
-                mt="l"
-                style={{ color: "#323232" }}
-              >
-                You're almost done!
-              </Text>
-            </Box>
+          <Box alignItems="center">
+            <Text fontSize={64}>🥳</Text>
+            <Text
+              fontSize={18}
+              fontFamily="Bold"
+              mt="l"
+              style={{ color: "#323232" }}
+            >
+              You're almost done!
+            </Text>
+          </Box>
 
-            {/* Name */}
+          <Box px="screen">
             <Box mt="xl">
               <Input label="First Name" onChangeText={setFirstName} />
             </Box>
@@ -144,12 +140,11 @@ const UserInfo = observer(
               <Input label="Last Name" onChangeText={setLastName} />
             </Box>
 
-            {/* Referral Code */}
             <Box
               flexDirection="row"
               justifyContent="space-between"
               alignItems="center"
-              mt="xl"
+              my="xl"
             >
               <Box>
                 {refCode && (
@@ -212,47 +207,14 @@ const UserInfo = observer(
                 )}
               </Box>
             </Box>
+          </Box>
 
-            <TouchableWithoutFeedback
-              onPress={() => navigation.navigate("EditLocation", { id: null })}
-            >
-              <Box
-                style={{
-                  marginTop: 26,
-                  paddingHorizontal: 25,
-                  paddingVertical: 23,
-                }}
-                borderColor="lightGray"
-                borderWidth={1}
-                borderRadius="l"
-                flexDirection="row"
-                justifyContent="space-between"
-              >
-                <Box flexDirection="row">
-                  <Icon
-                    name="navigation"
-                    size={14}
-                    color={theme.colors.primary}
-                  />
-                  <Text
-                    style={{ marginLeft: 12 }}
-                    fontFamily="Bold"
-                    fontSize={15}
-                    color="primary"
-                  >
-                    Set Your Address
-                  </Text>
-                </Box>
+          <LocationBar editMode />
 
-                <Icon name="edit-2" size={14} color={theme.colors.primary} />
-              </Box>
-            </TouchableWithoutFeedback>
-
-            <Box style={{ paddingTop: 16, paddingBottom: 40, marginTop: 14 }}>
-              <Button onPress={handleFinish} size="lg">
-                Let's Go!
-              </Button>
-            </Box>
+          <Box px="screen" style={{ paddingBottom: 40, marginTop: 30 }}>
+            <Button onPress={handleFinish} size="lg">
+              Let's Go!
+            </Button>
           </Box>
         </ScrollView>
 
@@ -316,7 +278,7 @@ const UserInfo = observer(
             justifyContent="center"
             style={{ paddingBottom: 55, paddingTop: 32 }}
           >
-            <Success />
+            <SuccessIcon />
             <Text fontSize={18} style={{ color: "#323232" }}>
               Wohoo! you're done
             </Text>
