@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 import React, { useState } from "react";
 import { ScrollView, TextInput } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -12,35 +13,19 @@ import {
   Text,
 } from "../../components";
 import DissmissKeyboard from "../../components/DissmissKeyboard";
+import { useAppState } from "../../state/StateContext";
+import type { CartableWrapper, CartStore } from "../../state/store/CartStore";
 import { CheckoutButton } from "../Cart/Button";
 import LocationBar from "../LocationBar";
 
 import PaymentMethodItem from "./PaymentMethodItem";
 
-const summary = [
-  {
-    quantity: 2,
-    restaurant: "Cheez",
-    name: "Cheezburger",
-    price: "829.00",
-  },
-  {
-    quantity: 1,
-    restaurant: "Cheez",
-    name: "Beef Shorisha",
-    price: "126.00",
-  },
-  {
-    quantity: 1,
-    restaurant: "Madchef",
-    name: "Cajun Fries",
-    price: "666.00",
-  },
-];
-
-const Checkout = () => {
+const Checkout = observer(() => {
   const styles = useStyles();
   const insets = useSafeAreaInsets();
+
+  const cart: CartStore = useAppState("cart");
+  const cartItems: CartableWrapper[] = cart.all;
 
   const [paymentMethod, setPaymentMethod] = useState<"bkash" | "cod" | "card">(
     "bkash"
@@ -82,19 +67,19 @@ const Checkout = () => {
           <Box style={{ marginTop: 56 }}>
             <Text style={styles.title}>Order Summary</Text>
 
-            {summary.map(({ quantity, restaurant, name, price }, index) => (
+            {cartItems.map((item) => (
               <Box
-                key={index}
+                key={item.itemID}
                 flexDirection="row"
                 px="screen"
                 justifyContent="space-between"
               >
                 <Text style={{ color: "#939393", lineHeight: 24 }}>
-                  {quantity}x {restaurant}: {name}
+                  {item.count}x: {item.itemName}
                 </Text>
 
                 <Text>
-                  <CurrencyFormat value={price} />
+                  <CurrencyFormat value={item.totalPrice} />
                 </Text>
               </Box>
             ))}
@@ -136,7 +121,7 @@ const Checkout = () => {
             </Box>
 
             <Text fontFamily="Normal" fontSize={18}>
-              ৳829.00
+              <CurrencyFormat value={cart.grandTotalAmount} />
             </Text>
           </Box>
 
@@ -147,7 +132,7 @@ const Checkout = () => {
       </DissmissKeyboard>
     </SafeArea>
   );
-};
+});
 
 const useStyles = makeStyles((theme: Theme) => ({
   title: {
