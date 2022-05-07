@@ -48,7 +48,7 @@ const AddressListModal = observer(
       lockedAddress.lockedAddress;
 
     const handleOnClose = useCallback(() => {
-      if (!currentlySelectedAddress || route.name === "Home") {
+      if (!currentlySelectedAddress && route.name === "Home") {
         Alert.alert("Please select an address");
       } else {
         onClose();

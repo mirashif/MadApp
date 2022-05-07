@@ -36,6 +36,7 @@ const UserInfo = observer(
 
     const user: UserStore = useAppState("user");
     const builder: UserBuilder | null = user.builder;
+
     const [refCode, setRefCode] = useState<null | string>(null);
     const [lastName, setLastName] = useState("");
     const [firstName, setFirstName] = useState("");
