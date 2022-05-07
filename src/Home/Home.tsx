@@ -48,7 +48,8 @@ const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
    * requiring user info
    */
   useEffect(() => {
-    const userData = user && user.firstName && user.lastName;
+    if (!user) return;
+    const userData = user.firstName && user.lastName;
     if (!userData) {
       setTimeout(() => {
         navigation.navigate("OnBoarding", {
