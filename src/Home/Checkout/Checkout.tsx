@@ -109,7 +109,6 @@ const Checkout = () => {
         </ScrollView>
 
         <Box
-          mx="screen"
           style={{
             marginBottom: 17 + insets.bottom,
             paddingTop: 17,
@@ -119,6 +118,9 @@ const Checkout = () => {
             flexDirection="row"
             alignItems="center"
             justifyContent="space-between"
+            style={{
+              paddingHorizontal: 40,
+            }}
           >
             <Box>
               <Text fontFamily="Normal" fontSize={18}>
@@ -138,7 +140,7 @@ const Checkout = () => {
             </Text>
           </Box>
 
-          <Box style={{ marginTop: 27 }}>
+          <Box mx="screen" style={{ marginTop: 27 }}>
             <CheckoutButton label="Place Order" onPress={() => null} />
           </Box>
         </Box>
