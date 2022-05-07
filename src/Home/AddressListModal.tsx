@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { observer } from "mobx-react";
 import React, { useCallback, useEffect } from "react";
 import {
@@ -32,12 +32,13 @@ interface AddressListModalProps {
 }
 
 const AddressListModal = observer(
-  ({ visible, onClose: _onClose }: AddressListModalProps) => {
+  ({ visible, onClose }: AddressListModalProps) => {
     const styles = useStyles();
     const theme = useTheme();
+    const insets = useSafeAreaInsets();
     const navigation =
       useNavigation<RootStackProps<"EditLocation">["navigation"]>();
-    const insets = useSafeAreaInsets();
+    const route = useRoute();
 
     const addresses: AddressStore = useAppState("addresses");
     const lockedAddress: LockedAddressStore = useAppState("lockedAddress");
@@ -46,23 +47,26 @@ const AddressListModal = observer(
     const currentlySelectedAddress: Address | null =
       lockedAddress.lockedAddress;
 
+    const handleOnClose = useCallback(() => {
+      if (!currentlySelectedAddress || route.name === "Home") {
+        Alert.alert("Please select an address");
+      } else {
+        onClose();
+      }
+    }, [currentlySelectedAddress, onClose, route.name]);
+
     const handleEditLocation = (id: string | null) => {
       navigation.navigate("EditLocation", { id });
+      onClose();
     };
 
     const handleLockAddress = ({ id }: AddressType) => {
       lockedAddress.lockAddress(id);
     };
 
-    const onClose = useCallback(() => {
-      if (!currentlySelectedAddress)
-        return Alert.alert("Set a address to continue");
-      else _onClose();
-    }, [_onClose, currentlySelectedAddress]);
-
     useEffect(() => {
       const backAction = () => {
-        onClose();
+        handleOnClose();
         return true;
       };
 
@@ -72,12 +76,12 @@ const AddressListModal = observer(
       );
 
       return () => backHandler.remove();
-    }, [onClose]);
+    }, [handleOnClose]);
 
     if (!visible) return null;
     return (
-      <Modal transparent onRequestClose={onClose}>
-        <TouchableWithoutFeedback onPress={onClose}>
+      <Modal transparent onRequestClose={handleOnClose}>
+        <TouchableWithoutFeedback onPress={handleOnClose}>
           <Animated.View layout={FadingTransition} style={styles.backdrop}>
             <Animated.ScrollView
               showsVerticalScrollIndicator={false}
@@ -86,7 +90,7 @@ const AddressListModal = observer(
               style={styles.container}
             >
               <Box style={[styles.header, { paddingTop: insets.top }]}>
-                <TouchableWithoutFeedback onPress={onClose}>
+                <TouchableWithoutFeedback onPress={handleOnClose}>
                   <Icon name="arrow-left" size={24} />
                 </TouchableWithoutFeedback>
                 <Text ml="m" fontSize={24}>

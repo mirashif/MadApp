@@ -31,21 +31,21 @@ const EditLocation = observer(() => {
   const navigation =
     useNavigation<RootStackProps<"EditLocation">["navigation"]>();
   const route = useRoute<RootStackProps<"EditLocation">["route"]>();
-  const { id } = route?.params;
+  const locationId = route?.params.id;
 
   const addresses: AddressStore = useAppState("addresses");
   const lockedAddress: LockedAddressStore = useAppState("lockedAddress");
-
   const builder: AddressBuilder = useMemo(() => {
-    if (id === "location" || null) {
+    if (locationId === "location" || null) {
       // new addresses
       return addresses.builder;
     } else {
       // address editing
-      const _address = addresses.get(id as string);
+      const _address = addresses.get(locationId as string);
       return _address ? _address.builder : addresses.builder;
     }
-  }, [addresses, id]);
+  }, [addresses, locationId]);
+  const addressable: UnsavedAddressType = builder.addressable;
 
   const [region, setRegion] = useState<Region>({
     // builder location ?? dhaka
@@ -56,24 +56,28 @@ const EditLocation = observer(() => {
   });
 
   const handleSaveAddress = async () => {
-    const addressable: UnsavedAddressType = builder.addressable;
-
     try {
-      if (id) {
-        await addresses.updateAddress(id as string, addressable);
+      if (locationId) {
+        await addresses.updateAddress(locationId as string, addressable);
       } else {
         await addresses.addAddress(addressable);
         lockedAddress.lockAddress(addresses.all[0].data.id);
       }
-      navigation.goBack();
     } catch (error) {
       console.error(error);
+    } finally {
+      navigation.goBack();
     }
   };
 
   const handleDeleteAddress = async () => {
-    await addresses.deleteAddress(id as string);
-    navigation.goBack();
+    try {
+      await addresses.deleteAddress(locationId as string);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      navigation.goBack();
+    }
   };
 
   useEffect(() => {
@@ -181,7 +185,7 @@ const EditLocation = observer(() => {
             >
               Save
             </Button>
-            {id && (
+            {locationId && (
               <Box
                 style={{
                   marginBottom: insets.bottom,
