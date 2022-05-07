@@ -40,7 +40,6 @@ const summary = [
 
 const Checkout = () => {
   const styles = useStyles();
-
   const insets = useSafeAreaInsets();
 
   const [paymentMethod, setPaymentMethod] = useState<"bkash" | "cod" | "card">(
@@ -110,9 +109,9 @@ const Checkout = () => {
         </ScrollView>
 
         <Box
+          mx="screen"
           style={{
             marginBottom: 17 + insets.bottom,
-            marginHorizontal: 40,
             paddingTop: 17,
           }}
         >

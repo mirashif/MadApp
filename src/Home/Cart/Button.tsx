@@ -19,7 +19,7 @@ export const CheckoutButton = ({
       <Box
         backgroundColor="primary"
         height={57}
-        width={358}
+        width="100%"
         borderRadius="l"
         position="relative"
         alignItems="center"

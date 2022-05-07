@@ -43,7 +43,7 @@ const Total = observer(() => {
         </Text>
       </Box>
 
-      <Box style={{ alignItems: "center", marginTop: 27 }}>
+      <Box mx="screen" style={{ alignItems: "center", marginTop: 27 }}>
         <CheckoutButton onPress={() => navigation.navigate("Checkout")} />
       </Box>
     </Box>
