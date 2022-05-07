@@ -1,11 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
 import { observer } from "mobx-react";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   TouchableWithoutFeedback,
   StyleSheet,
   BackHandler,
   Modal,
+  Alert,
 } from "react-native";
 import Animated, {
   FadingTransition,
@@ -31,7 +32,7 @@ interface AddressListModalProps {
 }
 
 const AddressListModal = observer(
-  ({ visible, onClose }: AddressListModalProps) => {
+  ({ visible, onClose: _onClose }: AddressListModalProps) => {
     const styles = useStyles();
     const theme = useTheme();
     const navigation =
@@ -52,6 +53,12 @@ const AddressListModal = observer(
     const handleLockAddress = ({ id }: AddressType) => {
       lockedAddress.lockAddress(id);
     };
+
+    const onClose = useCallback(() => {
+      if (!currentlySelectedAddress)
+        return Alert.alert("Set a address to continue");
+      else _onClose();
+    }, [_onClose, currentlySelectedAddress]);
 
     useEffect(() => {
       const backAction = () => {

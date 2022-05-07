@@ -59,16 +59,16 @@ const EditLocation = observer(() => {
     const addressable: UnsavedAddressType = builder.addressable;
 
     try {
-      if (id) await addresses.updateAddress(id as string, addressable);
-      else {
+      if (id) {
+        await addresses.updateAddress(id as string, addressable);
+      } else {
         await addresses.addAddress(addressable);
         lockedAddress.lockAddress(addresses.all[0].data.id);
       }
+      navigation.goBack();
     } catch (error) {
       console.error(error);
     }
-
-    navigation.goBack();
   };
 
   const handleDeleteAddress = async () => {
