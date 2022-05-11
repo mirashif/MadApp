@@ -76,6 +76,27 @@ export class Order {
         makeAutoObservable(this, {}, {autoBind: true});
     }
 
+    get getTriStage(): 'waiting' | 'preparing' | 'delivering' | 'complete' {
+        return (
+            {
+                waiting: 'waiting',
+                accepted: 'preparing',
+                preparing: 'preparing',
+                prepared: 'preparing',
+                'picked-up': 'delivering',
+                delivering: 'delivering',
+                delivered: 'complete',
+                cancelled: 'complete',
+            } as {
+                [key: string]:
+                    | 'waiting'
+                    | 'preparing'
+                    | 'delivering'
+                    | 'complete';
+            }
+        )[this.data.stage];
+    }
+
     get simplifiedStage(): 'waiting' | 'active' | 'delivered' | 'cancelled' {
         return (
             {
