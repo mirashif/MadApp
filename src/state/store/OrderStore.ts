@@ -76,7 +76,7 @@ export class Order {
         makeAutoObservable(this, {}, {autoBind: true});
     }
 
-    get getTriStage(): 'waiting' | 'preparing' | 'delivering' | 'complete' {
+    get triStage(): 'waiting' | 'preparing' | 'delivering' | 'complete' {
         return (
             {
                 waiting: 'waiting',
