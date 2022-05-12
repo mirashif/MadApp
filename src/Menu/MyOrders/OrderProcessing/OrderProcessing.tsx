@@ -93,7 +93,12 @@ const OrderProcessing = observer(() => {
   return (
     <SafeArea>
       <ScrollView>
-        <HeaderBar title="Your Order" />
+        <HeaderBar
+          title="Your Order"
+          onBackPress={() =>
+            navigation.navigate("BottomTabs", { screen: "Home" })
+          }
+        />
         <Box alignItems="center">
           {timeLeft && TimeLeft(timeLeft)}
           <StageAnimation {...{ stage }} />
