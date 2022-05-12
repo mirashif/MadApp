@@ -22,8 +22,8 @@ export type MenuStackProps<RouteName extends keyof MenuStackParamList> = {
 
 export type MenuStackParamList = {
   MyOrders: undefined;
-  OrderDetails: undefined;
-  OrderProcessing: undefined;
+  OrderDetails: { orderId: string };
+  OrderProcessing: { orderId: string };
   MyProfile: undefined;
   Settings: undefined;
   StoreLocator: undefined;

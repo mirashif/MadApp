@@ -69,6 +69,7 @@
     "react-native-swipe-gestures": "^1.0.5",
     "react-native-unimodules": "0.14.10",
     "react-native-web": "~0.13.12",
+    "react-native-webview": "11.6.2",
     "react-navigation-hooks": "^1.1.0",
     "react-number-format": "^4.9.1",
     "uuid": "^8.3.2"

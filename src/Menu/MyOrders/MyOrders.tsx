@@ -3,23 +3,26 @@ import { ScrollView } from "react-native-gesture-handler";
 
 import { Box, HeaderBar, SafeArea } from "../../components";
 import type { RootStackProps } from "../../components/AppNavigator";
+import { useAppState } from "../../state/StateContext";
+import type {
+  OrderStore,
+  OrderPage,
+  Order,
+} from "../../state/store/OrderStore";
 
 import ActiveOrderItem from "./ActiveOrderItem";
 import CashbackNotice from "./CashbackNotice";
 import NoOrders from "./NoOrders";
 import PastOrderItem from "./PastOrderItem";
 
-const orders = [
-  {
-    id: "1",
-    restaurant: "Cheez",
-    price: 829.0,
-    date: "July 10th, 2021",
-    status: "Active",
-  },
-];
 
 const MyOrders = ({ navigation }: RootStackProps<"MenuStack">) => {
+  const orders: OrderStore = useAppState("orders");
+
+  const pages: OrderPage[] = orders.pages;
+  const order: Order = pages[i].all;
+  const orderRestaurantName: string = order.restaurantNames.join(" x ");
+
   return (
     <SafeArea>
       <ScrollView showsVerticalScrollIndicator={false}>
