@@ -52,7 +52,7 @@ const OrderProcessing = observer(() => {
   const orderNumber = order?.data.orderNumber || "12345";
   const addressLine = order?.data.address.address || "Address";
   const addressLabel = order?.data.address.label || "Label";
-  const totalAmount = order?.data.payments.grandTotalAmount;
+  const totalAmount = order?.data.payments.grandTotalAmount || "5432";
 
   const showWebView = order?.data.paymentRequired && order?.data.paymentURL;
   const webViewURL = order?.data.paymentURL;
