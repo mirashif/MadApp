@@ -13,8 +13,8 @@ import {
   SafeArea,
   Text,
 } from "../../components";
+import type { RootStackProps } from "../../components/AppNavigator";
 import DissmissKeyboard from "../../components/DissmissKeyboard";
-import type { MenuStackProps } from "../../Menu";
 import { useAppState } from "../../state/StateContext";
 import type { CartableWrapper, CartStore } from "../../state/store/CartStore";
 import { CheckoutButton } from "../Cart/Button";
@@ -27,8 +27,7 @@ type PaymentMethodType = "cash-on-delivery" | "bkash" | "card";
 const Checkout = observer(() => {
   const styles = useStyles();
   const insets = useSafeAreaInsets();
-  const navigation =
-    useNavigation<MenuStackProps<"OrderProcessing">["navigation"]>();
+  const navigation = useNavigation<RootStackProps<"MenuStack">["navigation"]>();
 
   const cart: CartStore = useAppState("cart");
   const cartItems: CartableWrapper[] = cart.all;
@@ -36,12 +35,13 @@ const Checkout = observer(() => {
 
   const handlePlaceOrder = async () => {
     try {
-      const orderId = await cart.placeOrder();
-      if (orderId)
-        navigation.navigate("OrderProcessing", {
-          // TODO: Fix orderId type
-          orderId,
-        });
+      // const orderId = await cart.placeOrder();
+      // if (orderId)
+      navigation.navigate("MenuStack", {
+        screen: "OrderProcessing",
+        params: { orderId: "123" },
+        // TODO: Fix orderId type
+      });
     } catch (error) {
       console.error(error);
     }
