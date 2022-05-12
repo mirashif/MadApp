@@ -1,5 +1,6 @@
+import { useNavigation } from "@react-navigation/native";
 import { observer } from "mobx-react";
-import React, { useState } from "react";
+import React from "react";
 import { ScrollView, TextInput } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -13,6 +14,7 @@ import {
   Text,
 } from "../../components";
 import DissmissKeyboard from "../../components/DissmissKeyboard";
+import type { MenuStackProps } from "../../Menu";
 import { useAppState } from "../../state/StateContext";
 import type { CartableWrapper, CartStore } from "../../state/store/CartStore";
 import { CheckoutButton } from "../Cart/Button";
@@ -20,16 +22,30 @@ import LocationBar from "../LocationBar";
 
 import PaymentMethodItem from "./PaymentMethodItem";
 
+type PaymentMethodType = "cash-on-delivery" | "bkash" | "card";
+
 const Checkout = observer(() => {
   const styles = useStyles();
   const insets = useSafeAreaInsets();
+  const navigation =
+    useNavigation<MenuStackProps<"OrderProcessing">["navigation"]>();
 
   const cart: CartStore = useAppState("cart");
   const cartItems: CartableWrapper[] = cart.all;
+  const paymentMethod: PaymentMethodType = cart.paymentMethod;
 
-  const [paymentMethod, setPaymentMethod] = useState<"bkash" | "cod" | "card">(
-    "bkash"
-  );
+  const handlePlaceOrder = async () => {
+    try {
+      const orderId = await cart.placeOrder();
+      if (orderId)
+        navigation.navigate("OrderProcessing", {
+          // TODO: Fix orderId type
+          orderId,
+        });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <SafeArea>
@@ -44,29 +60,33 @@ const Checkout = observer(() => {
 
           <Box style={{ marginTop: 32 }}>
             <Text style={styles.title}>Payment method</Text>
-
             <PaymentMethodItem
               type="bkash"
               active={paymentMethod === "bkash"}
-              onPress={() => setPaymentMethod("bkash")}
+              onPress={() =>
+                cart.selectPaymentMethod("bkash" as PaymentMethodType)
+              }
             />
-
             <PaymentMethodItem
               type="cod"
-              active={paymentMethod === "cod"}
-              onPress={() => setPaymentMethod("cod")}
+              active={paymentMethod === "cash-on-delivery"}
+              onPress={() =>
+                cart.selectPaymentMethod(
+                  "cash-on-delivery" as PaymentMethodType
+                )
+              }
             />
-
             <PaymentMethodItem
               type="card"
               active={paymentMethod === "card"}
-              onPress={() => setPaymentMethod("card")}
+              onPress={() =>
+                cart.selectPaymentMethod("card" as PaymentMethodType)
+              }
             />
           </Box>
 
           <Box style={{ marginTop: 56 }}>
             <Text style={styles.title}>Order Summary</Text>
-
             {cartItems.map((item) => (
               <Box
                 key={item.itemID}
@@ -89,6 +109,8 @@ const Checkout = observer(() => {
             <TextInput
               style={styles.input}
               placeholder="Special Instructions"
+              value={cart.specialInstructions}
+              onChangeText={cart.setSpecialInstructions}
             />
           </Box>
         </ScrollView>
@@ -126,13 +148,15 @@ const Checkout = observer(() => {
           </Box>
 
           <Box mx="screen" style={{ marginTop: 27 }}>
-            <CheckoutButton label="Place Order" onPress={() => null} />
+            <CheckoutButton label="Place Order" onPress={handlePlaceOrder} />
           </Box>
         </Box>
       </DissmissKeyboard>
     </SafeArea>
   );
 });
+
+export default Checkout;
 
 const useStyles = makeStyles((theme: Theme) => ({
   title: {
@@ -149,5 +173,3 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderRadius: 12,
   },
 }));
-
-export default Checkout;
