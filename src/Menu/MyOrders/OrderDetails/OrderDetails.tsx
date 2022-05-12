@@ -1,6 +1,7 @@
 import React from "react";
 import { ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useRoute } from "@react-navigation/native";
 
 import {
   Box,
@@ -14,6 +15,9 @@ import {
 } from "../../../components";
 import LocationBar from "../../../Home/LocationBar";
 import TakaIcon from "../../../Home/Checkout/assets/taka.svg";
+import type { MenuStackProps } from "../..";
+import { useAppState } from "../../../state/StateContext";
+import type { OrderStore } from "../../../state/store/OrderStore";
 
 import Item from "./Item";
 import TrackOrder from "./TrackOrder";
@@ -22,8 +26,21 @@ import { OrderSummaryItem } from "./OrderSummaryItem";
 const OrderDetails = () => {
   const theme = useTheme();
   const styles = useStyles();
-
   const insets = useSafeAreaInsets();
+  const route = useRoute<MenuStackProps<"OrderDetails">["route"]>();
+  const orderId = route.params?.orderId;
+
+  const orders: OrderStore = useAppState("orders");
+
+  const order = orders.get(orderId);
+  const displayText = order?.data.displayText;
+  const timeLeft = order?.data.timeLeft;
+  const orderNumber = order?.data.orderNumber;
+  const addressLine = order?.data.address.address;
+  const addressLabel = order?.data.address.label;
+  const totalAmount = order?.data.payments.grandTotalAmount;
+  const stage: "waiting" | "preparing" | "delivering" | "complete" =
+    order?.triStage;
 
   return (
     <SafeArea>

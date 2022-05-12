@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import {
   ActivityIndicator,
   BackHandler,
@@ -41,21 +41,31 @@ const OrderProcessing = observer(() => {
   const orders: OrderStore = useAppState("orders");
   const order = orders.get(orderId);
 
+  const showWebView = order?.data.paymentRequired && order?.data.paymentURL;
+  const webViewURL = order?.data.paymentURL;
+  const displayText = order?.data.displayText || "3D printing the buns...";
+  const orderNumber = order?.data.orderNumber || "12345";
+  const addressLine = order?.data.address.address || "Address";
+  const addressLabel = order?.data.address.label || "Label";
+  const totalAmount = order?.data.payments.grandTotalAmount || "5432";
   // TODO: Remove default values
   const timeLeft = order?.data.timeLeft || {
     from: 20,
     to: 40,
   };
   const stage: "waiting" | "preparing" | "delivering" | "complete" =
-    order?.triStage || "preparing"; // TODO: triStage does not exist
-  const displayText = order?.data.displayText || "3D printing the buns...";
-  const orderNumber = order?.data.orderNumber || "12345";
-  const addressLine = order?.data.address.address || "Address";
-  const addressLabel = order?.data.address.label || "Label";
-  const totalAmount = order?.data.payments.grandTotalAmount || "5432";
-
-  const showWebView = order?.data.paymentRequired && order?.data.paymentURL;
-  const webViewURL = order?.data.paymentURL;
+    order?.triStage || "delivering"; // TODO: triStage does not exist
+  const stageNumber: number | null = useMemo(
+    () =>
+      stage === "preparing"
+        ? 1
+        : stage === "delivering"
+        ? 2
+        : stage === "complete"
+        ? 3
+        : null,
+    [stage]
+  );
 
   /**
    * Back button should take the user back to home
@@ -101,7 +111,7 @@ const OrderProcessing = observer(() => {
         />
         <Box alignItems="center">
           {timeLeft && TimeLeft(timeLeft)}
-          <StageAnimation {...{ stage }} />
+          <StageAnimation {...{ stageNumber }} />
           <Text fontFamily="Normal" fontSize={18} mt="xl">
             {displayText}
           </Text>
@@ -239,13 +249,9 @@ const TimeLeft = (
   );
 };
 
-const StageAnimation = ({
-  stage,
-}: {
-  stage: "preparing" | "delivering" | "complete";
-}) => {
-  switch (stage) {
-    case "preparing":
+const StageAnimation = ({ stageNumber }: { stageNumber: number | null }) => {
+  switch (stageNumber) {
+    case 1:
       return (
         <Box justifyContent="center" alignItems="center">
           <LottieView
@@ -266,7 +272,7 @@ const StageAnimation = ({
         </Box>
       );
 
-    case "delivering":
+    case 2:
       return (
         <Box justifyContent="center" alignItems="center">
           <LottieView
@@ -287,7 +293,7 @@ const StageAnimation = ({
         </Box>
       );
 
-    case "complete":
+    case 3:
       return (
         <Box justifyContent="center" alignItems="center">
           <LottieView
@@ -307,6 +313,9 @@ const StageAnimation = ({
           />
         </Box>
       );
+
+    default:
+      return null;
   }
 };
 
