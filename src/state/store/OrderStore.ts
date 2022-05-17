@@ -114,6 +114,14 @@ export class Order {
         )[this.data.stage];
     }
 
+    get timeLeftString() {
+        return 'from' in this.data.timeLeft
+            ? `Between ${this.data.timeLeft.from} and ${this.data.timeLeft.to} minutes`
+            : 'lessThan' in this.data.timeLeft
+            ? `< ${this.data.timeLeft.lessThan} minutes`
+            : `${this.data.timeLeft.string}`;
+    }
+
     get restaurantNames(): string[] {
         const restaurantIDs = [
             ...new Set(

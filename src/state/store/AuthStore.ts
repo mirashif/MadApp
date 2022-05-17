@@ -58,6 +58,10 @@ export class AuthStore {
 
             this.requests[number] = Date.now();
         } catch (ex) {
+            console.error(
+                '[google/firebase - Too Many Requests]: We have blocked all requests from this app signature due to suspicious activity.',
+            );
+
             throw ex;
         }
 

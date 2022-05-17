@@ -29,6 +29,10 @@ const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
   const auth: AuthStore = useAppState("auth");
   const restaurants: RestaurantStore = useAppState("restaurants");
   const userStore: UserStore = useAppState("user");
+
+  const addresses = useAppState("addresses");
+  const lockedAddress = useAppState("lockedAddress");
+
   const user = userStore.user;
 
   const isLoggedIn = auth.authenticated;
@@ -48,6 +52,24 @@ const Home = observer(({ navigation }: RootStackProps<"HomeStack">) => {
       }
     }
   }, [user, navigation, isFocused]);
+
+  useEffect(() => {
+    if (
+      !lockedAddress.lockedAddress &&
+      user?.firstName &&
+      user?.lastName &&
+      !addressListModalVisible
+    ) {
+      setImmediate(() => {
+        setAddressListModalVisible(true);
+      });
+    }
+  }, [
+    user,
+    addresses.all,
+    lockedAddress.lockedAddress,
+    addressListModalVisible,
+  ]);
 
   return (
     <SafeArea>

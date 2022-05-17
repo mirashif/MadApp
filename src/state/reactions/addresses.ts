@@ -1,4 +1,4 @@
-import {reaction} from 'mobx';
+import {autorun, reaction} from 'mobx';
 import {withCleanup} from '../helpers/withCleanup';
 import {Store} from '../store';
 
@@ -18,4 +18,11 @@ export function addressReactions(store: Store) {
         }),
         {fireImmediately: true},
     );
+
+    autorun(() => {
+        console.log(
+            '-------------TOMATO--------------',
+            store.addresses.all.map((address) => address.data.id),
+        );
+    });
 }

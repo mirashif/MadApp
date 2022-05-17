@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { observer } from "mobx-react";
 import React, { useEffect } from "react";
 import {
@@ -51,21 +51,26 @@ const AddressListModal = observer(
 
     const handleLockAddress = ({ id }: AddressType) => {
       lockedAddress.lockAddress(id);
+      onClose();
     };
 
-    useEffect(() => {
-      const backAction = () => {
-        onClose();
-        return true;
-      };
+    useFocusEffect(() => {
+      if (visible) {
+        const backAction = () => {
+          onClose();
+          return true;
+        };
 
-      const backHandler = BackHandler.addEventListener(
-        "hardwareBackPress",
-        backAction
-      );
+        const backHandler = BackHandler.addEventListener(
+          "hardwareBackPress",
+          backAction
+        );
 
-      return () => backHandler.remove();
-    }, [onClose]);
+        return () => backHandler.remove();
+      }
+
+      return () => {};
+    });
 
     if (!visible) return null;
     return (
@@ -110,7 +115,9 @@ const AddressListModal = observer(
                       </Box>
 
                       <Box style={styles.address}>
-                        <Text style={styles.label}>{address.label}</Text>
+                        <Text style={styles.label}>
+                          {address.label || address.address}
+                        </Text>
                         <Text
                           style={styles.street}
                           numberOfLines={1}

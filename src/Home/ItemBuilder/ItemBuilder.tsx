@@ -28,6 +28,7 @@ import { useAppState } from "../../state/StateContext";
 
 import Variants from "./Variants";
 import Addons from "./Addons";
+import { useFocusEffect } from "@react-navigation/native";
 
 const FOOTER_HEIGHT = 144;
 
@@ -79,7 +80,7 @@ const ItemBuilder = observer(
       }
     }, [itemBuilderId, item]);
 
-    useEffect(() => {
+    useFocusEffect(() => {
       const backAction = () => {
         handleDismiss();
         return true;
@@ -91,7 +92,7 @@ const ItemBuilder = observer(
       );
 
       return () => backHandler.remove();
-    }, [handleDismiss]);
+    });
 
     return (
       <BottomSheetModal

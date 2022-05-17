@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Dimensions, ScrollView } from "react-native";
+import { Dimensions, Pressable, ScrollView } from "react-native";
 import type { Region } from "react-native-maps";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
@@ -7,7 +7,14 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { observer } from "mobx-react";
 
-import { SafeArea, Box, makeStyles, Text, Button } from "../../components";
+import {
+  SafeArea,
+  Box,
+  makeStyles,
+  Text,
+  Button,
+  CircularIcon,
+} from "../../components";
 import Input from "../../components/Input";
 import DissmissKeyboard from "../../components/DissmissKeyboard";
 import type {
@@ -122,6 +129,17 @@ const EditLocation = observer(() => {
           />
           <Box style={styles.marker}>
             <MarkerIcon />
+          </Box>
+
+          <Box position="absolute" m="screen">
+            <Pressable onPress={() => navigation.goBack()}>
+              <CircularIcon
+                name="arrow-left"
+                color="#000"
+                backgroundColor="#fff"
+                size={54}
+              />
+            </Pressable>
           </Box>
         </Box>
 

@@ -75,6 +75,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: 65,
     resizeMode: "contain",
     marginBottom: theme.spacing.s,
-    backgroundColor: theme.colors.gray,
+    backgroundColor: "white",
   },
 }));

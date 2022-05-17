@@ -28,6 +28,8 @@ import Success from "./assets/Success.svg";
 import Referral from "./assets/Referral.svg";
 import type { OnBoardingStepProps } from "./constants";
 import { STEPS } from "./constants";
+import LocationBar from "../Home/LocationBar";
+import { LockedAddressStore } from "../state/store/LockedAddressStore";
 
 const UserInfo = observer(
   ({ setStep, disableGoingBack }: OnBoardingStepProps) => {
@@ -36,6 +38,8 @@ const UserInfo = observer(
       useNavigation<RootStackProps<"EditLocation">["navigation"]>();
 
     const user: UserStore = useAppState("user");
+    const lockedAddress: LockedAddressStore = useAppState("lockedAddress");
+
     const builder: UserBuilder | null = user.builder;
     const [refCode, setRefCode] = useState<null | string>(null);
     const [lastName, setLastName] = useState("");
@@ -213,40 +217,50 @@ const UserInfo = observer(
               </Box>
             </Box>
 
-            <TouchableWithoutFeedback
-              onPress={() => navigation.navigate("EditLocation", { id: null })}
-            >
-              <Box
-                style={{
-                  marginTop: 26,
-                  paddingHorizontal: 25,
-                  paddingVertical: 23,
-                }}
-                borderColor="lightGray"
-                borderWidth={1}
-                borderRadius="l"
-                flexDirection="row"
-                justifyContent="space-between"
+            {!lockedAddress.lockedAddress ? (
+              <TouchableWithoutFeedback
+                onPress={() =>
+                  navigation.navigate("EditLocation", { id: null })
+                }
               >
-                <Box flexDirection="row">
-                  <Icon
-                    name="navigation"
-                    size={14}
-                    color={theme.colors.primary}
-                  />
-                  <Text
-                    style={{ marginLeft: 12 }}
-                    fontFamily="Bold"
-                    fontSize={15}
-                    color="primary"
-                  >
-                    Set Your Address
-                  </Text>
-                </Box>
+                <Box
+                  style={{
+                    marginTop: 26,
+                    paddingHorizontal: 25,
+                    paddingVertical: 23,
+                  }}
+                  borderColor="lightGray"
+                  borderWidth={1}
+                  borderRadius="l"
+                  flexDirection="row"
+                  justifyContent="space-between"
+                >
+                  <Box flexDirection="row">
+                    <Icon
+                      name="navigation"
+                      size={14}
+                      color={theme.colors.primary}
+                    />
+                    <Text
+                      style={{ marginLeft: 12 }}
+                      fontFamily="Bold"
+                      fontSize={15}
+                      color="primary"
+                    >
+                      Set Your Address
+                    </Text>
+                  </Box>
 
-                <Icon name="edit-2" size={14} color={theme.colors.primary} />
-              </Box>
-            </TouchableWithoutFeedback>
+                  <Icon name="edit-2" size={14} color={theme.colors.primary} />
+                </Box>
+              </TouchableWithoutFeedback>
+            ) : (
+              <LocationBar
+                onEditPress={() =>
+                  navigation.navigate("EditLocation", { id: null })
+                }
+              />
+            )}
 
             <Box style={{ paddingTop: 16, paddingBottom: 40, marginTop: 14 }}>
               <Button onPress={handleFinish} size="lg">
